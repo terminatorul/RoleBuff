@@ -32,11 +32,11 @@ with your character role (spec) upon entering combat.
 
 These checks are based on the author's own game experience, contact me if you have other suggestions.
 
-###All classes:
+####All classes:
 - check that a weapon is equipped, check for fishing pole instead of weapon
 - check the role for the current equipment set to match the character build/spec.
 
-###Warriors:
+####Warriors:
 - character role is Tank if most talents are invested in the Protection tree, DPS otherwise
 - for tanks:
     - check that Vigilance ability is cast, if in group.
@@ -46,7 +46,7 @@ These checks are based on the author's own game experience, contact me if you ha
     - check shield is not equipped
     - check for Battle Stance or Berseker Stance
 
-###Paladins:
+####Paladins:
 - character roles is Tank if most talen are invested in the Protection tree, Healer if most
   talents are invested in the Holy tree, and DPS if most talents are invested in the Retribution
   tree
@@ -58,31 +58,31 @@ These checks are based on the author's own game experience, contact me if you ha
 - for healers and DPSes
     - check Rightoues Fury is not active
 
-###Death Knights:
-    - character role is Tank if all three talents Blade Barrier, Anticipation, Toughness are learned
-      or have most of the invested talent points, DPS otherwise.
-    - if Threat of Thassarian talent is learned, character is expected to dual-wield two single-handed
-      weapons, instead of a single two-handed weapon.
-    - for tanks:
-	- check Frost Presence is active
-    - for DPS:
-	- check Blood Presence or Unholy Presence is active
+####Death Knights:
+- character role is Tank if all three talents Blade Barrier, Anticipation, Toughness are learned
+  or have most of the invested talent points, DPS otherwise.
+- if Threat of Thassarian talent is learned, character is expected to dual-wield two single-handed
+  weapons, instead of a single two-handed weapon.
+- for tanks:
+    - check Frost Presence is active
+- for DPS:
+    - check Blood Presence or Unholy Presence is active
 
-###Warlocks:
-    - character class is DPS, no gear checks included
-    - check for Daemon Skin, Daemon Armor or Fel Armor
-    - check for weapon Firestone or Spellstone applied
-    - check for a warlock minion or enslaved daemon
-    - check for minion-specific buff, Imp has Blood Pact.
-    - check for conjured healthstone
-    - check for soulshards, if the character has abilities consume shards
-    - check without the warning sound that you have at least 8 shards.
+####Warlocks:
+- character class is DPS, no gear checks included
+- check for Daemon Skin, Daemon Armor or Fel Armor
+- check for weapon Firestone or Spellstone applied
+- check for a warlock minion or enslaved daemon
+- check for minion-specific buff, Imp has Blood Pact.
+- check for conjured healthstone
+- check for soulshards, if the character has abilities consume shards
+- check without the warning sound that you have at least 8 shards.
 
 If the character does not have any of the abilites included here, the ability is not checked until it is
 learned.
 
-##TODO:
+###TODO:
 - only check the abilities if the mob being fought is not trivial (not grey mobs, but green, yellow or red).
 
-###Shaman:
+####Shaman:
 - check shaman healer has Water Shield.
