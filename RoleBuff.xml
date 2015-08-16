@@ -1,0 +1,24 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+        xsi:schemaLocation="http://www.blizzard.com/wow/ui/ 
+                   ..\..\FrameXML\UI.xsd">
+    <Script File="WowAPI.lua" />
+    <Script File="RoleBuff-en.lua" />
+    <Script File="WowAPI-en.lua" />
+    <Scirpt File="RoleBuffLib.lua" />
+    <Script File="RoleBuffWarrior.lua" />
+    <Script File="RoleBuffDeathKnight.lua" />
+    <Script File="RoleBuffPaladin.lua" />
+    <Script File="RoleBuffWarlock.lua" />
+    <Script File="RoleBuffShaman.lua" />
+    <Script File="RoleBuffRogue.lua" />
+    <Script File="GearSpec.lua" />
+    <Script File="RoleBuff.lua" />
+
+    <Frame name="RoleBuffFrame">
+        <Scripts>
+            <OnLoad>RoleBuff_OnLoad();</OnLoad>
+            <OnEvent>RoleBuff_OnEvent(self, event, ...);</OnEvent>
+	    <OnUpdate>RoleBuff_OnUpdate(self, elapsedFrameTime);</OnUpdate>
+        </Scripts>
+    </Frame>
+</Ui>
