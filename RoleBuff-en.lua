@@ -18,6 +18,7 @@ paladinBlessing = "Paladin Blessing";
 warlockMinion = "Warlock Minion";
 warlockArmor = "Warlock Armor";
 warlockWeaponEnchantment = "Warlock Weapon Enchantment";
+rogueWeaponPoison = "Rogue Weapon Posion";
 commandSyntaxIntroLine = "Syntax: ";
 addonLoadedMessage = displayName .. " loaded.";
 addonEnabledMessage = displayName .. " enabled.";
@@ -34,6 +35,9 @@ equipmentMatchMessage = displayName .. ": Equipment set match.";
 equipmentMatchNeededMessage = displayName ..": Multiple equipment sets with different player roles needed to check gear specialization.";
 equipmentMatchSingleRoleClass = displayName .. ": Gear specialization check only used for classes with multiple roles.";
 equipmentMatchDisabled = displayName .. ": Gear specialization check disabled.";
+
+itemMainHandWeapon = "Main Hand Weapon";
+itemOffHand = "Off Hand";
 
 -- warrior
 itemShield = "Shield";
@@ -73,12 +77,12 @@ end
 
 -- e.g. "Switch to Dire Bear"
 function RoleBuff_SwitchFormMessage(classForm)
-    return "Switch to " .. classForm;
+    return "Switch to " .. classForm
 end
 
 -- e.g. "Cast Warlock Armor"
 function RoleBuff_AbilityToCastMessage(abilityName)
-    return "Cast " .. abilityName;
+    return "Cast " .. abilityName
 end
 
 -- e.g. "Create Greater Healthstone"
@@ -88,22 +92,27 @@ end
 
 -- e.g. "Equip shield"
 function RoleBuff_ItemEquipMessage(itemName)
-    return "Equip " .. itemName;
+    return "Equip " .. itemName
 end
 
 -- e..g "Fishing Pole equipped"
 function RoleBuff_ItemEquippedMessage(itemName)
-    return itemName .. " equipped";
+    return itemName .. " equipped"
 end
 
 -- e.g. "Righteous Fury" (when active for non-tanks)
 function RoleBuff_AbilityActiveMessage(abilityName)
-    return abilityName;
+    return abilityName
 end
 
 -- e.g. "Use Greater Soulstone"
 function RoleBuff_UseItemMessage(itemName)
-    return "Use " .. itemName;
+    return "Use " .. itemName
+end
+
+-- e.g. "Use Rogue Weapon Poison"
+function RoleBuff_UseEnhancementMessage(enhancementName)
+    return "Use " .. enhancementName
 end
 
 function RoleBuff_SummonUnitMessage(unitReference)

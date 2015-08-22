@@ -22,7 +22,7 @@ function RoleBuff_DebugMessage(msg)
     end
 end
 
-function RoleBuff_CombatCheckPlayer(chatOnly)
+function RoleBuff_CombatCheckFishingPole(chatOnly)
     if RoleBuff_CheckFishingPole and
 	(
 	    tonumber(clientBuildNumber) < 7561 and IsEquippedItemType(itemTypeFishingPole)
@@ -32,7 +32,29 @@ function RoleBuff_CombatCheckPlayer(chatOnly)
     then
 	RoleBuff_ReportMessage(RoleBuff_ItemEquippedMessage(itemTypeFishingPole), chatOnly);
     end
+end
 
+function RoleBuff_CombatCheckMainHandOffHand(chatOnly)
+    if RoleBuff_CheckMainHandOffHand
+    then
+	local mainHandSlot, _ = GetInventorySlotInfo(mainHandSlot);
+	local offHandSlot, _ = GetInventorySlotInfo(secondaryHandSlot);
+
+	if GetInventoryItemID(unitPlayer, mainHandSlot) == nil
+	then
+	    RoleBuff_ReportMessage(RoleBuff_ItemEquipMessage(itemMainHandWeapon), chatOnly)
+	end
+
+	if GetInventoryItemID(unitPlayer, offHandSlot) == nil and not IsEquippedItemType(itemTypeTwoHand)
+	then
+	    RoleBuff_ReportMessage(RoleBuff_ItemEquipMessage(itemOffHand), chatOnly)
+	end
+    end
+end
+
+function RoleBuff_CombatCheckPlayer(chatOnly)
+    RoleBuff_CombatCheckFishingPole(chatOnly);
+    RoleBuff_CombatCheckMainHandOffHand(chatOnly);
     RoleBuff_CombatCheckGearSpec(chatOnly)
 end
 
@@ -143,7 +165,7 @@ function RoleBuff_OnLoad()
     end
 end
 
-RoleBuff_CheckFishingPole, RoleBuff_CheckEmptyGear = true, false;
+RoleBuff_CheckFishingPole, RoleBuff_CheckMainHandOffHand, RoleBuff_CheckEmptyGear = true, true, false;
 
 RoleBuff_EnableClassTable = 
 {
@@ -152,7 +174,7 @@ RoleBuff_EnableClassTable =
     [playerClassEnPaladin] = true,
     [playerClassEnWarlock] = true,
     [playerClassEnShaman] = false,
-    [playerClassEnRogue] = false
+    [playerClassEnRogue] = true
 };
 
 RoleBuff_ClassEventHandlerTable =
@@ -162,7 +184,7 @@ RoleBuff_ClassEventHandlerTable =
     [playerClassEnPaladin] = RoleBuff_EventHandlerTablePaladin,
     [playerClassEnWarlock] = RoleBuff_EventHandlerTableWarlock,
     [playerClassEnShaman] = nil,
-    [playerClassEnRogue] = nil
+    [playerClassEnRogue] = RoleBuff_EventHandlerTableRogue
 };
 
 RoleBuff_ClassGetRoleTable =
@@ -197,7 +219,7 @@ local RoleBuff_ClassCommandHandlerTable =
     [playerClassEnPaladin] = RoleBuff_SlashCommandHandlerPaladin,
     [playerClassEnWarlock] = RoleBuff_SlashCommandHandlerWarlock,
     [playerClassEnShaman] = nil,
-    [playerClassEnRogue] = nil
+    [playerClassEnRogue] = RoleBuff_SlashCommandHandlerRogue
 };
 
 function RoleBuff_ErrorHandler(errorMessage)
@@ -320,5 +342,7 @@ end
 SLASH_ROLEBUFF1 = "/rolebuff";
 function SlashCmdList.ROLEBUFF(msgLine, editbox)
     -- xpcall(RoleBuff_SlashCmdHandler, RoleBuff_ErrorHandler, msg)
+    -- local unitGUID = UnitGUID(unitTarget);
+    -- print("RoleBuff: Target level " .. UnitLevel(unitGUID));
     RoleBuff_SlashCmdHandler(msgLine)
 end

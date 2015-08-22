@@ -30,7 +30,7 @@ for every set of gear that you carray. The role for the currently equipped gear 
 with your character role (spec) upon entering combat.
 
 
-These checks are based on the author's own game experience, contact me if you have other suggestions.
+These checks are based on the experience of the author in-game, contact me if you have other suggestions.
 
 ####All classes:
 - check that a weapon is equipped, check for fishing pole instead of weapon
@@ -83,6 +83,9 @@ learned.
 
 ###TODO:
 - only check the abilities if the mob being fought is not trivial (not grey mobs, but green, yellow or red).
+  The problem here is the game client does not really know the level of a world mob untill user or her
+  party targets the mob, or user hovers the mouse over the mob.
+- check minions for DKs with permanent ghoul
 
 ####Shaman:
 - check shaman healer has Water Shield.

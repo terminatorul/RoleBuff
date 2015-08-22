@@ -13,6 +13,8 @@ itemTypeShields = "Shields";
 itemTypeTwoHand = "Two-Hand";
 itemTypeFishingPole = "Fishing Pole";	    -- used before 2.3 (build number 7561)
 itemTypeFishingPoles = "Fishing Poles";	    -- used on 2.3
+mainHandSlot = "MainHandSlot";
+secondaryHandSlot = "SecondaryHandSlot";
 
 -- Warrior
 defensiveStanceSpellName = "Defensive Stance";
@@ -116,6 +118,9 @@ prayerOfShadowProtection = "Prayer of Shadow Protection";
 restaurationSpecName = "Restauration";
 elementalSpecName = "Elemental";
 enhancementSpecName = "Enhancement";
+
+-- Rogue
+poisonsSpellName = "Poisons";
 
 RoleBuff_AddOnLocalized = true;
 

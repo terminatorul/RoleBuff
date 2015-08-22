@@ -174,9 +174,9 @@ end
 function RoleBuff_CheckWarlockWeaponStone(chatOnly)
     if checkWarlockWeapon and hasWeaponStone
     then
-	hasMainHandEnchant, _, _, _, hasOffHandEnchant = GetWeaponEnchantInfo();
+	local hasMainHandEnchant, hasOffHandEnchant = RoleBuff_HasWeaponEnchants();
 
-	if hasMainHandEnchant and (hasOffhandEnchant or IsEquippedItemType(itemTypeTwoHand))
+	if hasMainHandEnchant ~= nil and (hasOffhandEnchant ~= nil or not OffhandHasWeapon())
 	then
 	else
 	    RoleBuff_ReportMessage(RoleBuff_ApplyEnchantmentMessage(warlockWeaponEnchantment), chatOnly);

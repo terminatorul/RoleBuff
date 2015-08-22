@@ -84,8 +84,11 @@ function RoleBuff_CheckVigilanceTargetWarrior(chatOnly)
 		    local intervalMin = (expirationInterval - intervalSec) / 60;
 		    RoleBuff_DebugMessage(vigilanceName .. " on " .. vigilanceTargetUnit .. " for the next " .. intervalMin .. " min " .. intervalSec .. " sec.")
 		else
-		    -- Our last vigilance target no longer has the buff, or has it from some other warrior now 
-		    RoleBuff_ReportMessage(RoleBuff_AbilityToCastMessage(vigilanceSpellName), chatOnly);
+		    if UnitIsVisible(vigilanceTargetUnit) or not (UnitPlayerOrPetInParty(vigilanceTargetUnit) or UnitPlayerOrPetInRaid(vigilanceTargetUnit))
+		    then
+		    -- Last vigilance target no longer has the buff, or has it from some other warrior now 
+			RoleBuff_ReportMessage(RoleBuff_AbilityToCastMessage(vigilanceSpellName), chatOnly);
+		    end
 		end
 	    end
 	end

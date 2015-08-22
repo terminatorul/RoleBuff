@@ -229,6 +229,19 @@ function RoleBuff_GetPlayerAbilityRanks(playerAbilities, abilityRanks)
     return hasAbilities;
 end
 
+function RoleBuff_HasWeaponEnchants()
+    local hasMainHandEnchant, hasOffHandEnchant = nil, nil;
+
+    if tonumber(clientBuildNumber) >= 18482 -- Patch 6.0 The Iron Tide
+    then
+	hasMainHandEnchant, _, _, _, hasOffHandEnchant = GetWeaponEnchantInfo();
+    else
+	hasMainHandEnchant, _, _, hasOffHandEnchant = GetWeaponEnchantInfo();
+    end
+
+    return hasMainHandEnchant, hasOffHandEnchant
+end
+
 function RoleBuff_ReportMessage(message, chatOnly)
     if chatOnly
     then
