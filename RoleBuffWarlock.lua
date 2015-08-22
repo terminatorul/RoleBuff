@@ -1,6 +1,7 @@
 -- Check Warlock for:
 --	- armor buff
 --	- summoned minion or enslaved demon
+--	- minion buff (Blood Pact, Fel Intelligence, Enrage)
 --	- conjured healthstone
 --	- soulstone ressurection
 --	- firestone or spellstone weapon buff
@@ -8,12 +9,14 @@
 --
 
 local checkWarlockArmor, checkWarlockMinion, checkWarlockHealthstone, checkWarlockSoulstone, checkWarlockWeapon, checkWarlockSoulShard = true, true, true, true, true, true;
+local checkWarlockMinionBuff = true;
 local warlockArmorList = { [demonSkin] = true, [demonArmor] = true, [felArmor] = true };
 local warlockMinionList =
 {
     [summonImp] = true, [summonVoidwalker] = true, [summonSuccubuss] = true, [summonFelhunter] = true,
     [summonFelgurard] = true, [summonInfernal] = true, [summonDoomguard] = true
 };
+local warlockMinionBuff = { [creatureFamilyImp] = bloodPact, [creatureFamilyFelhunter] = felIntelligence, [enslaveDemon] = enrageSpellName };
 local warlockHealthstoneList = { [createHealthstone] = true, [ritualOfSouls] = true };
 local warlockWeaponStoneList = { [createFirestone] = true, [createSpellstone] = true };
 local warlockSoulShardCombatList = { [shadowburnSpellName] = true, [soulFireSpellName] = true };
@@ -108,6 +111,90 @@ function RoleBuff_CheckWarlockMinion(chatOnly)
 	if not UnitExists(unitPet) and not IsMounted()
 	then
 	    RoleBuff_ReportMessage(RoleBuff_SummonUnitMessage(warlockMinion), chatOnly)
+	end
+    end
+end
+
+function RoleBuff_CheckWarlockMinionBuff(chatOnly)
+    if checkWarlockMinionBuff and hasMinion and UnitExists(unitPet)
+    then
+	local creatureFamily = UnitCreatureFamily(unitPet);
+
+	if warlockMinionBuff[creatureFamily] ~= nil
+	then
+	    local daemonHasBuffAbility, demonAbilityRank = RoleBuff_GetPlayerAbilityAndRank(warlockMinionBuff[creatureFamily]);
+
+	    if daemonHasBuffAbility
+	    then
+		local autocastable, autocast = GetSpellAutocast(warlockMinionBuff[creatureFamily], BOOKTYPE_PET);
+
+		if not autocast
+		then
+		    local minionBuffName, minionBuffRank = UnitBuff(unitPlayer, warlockMinionBuff[creatureFamily]);
+
+		    if not minionBuffRank or minionBuffRank == "" or minionBuffRank == 0
+		    then
+			minionBuffRank = 1;
+		    end
+
+		    if tonumber(minionBuffRank) ~= nil
+		    then
+			minionBuffRank = tonumber(minionBuffRank);
+		    else
+			local numericRank, matched = string.gsub(minionBuffRank, "Rank ", "");
+			if matched > 0 and tonumber(numericRank) ~= nil
+			then
+			    minionBuffRank = tonumber(numericRank);
+			else
+			    minionBuffRank = 1;
+			end
+		    end
+
+		    if minionBuffName == nil or minionBuffRank < demonAbilityRank
+		    then
+			RoleBuff_ReportMessage(RoleBuff_AbilityToCastMessage(warlockMinionBuff[creatureFamily]), chatOnly);
+		    end
+		end
+	    end
+	else
+	    -- if UnitAura(unitPet, enslaveDemon) ~= nil
+	    -- then
+		-- -- warlock has a demon enslaved instead of a minion, check for Enrage buff
+		-- local demonHasEnrage, enrageAbilityRank = RoleBuff_GetPlayerAbilityAndRank(enrageSpellName);
+
+		-- if deamonHasEnrage
+		-- then
+		--     local autocastable, autocast = GetSpellAutocast(warlockMinionBuff[creatureFamily], BOOKTYPE_PET);
+
+		--     if not autocast
+		--     then
+		-- 	local minionBuffName, minionBuffRank = UnitAura(unitPet, enrageSpellName);
+
+		-- 	if not minionBuffRank or minionBuffRank == "" or minionBuffRank == 0
+		-- 	then
+		-- 	    minionBuffRank = 1;
+		-- 	end
+
+		-- 	if tonumber(minionBuffRank) ~= nil
+		-- 	then
+		-- 	    minionBuffRank = tonumber(minionBuffRank);
+		-- 	else
+		-- 	    local numericRank, matched = string.gsub(minionBuffRank, "Rank ", "");
+		-- 	    if matched > 0 and tonumber(numericRank) ~= nil
+		-- 	    then
+		-- 		minionBuffRank = tonumber(numericRank);
+		-- 	    else
+		-- 		minionBuffRank = 1;
+		-- 	    end
+		-- 	end
+
+		-- 	if minionBuffName == nil or minionBuffRank < enrageAbilityRank
+		-- 	then
+		-- 	    RoleBuff_ReportMessage(RoleBuff_AbilitytoCastMessage(enrageSpellName), chatOnly);
+		-- 	end
+		--     end
+		-- end
+	    -- end
 	end
     end
 end
@@ -217,11 +304,12 @@ end
 
 
 function RoleBuff_CombatCheckWarlock(chatOnly, event, frame, ...)
-    RoleBuff_CheckWarlockArmor(chatOnly)
-    RoleBuff_CheckWarlockMinion(chatOnly)
-    RoleBuff_CheckWarlockHasHealthstone(chatOnly)
-    RoleBuff_CheckWarlockHasSoulstone(chatOnly)
-    RoleBuff_CheckWarlockWeaponStone(chatOnly)
+    RoleBuff_CheckWarlockArmor(chatOnly);
+    RoleBuff_CheckWarlockMinion(chatOnly);
+    RoleBuff_CheckWarlockMinionBuff(chatOnly);
+    RoleBuff_CheckWarlockHasHealthstone(chatOnly);
+    RoleBuff_CheckWarlockHasSoulstone(chatOnly);
+    RoleBuff_CheckWarlockWeaponStone(chatOnly);
     RoleBuff_CheckWarlockHasSoulShard(chatOnly)
 end
 

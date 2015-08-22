@@ -1,4 +1,4 @@
-local checkDeathKnightPresence, checkDeathKnightDualWielding = true, true;
+local checkDeathKnightPresence, checkDeathKnightDualWielding, checkDeathKnightGhoul = true, true, false;
 
 local bloodPresenceIndex, frostPresenceIndex, UnholyPresenceIndex = 1, 2, 3;
 local bloodTabIndex, frostTabIndex, unholyTabIndex = 1, 2, 3;

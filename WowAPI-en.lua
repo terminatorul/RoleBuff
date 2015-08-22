@@ -15,6 +15,8 @@ itemTypeFishingPole = "Fishing Pole";	    -- used before 2.3 (build number 7561)
 itemTypeFishingPoles = "Fishing Poles";	    -- used on 2.3
 mainHandSlot = "MainHandSlot";
 secondaryHandSlot = "SecondaryHandSlot";
+creatureFamilyImp = "Imp";		    -- warlock minion (daemon)
+creatureFamilyFelhunter = "Felhunter";	    -- warlock minion (daemon)
 
 -- Warrior
 defensiveStanceSpellName = "Defensive Stance";
@@ -110,6 +112,9 @@ greaterSoulstone = "Greater Soulstone";
 majorSoulstone = "Major Soulstone";
 masterSoulstone = "Master Soulstone";
 demonicSoulstone = "Demonic Soulstone";
+bloodPact = "Blood Pact";
+felIntelligence = "Fel Intelligence";
+enrageSpellName = "Enrage";
 
 -- Priest
 prayerOfShadowProtection = "Prayer of Shadow Protection";
