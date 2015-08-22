@@ -7,11 +7,13 @@ local bladeBarrierTalentIndex = 3;
 local toughnessTalentIndex = 3;
 local anticipationTalentIndex = 3;
 local threatOfThassarianTalentIndex = 22;
+local masterOfGhoulsTalentIndex = 20;
 
 bladeBarrierRank, anticipationRank, toughnessRank = 0, 0, 0;
 hasTankTalentsInvested = false;
 hasFrostPresence = false;
 hasThreatOfThassarian = false;
+hasMasterOfGhouls = false;
 
 presenceIndex = 0;
 RoleBuff_DeathKnightAttacked, RoleBuff_DeathKnightAttacking = false, false;
@@ -84,6 +86,12 @@ function RoleBuff_InitialPlayerAliveDeathKnight(frame, event, ...)
 	print(displayName .. ": " .. RoleBuff_FormatSpecialization(playerClassLocalized, frostSpecName, abilityDualWielding) .. ".");
     else
 	hasThreadOfThassarian = false;
+    end
+
+    local name, iconPath, tied, column, currentRank, maxRank = GetTalentInfo(unholyTabIndex, masterOfGhoulsTalentIndex);
+    if name ~= nil and currentRank > 0
+    then
+	hasMasterOfGhouls = true;
     end
 end
 

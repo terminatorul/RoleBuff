@@ -16,7 +16,7 @@ local warlockMinionList =
     [summonImp] = true, [summonVoidwalker] = true, [summonSuccubuss] = true, [summonFelhunter] = true,
     [summonFelgurard] = true, [summonInfernal] = true, [summonDoomguard] = true
 };
-local warlockMinionBuff = { [creatureFamilyImp] = bloodPact, [creatureFamilyFelhunter] = felIntelligence, [enslaveDemon] = enrageSpellName };
+local warlockMinionBuff = { [creatureFamilyImp] = bloodPact, [creatureFamilyFelhunter] = felIntelligence };
 local warlockHealthstoneList = { [createHealthstone] = true, [ritualOfSouls] = true };
 local warlockWeaponStoneList = { [createFirestone] = true, [createSpellstone] = true };
 local warlockSoulShardCombatList = { [shadowburnSpellName] = true, [soulFireSpellName] = true };
