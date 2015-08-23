@@ -156,45 +156,6 @@ function RoleBuff_CheckWarlockMinionBuff(chatOnly)
 		    end
 		end
 	    end
-	else
-	    -- if UnitAura(unitPet, enslaveDemon) ~= nil
-	    -- then
-		-- -- warlock has a demon enslaved instead of a minion, check for Enrage buff
-		-- local demonHasEnrage, enrageAbilityRank = RoleBuff_GetPlayerAbilityAndRank(enrageSpellName);
-
-		-- if deamonHasEnrage
-		-- then
-		--     local autocastable, autocast = GetSpellAutocast(warlockMinionBuff[creatureFamily], BOOKTYPE_PET);
-
-		--     if not autocast
-		--     then
-		-- 	local minionBuffName, minionBuffRank = UnitAura(unitPet, enrageSpellName);
-
-		-- 	if not minionBuffRank or minionBuffRank == "" or minionBuffRank == 0
-		-- 	then
-		-- 	    minionBuffRank = 1;
-		-- 	end
-
-		-- 	if tonumber(minionBuffRank) ~= nil
-		-- 	then
-		-- 	    minionBuffRank = tonumber(minionBuffRank);
-		-- 	else
-		-- 	    local numericRank, matched = string.gsub(minionBuffRank, "Rank ", "");
-		-- 	    if matched > 0 and tonumber(numericRank) ~= nil
-		-- 	    then
-		-- 		minionBuffRank = tonumber(numericRank);
-		-- 	    else
-		-- 		minionBuffRank = 1;
-		-- 	    end
-		-- 	end
-
-		-- 	if minionBuffName == nil or minionBuffRank < enrageAbilityRank
-		-- 	then
-		-- 	    RoleBuff_ReportMessage(RoleBuff_AbilitytoCastMessage(enrageSpellName), chatOnly);
-		-- 	end
-		--     end
-		-- end
-	    -- end
 	end
     end
 end

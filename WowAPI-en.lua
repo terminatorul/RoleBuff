@@ -114,7 +114,6 @@ masterSoulstone = "Master Soulstone";
 demonicSoulstone = "Demonic Soulstone";
 bloodPact = "Blood Pact";
 felIntelligence = "Fel Intelligence";
-enrageSpellName = "Enrage";
 
 -- Priest
 prayerOfShadowProtection = "Prayer of Shadow Protection";
