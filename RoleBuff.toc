@@ -16,6 +16,7 @@ RoleBuffPaladin.lua
 RoleBuffWarlock.lua
 RoleBuffShaman.lua
 RoleBuffRogue.lua
+RoleBuffOptionsFrame.lua
 GearSpec.lua
 RoleBuff.lua
 RoleBuff.xml

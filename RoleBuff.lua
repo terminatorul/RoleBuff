@@ -155,7 +155,7 @@ RoleBuff_BaseCommandHandlerTable =
 };
 
 -- called from XML
-function RoleBuff_OnLoad()
+function RoleBuff_OnLoad(panel)
     if RoleBuff_AddOnLocalized and RoleBuff_UserStringsLocalized
     then
 	this:RegisterEvent(eventPlayerAlive);
@@ -163,6 +163,8 @@ function RoleBuff_OnLoad()
 	print("RoleBuff: New add-on translation is needed for your World of Warcraft client language.");
 	print("RoleBuff: Not loaded.");
     end
+
+    RoleBuff_OptionsFrame_Load(panel)
 end
 
 RoleBuff_CheckFishingPole, RoleBuff_CheckMainHandOffHand, RoleBuff_CheckEmptyGear = true, true, false;
