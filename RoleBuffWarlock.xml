@@ -1,0 +1,110 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xsi:schemaLocation="http://www.blizzard.com/wow/ui/ 
+	   ..\..\FrameXML\UI.xsd">
+   <Frame name="RoleBuff_WarlockOptionsFrame" parent="RoleBuff_OptionsFrame" enableMouse="true">
+       <Scripts>
+	   <OnLoad>RoleBuff_WarlockOptionsFrame_Load(self);</OnLoad>
+       </Scripts>
+       <Layers>
+	   <Layer level="OVERLAY">
+	       <FontString name="RoleBuff_WarlockTitle" text="Warlock" inherits="GameFontNormalLarge">
+		    <Anchors>
+			<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="15" y="-15"/>
+		    </Anchors>
+		</FontString>
+	       <FontString name="RoleBuff_WarlockDescription" text="Warlock check when entering combat" inherits="GameFontHighlightSmall">
+		   <Anchors>
+		       <Anchor point="TOPLEFT" relativeTo="RoleBuff_WarlockTitle" relativePoint="BOTTOMLEFT" x="0" y="-8" />
+		   </Anchors>
+	       </FontString>
+	    </Layer>
+	</Layers>
+       <Frames>
+	   <CheckButton name="RoleBuff_WarlockArmorCheck" checked="true" inherits="InterfaceOptionsCheckButtonTemplate">
+	       <Anchors>
+		   <Anchor point="TOPLEFT" relativeTo="RoleBuff_WarlockDescription" relativePoint="BOTTOMLEFT" x="0" y="-15"/>
+	       </Anchors>
+	       <Layers>
+		   <Layer level="OVERLAY">
+		       <FontString name="RoleBuff_WarlockArmorText" text="Armor" inherits="RoleBuff_CheckBoxText"/>
+		   </Layer>
+	       </Layers>
+	   </CheckButton>
+	   <CheckButton name="RoleBuff_WarlockMinionOption" checked="true" inherits="InterfaceOptionsCheckButtonTemplate">
+	       <Anchors>
+		   <Anchor point="TOPLEFT" relativeTo="RoleBuff_WarlockArmorCheck" relativePoint="BOTTOMLEFT" x="0" y="-10"/>
+	       </Anchors>
+	       <Layers>
+		   <Layer level="OVERLAY">
+		       <FontString name="RoleBuff_WarlocMinionText" text="Minion" inherits="RoleBuff_CheckBoxText"/>
+		   </Layer>
+	       </Layers>
+	   </CheckButton>
+	    <CheckButton name="RoleBuff_WarlockMinionBuffOption" checked="true" inherits="InterfaceOptionsCheckButtonTemplate">
+		<Anchors>
+		    <Anchor point="TOPLEFT" relativeTo="RoleBuff_WarlockMinionOption" relativePoint="BOTTOMLEFT" x="0" y="-10"/>
+		</Anchors>
+		<Layers>
+		    <Layer level="OVERLAY">
+			<FontString name="RoleBuff_WarlockMinionBuffText" text="Minion Buff" inherits="RoleBuff_CheckBoxText"/>
+		    </Layer>
+		</Layers>
+	    </CheckButton>
+	   <CheckButton name="RoleBuff_WarlockHealthstoneOption" checked="true" inherits="InterfaceOptionsCheckButtonTemplate">
+	       <Anchors>
+		   <Anchor point="TOPLEFT" relativeTo="RoleBuff_WarlockMinionBuffOption" relativePoint="BOTTOMLEFT" x="0" y="-10"/>
+	       </Anchors>
+	       <Layers>
+		   <Layer level="OVERLAY">
+		       <FontString name="WarlockHealthstoneText" text="Healthstone" inherits="RoleBuff_CheckBoxText"/>
+		   </Layer>
+	       </Layers>
+	   </CheckButton>
+	   <CheckButton name="RoleBuff_WarlockSoulstoneOption" checked="true" inherits="InterfaceOptionsCheckButtonTemplate">
+	       <Anchors>
+		   <Anchor point="TOPLEFT" relativeTo="RoleBuff_WarlockHealthstoneOption" relativePoint="BOTTOMLEFT" x="0" y="-10"/>
+	       </Anchors>
+	       <Layers>
+		   <Layer level="OVERLAY">
+		       <FontString name="RoleBuff_WarlockSoulstoneText" text="Soulstone" inherits="RoleBuff_CheckBoxText"/>
+		   </Layer>
+	       </Layers>
+	   </CheckButton>
+	   <CheckButton name="RoleBuff_WarlockWeaponOption" checked="true" inherits="InterfaceOptionsCheckButtonTemplate">
+	       <Anchors>
+		   <Anchor point="TOPLEFT" relativeTo="RoleBuff_WarlockSoulstoneOption" relativePoint="BOTTOMLEFT" x="0" y="-10"/>
+	       </Anchors>
+	       <Layers>
+		   <Layer level="OVERLAY">
+		       <FontString name="RoleBuff_WarlockWeaponText" text="Firestone / Spellstone" inherits="RoleBuff_CheckBoxText"/>
+		   </Layer>
+	       </Layers>
+	   </CheckButton>
+	   <CheckButton name="RoleBuff_WarlockSoulshardOption" checked="true" inherits="InterfaceOptionsCheckButtonTemplate">
+	       <Anchors>
+		    <Anchor point="TOPLEFT" relativeTo="RoleBuff_WarlockWeaponOption" relativePoint="BOTTOMLEFT" x="0" y="-10"/>
+		</Anchors>
+		<Layers>
+		    <Layer level="OVERLAY">
+			<FontString name="RoleBuff_WarlockSoulshardText" text="Soulshard" inherits="RoleBuff_CheckBoxText"/>
+		    </Layer>
+		</Layers>
+	    </CheckButton>
+	    <CheckButton name="RoleBuff_WarlockSoulshardCountOption" checked="true" inherits="InterfaceOptionsCheckButtonTemplate">
+		<Anchors>
+		    <Anchor point="TOPLEFT" relativeTo="RoleBuff_WarlockSoulshardOption" relativePoint="BOTTOMLEFT" x="0" y="-10"/>
+		</Anchors>
+		<Layers>
+		    <Layer level="OVERLAY">
+			<FontString name="RoleBuff_WarlockSoulshardCountText" text="Soulshard count: " inherits="RoleBuff_CheckBoxText"/>
+		    </Layer>
+		</Layers>
+	    </CheckButton>
+	    <EditBox name="RoleBuff_WarlockSoulshardCountBox" numeric="true" letters="2" autoFocus="false" inherits="InputBoxTemplate">
+		<Anchors>
+		    <Anchor point="BOTTOMLEFT" relativeTo="RoleBuff_WarlockSoulshardCountText" relativePoint="BOTTOMRIGHT" x="10" y="0"/>
+		</Anchors>
+		<Size x="35" y="15"/>
+	    </EditBox>
+	</Frames>
+    </Frame>
+</Ui>

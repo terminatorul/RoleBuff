@@ -1,0 +1,109 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xsi:schemaLocation="http://www.blizzard.com/wow/ui/ 
+	   ..\..\FrameXML\UI.xsd">
+    <Frame name="RoleBuff_OptionsFrame" parent="UIParent" enableMouse="true">
+	<Scripts>
+	    <OnLoad>RoleBuff_OptionsFrame_Load(self);</OnLoad>
+	</Scripts>
+	<Layers>
+	    <Layer level="OVERLAY">
+		<FontString name="RoleBuff_OptionsHeader" text="RoleBuff" inherits="GameFontNormalLarge">
+		    <Anchors>
+			<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="15" y="-15"/>
+		    </Anchors>
+		</FontString>
+		<FontString name="RoleBuff_OptionsDescription" text="Player checks when entering combat" inherits="GameFontHighlightSmall">
+		    <Anchors>
+			<Anchor point="TOPLEFT" relativeTo="RoleBuff_OptionsHeader" relativePoint="BOTTOMLEFT" x="0" y="-8"/>
+		    </Anchors>
+		</FontString>
+	    </Layer>
+	</Layers>
+	<Frames>
+	    <CheckButton name="RoleBuff_CheckMainHandOffHandOption" parent="RoleBuff_OptionsFrame" checked="true" inherits="InterfaceOptionsCheckButtonTemplate">
+		<Anchors>
+		    <Anchor point="TOPLEFT" relativeTo="RoleBuff_OptionsDescription" relativePoint="BOTTOMLEFT" x="0" y="-15"/>
+		</Anchors>
+		<Layers>
+		    <Layer level="OVERLAY">
+			<FontString name="RoleBuff_CheckMainHandOffHandText" text="Equipped Main Hand and Off Hand" inherits="RoleBuff_CheckBoxText"/>
+		    </Layer>
+		</Layers>
+	    </CheckButton>
+	    <CheckButton name="RoleBuff_CheckFishingPoleOption" parent="RoleBuff_OptionsFrame" checked="true" inherits="InterfaceOptionsCheckButtonTemplate">
+		<Anchors>
+		    <Anchor point="TOPLEFT" relativeTo="RoleBuff_CheckMainHandOffHandOption" relativePoint="BOTTOMLEFT" x="0" y="-10"/>
+		</Anchors>
+		<Layers>
+		    <Layer level="OVERLAY">
+			<FontString name="RoleBuff_CheckFishingPoleText" text="Fishing Pole" inherits="RoleBuff_CheckBoxText"/>
+		    </Layer>
+		</Layers>
+	    </CheckButton>
+	    <CheckButton name="RoleBuff_CheckGearSetOption" parent="RoleBuff_OptionsFrame" checked="true" inherits="InterfaceOptionsCheckButtonTemplate">
+		<Anchors>
+		    <Anchor point="TOPLEFT" relativeTo="RoleBuff_CheckFishingPoleOption" relativePoint="BOTTOMLEFT" x="0" y="-10"/>
+		</Anchors>
+		<Layers>
+		    <Layer level="OVERLAY">
+			<FontString name="RoleBuff_CheckGearSetText" text="Gear Set" inherits="RoleBuff_CheckBoxText"/>
+			<FontString name="RoleBuff_ClassesTitleText" text="Classes" inherits="GameFontNormal">
+			    <Anchors>
+				<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="0" y="-15"/>
+			    </Anchors>
+			</FontString>
+		    </Layer>
+		</Layers>
+	    </CheckButton>
+	    <CheckButton name="RoleBuff_EnableDeathKnightOption" parent="RoleBuff_OptionsFrame" checked="true" inherits="InterfaceOptionsCheckButtonTemplate">
+		<Anchors>
+		    <Anchor point="TOPLEFT" relativeTo="RoleBuff_ClassesTitleText" relativePoint="BOTTOMLEFT" x="15" y="-10"/>
+		</Anchors>
+		<Layers>
+		    <Layer level="OVERLAY">
+			<FontString name="RoleBuff_EnableDeathKnightText" text="Death Knight" inherits="RoleBuff_CheckBoxText"/>
+		    </Layer>
+		</Layers>
+	    </CheckButton>
+	    <CheckButton name="RoleBuff_EnablePaladinOption" parent="RoleBuff_OptionsFrame" checked="true" inherits="InterfaceOptionsCheckButtonTemplate">
+		<Anchors>
+		    <Anchor point="TOPLEFT" relativeTo="RoleBuff_EnableDeathKnightOption" relativePoint="BOTTOMLEFT" x="0" y="-10"/>
+		</Anchors>
+		<Layers>
+		    <Layer level="OVERLAY">
+			<FontString name="RoleBuff_EnablePaladinText" text="Paladin" inherits="RoleBuff_CheckBoxText"/>
+		    </Layer>
+		</Layers>
+	    </CheckButton>
+	    <CheckButton name="RoleBuff_EnableRogueOption" parent="RoleBuff_OptionsFrame" checked="true" inherits="InterfaceOptionsCheckButtonTemplate">
+		<Anchors>
+		    <Anchor point="TOPLEFT" relativeTo="RoleBuff_EnablePaladinOption" relativePoint="BOTTOMLEFT" x="0" y="-10"/>
+		</Anchors>
+		<Layers>
+		    <Layer level="OVERLAY">
+			<FontString name="RoleBuff_EnableRogueText" text="Rogue" inherits="RoleBuff_CheckBoxText"/>
+		    </Layer>
+		</Layers>
+	    </CheckButton>
+	    <CheckButton name="RoleBuff_EnableWarlockOption" parent="RoleBuff_OptionsFrame" checked="true" inherits="InterfaceOptionsCheckButtonTemplate">
+		<Anchors>
+		    <Anchor point="TOPLEFT" relativeTo="RoleBuff_EnableRogueOption" relativePoint="BOTTOMLEFT" x="0" y="-10"/>
+		</Anchors>
+		<Layers>
+		    <Layer level="OVERLAY">
+			<FontString name="RoleBuff_EnableWarlockText" text="Warlock" inherits="RoleBuff_CheckBoxText"/>
+		    </Layer>
+		</Layers>
+	    </CheckButton>
+	    <CheckButton name="RoleBuff_EnableWarriorOption" parent="RoleBuff_OptionsFrame" checked="true" inherits="InterfaceOptionsCheckButtonTemplate">
+		<Anchors>
+		    <Anchor point="TOPLEFT" relativeTo="RoleBuff_EnableWarlockOption" relativePoint="BOTTOMLEFT" x="0" y="-10"/>
+		</Anchors>
+		<Layers>
+		    <Layer level="OVERLAY">
+			<FontString name="RoleBuff_EnableWarriorText" text="Warrior" inherits="RoleBuff_CheckBoxText"/>
+		    </Layer>
+		</Layers>
+	    </CheckButton>
+	</Frames>
+    </Frame>
+</Ui>

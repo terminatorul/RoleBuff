@@ -202,3 +202,9 @@ function RoleBuff_GetDeathKnightRole()
 	return roleDPS;
     end
 end
+
+function RoleBuff_DeathKnightOptionsFrame_Load(panel)
+    panel.name = classNameDeathKnight;
+    panel.parent = displayName;
+    InterfaceOptions_AddCategory(panel)
+end

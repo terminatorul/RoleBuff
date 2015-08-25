@@ -1,0 +1,34 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xsi:schemaLocation="http://www.blizzard.com/wow/ui/ 
+	   ..\..\FrameXML\UI.xsd">
+    <Frame name="RoleBuff_RogueOptionsFrame" parent="RoleBuff_OptionsFrame" enableMouse="true">
+	<Scripts>
+	    <OnLoad>RoleBuff_RogueOptionsFrame_Load(self);</OnLoad>
+	</Scripts>
+	<Layers>
+	    <Layer level="OVERLAY">
+		<FontString name="RoleBuff_RogueOptions" text="Rogue" inherits="GameFontNormalLarge">
+		    <Anchors>
+			<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="15" y="-15"/>
+		    </Anchors>
+		</FontString>
+		<FontString name="RoleBuff_RogueDescription" text="Rogue checks when entering combat" inherits="GameFontHighlightSmall">
+		    <Anchors>
+			<Anchor point="TOPLEFT" relativeTo="RoleBuff_RogueOptions" relativePoint="BOTTOMLEFT" x="0" y="-8"/>
+		    </Anchors>
+		</FontString>
+	    </Layer>
+	</Layers>
+	<Frames>
+	    <CheckButton name="RoleBuff_RogueWeaponOption" parent="RoleBuff_RogueOptionsFrame" checked="true" inherits="InterfaceOptionsCheckButtonTemplate">
+		<Anchors>
+		    <Anchor point="TOPLEFT" relativeTo="RoleBuff_RogueDescription" relativePoint="BOTTOMLEFT" x="0" y="-15"/>
+		</Anchors>
+		<Layers>
+		    <Layer level="OVERLAY">
+			<FontString name="RoleBuff_RogueWeaponText" text="Poisons" inherits="RoleBuff_CheckBoxText"/>
+		    </Layer>
+		</Layers>
+	    </CheckButton>
+	</Frames>
+    </Frame>
+</Ui>

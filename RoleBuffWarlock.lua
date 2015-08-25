@@ -9,7 +9,7 @@
 --
 
 local checkWarlockArmor, checkWarlockMinion, checkWarlockHealthstone, checkWarlockSoulstone, checkWarlockWeapon, checkWarlockSoulShard = true, true, true, true, true, true;
-local checkWarlockMinionBuff = true;
+local checkWarlockMinionBuff, minShardsCount = true, 6;
 local warlockArmorList = { [demonSkin] = true, [demonArmor] = true, [felArmor] = true };
 local warlockMinionList =
 {
@@ -236,10 +236,8 @@ function RoleBuff_CheckWarlockHasSoulShard(chatOnly)
     if checkWarlockSoulShard and hasDrainSoul and (hasSoulShardCombat or hasSoulshatter and RoleBuff_PlayerIsInGroup())
     then
 	local shardsCount = GetItemCount(soulShard, false, false);
-	if shardsCount > 5	-- Expect 6 shards at all times
+	if shardsCount < minShardsCount -- Expect 6 shards at all times
 	then
-	    return;
-	else
 	    if shardsCount > 0
 	    then
 		RoleBuff_ShowMessage(RoleBuff_CreateItemMessage(soulShard), chatOnly);
@@ -342,4 +340,13 @@ RoleBuff_SlashCommandHandlerWarlock =
 
 function RoleBuff_GetWarlockRole()
     return roleDPS
+end
+
+function RoleBuff_WarlockOptionsFrame_Load(panel)
+    RoleBuff_WarlockSoulshardCountBox:SetNumber(minShardsCount);
+    RoleBuff_WarlockSoulshardCountBox:SetCursorPosition(0);
+
+    panel.name = classNameWarlock;
+    panel.parent = displayName;
+    InterfaceOptions_AddCategory(panel);
 end

@@ -1,0 +1,44 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xsi:schemaLocation="http://www.blizzard.com/wow/ui/ 
+	   ..\..\FrameXML\UI.xsd">
+    <Frame name="RoleBuff_DeathKnightOptionsFrame" parent="RoleBuff_OptionsFrame" enableMouse="true">
+	<Scripts>
+	    <OnLoad>RoleBuff_DeathKnightOptionsFrame_Load(self);</OnLoad>
+	</Scripts>
+	<Layers>
+	    <Layer level="OVERLAY">
+		<FontString name="RoleBuff_DeathKnightOptions" text="Death Knight" inherits="GameFontNormalLarge">
+		    <Anchors>
+			<Anchor point="TOPLEFT" relativeTo="$parent" relativePoint="TOPLEFT" x="15" y="-15"/>
+		    </Anchors>
+		</FontString>
+		<FontString name="RoleBuff_DeathKnightDescription" text="Death Knight checks when entering combat" inherits="GameFontHighlightSmall">
+		    <Anchors>
+			<Anchor point="TOPLEFT" relativeTo="RoleBuff_DeathKnightOptions" relativePoint="BOTTOMLEFT" x="0" y="-8"/>
+		    </Anchors>
+		</FontString>
+	    </Layer>
+	</Layers>
+	<Frames>
+	    <CheckButton name="RoleBuff_DeathKnightDualWield" parent="RoleBuff_DeathKnightOptionsFrame" checked="true" inherits="InterfaceOptionsCheckButtonTemplate">
+		<Anchors>
+		    <Anchor point="TOPLEFT" relativeTo="RoleBuff_DeathKnightDescription" relativePoint="BOTTOMLEFT" x="0" y="-15"/>
+		</Anchors>
+		<Layers>
+		    <Layer level="OVERLAY">
+			<FontString name="RoleBuff_DeathKnightDualWieldText" text="Dual Wield" inherits="RoleBuff_CheckBoxText"/>
+		    </Layer>
+		</Layers>
+	    </CheckButton>
+	    <CheckButton name="RoleBuff_DeathKnightFrostPresence" parent="RoleBuff_DeathKnightOptionsFrame" checked="true" inherits="InterfaceOptionsCheckButtonTemplate">
+		<Anchors>
+		    <Anchor point="TOPLEFT" relativeTo="RoleBuff_DeathKnightDualWield" relativePoint="BOTTOMLEFT" x="0" y="-10"/>
+		</Anchors>
+		<Layers>
+		    <Layer level="OVERLAY">
+			<FontString name="RoleBuff_DeathKnightFrostPresenceText" text="Frost Presence" inherits="RoleBuff_CheckBoxText"/>
+		    </Layer>
+		</Layers>
+	    </CheckButton>
+	</Frames>
+    </Frame>
+</Ui>

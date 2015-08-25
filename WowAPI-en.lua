@@ -18,6 +18,18 @@ secondaryHandSlot = "SecondaryHandSlot";
 creatureFamilyImp = "Imp";		    -- warlock minion (daemon)
 creatureFamilyFelhunter = "Felhunter";	    -- warlock minion (daemon)
 
+classNameDeathKnight = "Death Knight";
+classNameDruid = "Druid";
+classNameHunter = "Hunter";
+classNameMage = "Mage";
+classNameMong = "Monk";
+classNamePaladin = "Paladin";
+classNamePriest = "Priest";
+classNameRogue = "Rogue";
+classNameShaman = "Shaman";
+classNameWarlock = "Warlock";
+classNameWarrior = "Warrior";
+
 -- Warrior
 defensiveStanceSpellName = "Defensive Stance";
 beserkerStanceSpellName = "Beserker Stance";

@@ -242,3 +242,9 @@ function RoleBuff_GetWarriorRole()
 
     return roleDPS;
 end
+
+function RoleBuff_WarriorOptionsFrame_Load(panel)
+    panel.name = classNameWarrior;
+    panel.parent = displayName;
+    InterfaceOptions_AddCategory(panel);
+end

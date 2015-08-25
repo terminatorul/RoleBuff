@@ -335,3 +335,8 @@ function RoleBuff_GetPaladinRole()
     end
 end
 
+function RoleBuff_PaladinOptionsFrame_Load(panel)
+    panel.name = classNamePaladin;
+    panel.parent = displayName;
+    InterfaceOptions_AddCategory(panel)
+end

@@ -163,8 +163,6 @@ function RoleBuff_OnLoad(panel)
 	print("RoleBuff: New add-on translation is needed for your World of Warcraft client language.");
 	print("RoleBuff: Not loaded.");
     end
-
-    RoleBuff_OptionsFrame_Load(panel)
 end
 
 RoleBuff_CheckFishingPole, RoleBuff_CheckMainHandOffHand, RoleBuff_CheckEmptyGear = true, true, false;

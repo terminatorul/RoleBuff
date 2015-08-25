@@ -74,3 +74,9 @@ RoleBuff_SlashCommandHandlerRogue =
 function RoleBuff_GetRogueRole()
     return roleDPS;
 end
+
+function RoleBuff_RogueOptionsFrame_Load(panel)
+    panel.name = classNameRogue;
+    panel.parent = displayName;
+    InterfaceOptions_AddCategory(panel)
+end
