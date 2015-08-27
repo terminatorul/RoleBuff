@@ -5,7 +5,9 @@
 ## Author: Timothy Madden
 ## SavedVariables: AddOnStorageTable
 ## SavedVariablesPerCharacter: CharacterStorageTable
+## Dependencies:
 
+RoleBuffAddOn.lua
 WowAPI.lua
 RoleBuff-en.lua
 WowAPI-en.lua

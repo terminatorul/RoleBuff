@@ -2,7 +2,7 @@
 -- Check if items from sets for other roles are quipped instead of items for current player role sets.
 -- Note only some of the classes classes can perform different roles with different specializations
 
-RoleBuff_CheckEquipmentSet = true
+RoleBuff_CheckEquipmentSet = RoleBuff_ReadAddOnStorage(true, { "options", "global" }, "optGearSpec")["optGearSpec"];
 
 local multipleRoleClass, equipmentMatchCount, equipmentMissmatchCount, equipmentSwapPending = false, nil, nil, false;
 

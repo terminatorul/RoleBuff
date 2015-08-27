@@ -30,17 +30,17 @@ with your character role (spec) upon entering combat.
 
 These checks are based on the experience of the author in-game, contact me if you have other suggestions.
 
-####All classes:
+####All classes
 - check that a weapon/shield is equipped, check for fishing pole instead of weapon
 - check the role for the current equipment set to match the character build/spec.
 
-####Warriors:
+####Warriors
 - for tanks:
     - check that Vigilance ability is cast, if in group.
     - check shield is equipped
     - check for Defensive Stance.
 
-####Paladins:
+####Paladins
 - check that the paladin has an aura, a seal and blessing cast
 - for tanks:
     - check that Rightous Fury is active
@@ -49,7 +49,7 @@ These checks are based on the experience of the author in-game, contact me if yo
 - for healers and DPSes
     - check Rightoues Fury is not active
 
-####Death Knights:
+####Death Knights
 - character role is Tank if all three talents Blade Barrier, Anticipation, Toughness are learned
   or if they have the most of the invested talent points, DPS otherwise.
 - if Threat of Thassarian talent is learned, character is expected to dual-wield two single-handed
@@ -59,22 +59,22 @@ These checks are based on the experience of the author in-game, contact me if yo
 - for DPS:
     - check Blood Presence or Unholy Presence is active
 
-####Warlocks:
+####Warlocks
 - check for Daemon Skin, Daemon Armor or Fel Armor
 - check for weapon enchantment (warn for Firestone or Spellstone applied)
 - check for a warlock minion or enslaved daemon
 - check for minion-specific buff: Imp - Blood Pact, Felhunter - Fel Intelligence.
 - check for conjured healthstone
 - check for soulshards for combat abilities that consume shards
-- check (without the warning sound) that you have at least 8 shards.
+- check (without the warning sound) that you have at least 6 shards.
 
-####Rogues:
+####Rogues
 - check all equipped weapons have an enchantment, warn user to use poisons otherwise.
 
 Any ability is checked only if your character has already learned it.
 
-###TODO:
-- add some UI to allow individual selection for any of the checks involved
+###TODO
+- add some UI to allow individual selection for any of the checks involved - in progress
 - casters can transition between combat and out-of-combat very frequently (on every spell cast), if they do
   not use melee auto-attack ability to stay in combat. Add a timer to the warning messages for this case.
 - add some addon command to allow user to explicitly choose a role, for example a dual-spec protection and
@@ -85,14 +85,17 @@ Any ability is checked only if your character has already learned it.
   The problem here is the game client does not really know the level of a world mob untill user or her
   party targets the mob, or user hovers the mouse over the mob.
 
-####Warrior:
+####Warrior
 - for DPSes
     - check shield is not equipped
     - check for Battle Stance or Berseker Stance
-####Death Knights:
+
+####Death Knights
 - check pet is present if DK has Master of Ghouls talent
 - check minions for DKs with permanent ghoul
-####Warlocks:
+
+####Warlocks
 - check for basic healthstone present when improved healthstone can be used
+
 ####Shaman:
 - check shaman healer has Water Shield.

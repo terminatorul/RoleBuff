@@ -71,6 +71,10 @@ RoleBuff_SlashCommandHandlerRogue =
     end
 };
 
+RoleBuff_CommandHandlerRogue = 
+{
+};
+
 function RoleBuff_GetRogueRole()
     return roleDPS;
 end

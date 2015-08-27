@@ -6,6 +6,20 @@
 
 RoleBuff_Enabled = true;
 
+local opt =
+{
+    ["global"] = RoleBuff_ReadAddOnStorage(true, { "options", "global" }, "optMainHandOffHand", "optFishingPole", "optEmptyGear"),
+    ["classes"] = RoleBuff_ReadAddOnStorage(true, { "options", "classes" },
+	{
+	    playerClassEnDeathKnight, -- playerClassEnDruid, playerClassEnHunter, playerClassEnMage, playerClassEnMonk, 
+	    playerClassEnPaladin, -- playerClassEnPriest, 
+	    playerClassEnRogue, -- playerClassEnShaman, 
+	    playerClassEnWarlock, playerClassEnWarrior
+	})
+}
+
+RoleBuff_CheckEmptyGear = false;
+
 RoleBuff_EventHandlerTable =
 {
     [eventPlayerAlive] = RoleBuff_OnInitialPlayerAlive
@@ -23,7 +37,7 @@ function RoleBuff_DebugMessage(msg)
 end
 
 function RoleBuff_CombatCheckFishingPole(chatOnly)
-    if RoleBuff_CheckFishingPole and
+    if opt.global.optFishingPole and
 	(
 	    tonumber(clientBuildNumber) < 7561 and IsEquippedItemType(itemTypeFishingPole)
 		or
@@ -35,7 +49,7 @@ function RoleBuff_CombatCheckFishingPole(chatOnly)
 end
 
 function RoleBuff_CombatCheckMainHandOffHand(chatOnly)
-    if RoleBuff_CheckMainHandOffHand
+    if opt.global.optMainHandOffHand
     then
 	local mainHandSlot, _ = GetInventorySlotInfo(mainHandSlot);
 	local offHandSlot, _ = GetInventorySlotInfo(secondaryHandSlot);
@@ -125,7 +139,7 @@ RoleBuff_BaseCommandHandlerTable =
 	then
 	    print(RoleBuff_NoClassSupportMessage(playerClassLocalized));
 	else
-	    if RoleBuff_EnableClassTable[playerClassEn] ~= nil and not RoleBuff_EnableClassTable[playerClassEn]
+	    if opt.classes[playerClassEn] ~= nil and not opt.classes[playerClassEn]
 	    then
 		print(RoleBuff_ClassDisabledMessage(playerClassLocalized));
 	    end
@@ -164,18 +178,6 @@ function RoleBuff_OnLoad(panel)
 	print("RoleBuff: Not loaded.");
     end
 end
-
-RoleBuff_CheckFishingPole, RoleBuff_CheckMainHandOffHand, RoleBuff_CheckEmptyGear = true, true, false;
-
-RoleBuff_EnableClassTable = 
-{
-    [playerClassEnWarrior] = true,
-    [playerClassEnDeathKnight] = true,
-    [playerClassEnPaladin] = true,
-    [playerClassEnWarlock] = true,
-    [playerClassEnShaman] = false,
-    [playerClassEnRogue] = true
-};
 
 RoleBuff_ClassEventHandlerTable =
 {
@@ -240,9 +242,9 @@ function RoleBuff_OnInitialPlayerAlive(frame, event, ...)
 	    frame:RegisterEvent(eventPlayerEnterCombat);
 	    frame:RegisterEvent(eventPlayerLeaveCombat);
 
-	    if RoleBuff_EnableClassTable[playerClassEn] ~= nil
+	    if opt.classes[playerClassEn] ~= nil
 	    then
-		if RoleBuff_EnableClassTable[playerClassEn]
+		if opt.classes[playerClassEn]
 		then
 		    if RoleBuff_ClassEventHandlerTable[playerClassEn] ~= nil
 		    then
