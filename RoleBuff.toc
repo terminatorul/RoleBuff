@@ -1,16 +1,17 @@
 ## Interface: 30300
 ## Title: RoleBuffWarnings
-## Notes: Check for role-specific buffs upon entering combat
-## Version: 0.8
+## Notes: Check for class and role specific buffs upon entering combat
+## Version: 0.9
 ## Author: Timothy Madden
-## SavedVariables: AddOnStorageTable
-## SavedVariablesPerCharacter: CharacterStorageTable
+## SavedVariables: RoleBuffAddOn_StorageTable
+## SavedVariablesPerCharacter: RoleBuffAddOn_CharacterStorageTable
 ## Dependencies:
+## DefaultState: enabled
 
 RoleBuffAddOn.lua
 WowAPI.lua
-RoleBuff-en.lua
 WowAPI-en.lua
+RoleBuff-en.lua
 RoleBuffLib.lua
 RoleBuffWarrior.lua
 RoleBuffDeathKnight.lua
@@ -18,7 +19,6 @@ RoleBuffPaladin.lua
 RoleBuffWarlock.lua
 RoleBuffShaman.lua
 RoleBuffRogue.lua
-RoleBuffOptionsFrame.lua
 GearSpec.lua
 RoleBuff.lua
 RoleBuff.xml

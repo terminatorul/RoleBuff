@@ -11,15 +11,17 @@
 --  check range for warrior vigilance
 --  check RDF role versus player available specs
 
+local this = RoleBuffAddOn;
+
 local checkShamanTotems, checkShamanWeapon, cheackShamanShielding = true, true, true;
 
-function RoleBuff_GetShamanRole()
-    local specIndex, specName = RoleBuff_GetPlayerBuild();
+function RoleBuffAddOn.GetShamanRole()
+    local specIndex, specName = this:GetPlayerBuild();
 
-    if specName == restaurationSpecName
+    if specName == this.restaurationSpecName
     then
-	return roleHealer;
+	return this.roleHealer;
     else
-	return roleDPS;
+	return this.roleDPS;
     end
 end

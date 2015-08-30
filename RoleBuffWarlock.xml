@@ -2,7 +2,7 @@
 	   ..\..\FrameXML\UI.xsd">
    <Frame name="RoleBuff_WarlockOptionsFrame" parent="RoleBuff_OptionsFrame" enableMouse="true">
        <Scripts>
-	   <OnLoad>RoleBuff_WarlockOptionsFrame_Load(self);</OnLoad>
+	   <OnLoad>RoleBuffAddOn:WarlockOptionsFrameLoad(self);</OnLoad>
        </Scripts>
        <Layers>
 	   <Layer level="OVERLAY">

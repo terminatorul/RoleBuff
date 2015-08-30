@@ -2,7 +2,7 @@
 	   ..\..\FrameXML\UI.xsd">
     <Frame name="RoleBuff_OptionsFrame" parent="UIParent" enableMouse="true">
 	<Scripts>
-	    <OnLoad>RoleBuff_OptionsFrame_Load(self);</OnLoad>
+	    <OnLoad>RoleBuffAddOn:OptionsFrameLoad(self);</OnLoad>
 	</Scripts>
 	<Layers>
 	    <Layer level="OVERLAY">

@@ -2,19 +2,21 @@
 -- Check if items from sets for other roles are quipped instead of items for current player role sets.
 -- Note only some of the classes classes can perform different roles with different specializations
 
-RoleBuff_CheckEquipmentSet = RoleBuff_ReadAddOnStorage(true, { "options", "global" }, "optGearSpec")["optGearSpec"];
+local this = RoleBuffAddOn;
+
+this.CheckEquipmentSet = this:ReadAddOnStorage(true, { "options", "global" }, "optGearSpec")["optGearSpec"];
 
 local multipleRoleClass, equipmentMatchCount, equipmentMissmatchCount, equipmentSwapPending = false, nil, nil, false;
 
 local gearSlotList =
 {
-    [headSlot] = true, [neckSlot] = true, [shoulderSlot] = true, [chestSlot] = true, [shirtSlot] = true, [tabardSlot] = true,
-    [handsSlot] = true, [wristSlot] = true, [waistSlot] = true, [fingerSlot0] = true, [fingerSlot1] = true, [trinketSlot0] = true,
-    [trinketSlot1] = true, [mainHandSlot] = true, [offHandSlot] = true, [rangedSlot] = true, [ammoSlot] = true
+    [this.headSlot] = true, [this.neckSlot] = true, [this.shoulderSlot] = true, [this.chestSlot] = true, [this.shirtSlot] = true, [this.tabardSlot] = true,
+    [this.handsSlot] = true, [this.wristSlot] = true, [this.waistSlot] = true, [this.fingerSlot0] = true, [this.fingerSlot1] = true, [this.trinketSlot0] = true,
+    [this.trinketSlot1] = true, [this.mainHandSlot] = true, [this.offHandSlot] = true, [this.rangedSlot] = true, [this.ammoSlot] = true
 };
 
-function RoleBuff_EquipmentSetUsage(currentRole)
-    local setRoles = RoleBuff_GetEquipmentSetRoles();
+local function RoleBuff_EquipmentSetUsage(currentRole)
+    local setRoles = this:GetEquipmentSetRoles();
 
     local currentSetNo, setName, numEquipmentSets = 1, nil, GetNumEquipmentSets();
     local roleMatch, setUsage = false, { };
@@ -30,7 +32,7 @@ function RoleBuff_EquipmentSetUsage(currentRole)
 	setName = GetEquipmentSetInfo(currentSetNo);
 	if setRoles[setName] == nil
 	then
-	    RoleBuff_DebugMessage("Equipment set " .. setName .. " needs to be assigned a role.");
+	    this:DebugMessage("Equipment set " .. setName .. " needs to be assigned a role.");
 	    return nil, nil;
 	end
 
@@ -109,12 +111,12 @@ function RoleBuff_EquipmentSetUsage(currentRole)
     return matches, missmatches;
 end
 
-function RoleBuff_PlayerEquipmentUsage()
+local function RoleBuff_PlayerEquipmentUsage()
     local playerRole = nil;
     
-    if RoleBuff_ClassGetRoleTable[playerClassEn] ~= nil
+    if this.ClassGetRoleTable[this.playerClassEn] ~= nil
     then
-	playerRole = RoleBuff_ClassGetRoleTable[playerClassEn]();
+	playerRole = this.ClassGetRoleTable[this.playerClassEn]();
     end
 
     if playerRole ~= nil and playerRole ~= ""
@@ -125,85 +127,85 @@ end
 
 -- display chat window message to the player asking to assign 
 -- a role to an equipment set
-function RoleBuff_GearSetRoleAnnounce(frame, event, ...)
+function RoleBuffAddOn:GearSetRoleAnnounce(frame, event, ...)
     if multipleRoleClass and equipmentMissmatchCount == nil
     then
-	print(setCommandUsageIntroLine);
+	print(self.setCommandUsageIntroLine);
 	for i = 1, GetNumEquipmentSets()
 	do
 	    local setName = GetEquipmentSetInfo(i);
 
-	    if RoleBuff_GetEquipmentSetRoles()[setName] == nil
+	    if self:GetEquipmentSetRoles()[setName] == nil
 	    then
-		print("  " .. SLASH_ROLEBUFF1 .. " " .. slashCommandEquipmentSet .. " " .. setName  .. " <ExpectedRole>");
+		print("  " .. SLASH_ROLEBUFF1 .. " " .. self.slashCommandEquipmentSet .. " " .. setName  .. " <ExpectedRole>");
 	    end
 	end
-	print(setCommandUsageClosingLine);
+	print(self.setCommandUsageClosingLine);
     end
 end
 
-function RoleBuff_OnGearSetEvent(frame, event, ...)
-    if event == eventEquipmentSwapPending
+function RoleBuffAddOn:OnGearSetEvent(frame, event, ...)
+    if event == self.eventEquipmentSwapPending
     then
 	equipmentSwapPending = true;
-	RoleBuff_DebugMessage("Equipment swap pending...");
+	self:DebugMessage("Equipment swap pending...");
     else
 	-- inventory changed
 	-- sets changed
 	-- wear set
 	-- swap finished
 
-	if event == eventEquipmentSwapFinished
+	if event == self.eventEquipmentSwapFinished
 	then
 	    equipmentSwapPending = false;
-	    RoleBuff_DebugMessage("Equipment swapped.");
+	    self:DebugMessage("Equipment swapped.");
 	end
 
 	RoleBuff_PlayerEquipmentUsage();
 
-	if event == eventEquipmentSetsChanged
+	if event == self.eventEquipmentSetsChanged
 	then
 	    -- Announce "/rolebuff set" command for a new gear set
-	    RoleBuff_GearSetRoleAnnounce();
+	    self:GearSetRoleAnnounce(frame, event, ...);
 	end
     end
 end
 
-function RoleBuff_GearSpec_InitialPlayerAlive(frame, event, ...)
-    if RoleBuff_CheckEquipmentSet
+function RoleBuffAddOn:GearSpec_InitialPlayerAlive(frame, event, ...)
+    if self.CheckEquipmentSet
     then
-	multipleRoleClass = (classRolesCount[playerClassEn] ~= nil and classRolesCount[playerClassEn] > 1);
+	multipleRoleClass = (self.classRolesCount[self.playerClassEn] ~= nil and self.classRolesCount[self.playerClassEn] > 1);
 
 	if multipleRoleClass
 	then
 	    RoleBuff_PlayerEquipmentUsage();
 
-	    frame:RegisterEvent(eventUnitInventoryChanged);
-	    frame:RegisterEvent(eventEquipmentSetsChanged);
-	    frame:RegisterEvent(eventEquipmentSwapPending);
-	    frame:RegisterEvent(eventEquipmentSwapFinished);
-	    frame:RegisterEvent(eventWearEquipmentSet);
+	    frame:RegisterEvent(self.eventUnitInventoryChanged);
+	    frame:RegisterEvent(self.eventEquipmentSetsChanged);
+	    frame:RegisterEvent(self.eventEquipmentSwapPending);
+	    frame:RegisterEvent(self.eventEquipmentSwapFinished);
+	    frame:RegisterEvent(self.eventWearEquipmentSet);
 
-	    RoleBuff_GearSetRoleAnnounce();
+	    self:GearSetRoleAnnounce(frame, event, ...);
 	end
     end
 end
 
-function RoleBuff_CombatCheckGearSpec(chatOnly)
-    if RoleBuff_CheckEquipmentSet and equipmentMissmatchCount ~= nil and equipmentMissmatchCount > 0
+function RoleBuffAddOn:CombatCheckGearSpec(chatOnly)
+    if self.CheckEquipmentSet and equipmentMissmatchCount ~= nil and equipmentMissmatchCount > 0
     then
-	RoleBuff_ReportMessage(warningSwitchGear, chatOnly);
+	self:ReportMessage(self.warningSwitchGear, chatOnly);
     end
 end
 
 local playerRolesMap =
 {
-    [string.lower(playerRoleDPS)] = roleDPS,
-    [string.lower(playerRoleTank)] = roleTank,
-    [string.lower(playerRoleHealer)] = roleHealer
+    [string.lower(this.playerRoleDPS)] = this.roleDPS,
+    [string.lower(this.playerRoleTank)] = this.roleTank,
+    [string.lower(this.playerRoleHealer)] = this.roleHealer
 };
 
-function RoleBuff_GetRoleName(roleName)
+local function RoleBuff_GetRoleName(roleName)
     return playerRolesMap[string.lower(roleName)];
 end
 
@@ -221,7 +223,7 @@ function RoleBuff_FindGearSet(setName)
     return nil;
 end
 
-function RoleBuff_ClassRolesFind(classRoles, roleName)
+local function RoleBuff_ClassRolesFind(classRoles, roleName)
     for index, name in pairs(classRoles)
     do
 	if name == roleName
@@ -233,11 +235,11 @@ function RoleBuff_ClassRolesFind(classRoles, roleName)
     return false;
 end
 
-function RoleBuff_SlashCommandEquipmentSet(cmdLine)
+function RoleBuffAddOn:SlashCommandEquipmentSet(cmdLine)
     if cmdLine[2] == nil or cmdLine[3] == nil or cmdLine[4] ~= nil
     then
 	-- <EquipmentSet> and <ExpectedRole> arguments are expected --
-	print(setCommandArgsMessage);
+	print(self.setCommandArgsMessage);
 	return;
     end
 
@@ -245,28 +247,28 @@ function RoleBuff_SlashCommandEquipmentSet(cmdLine)
 
     if multipleRoleClass
     then
-	local equipmentSetName, roleName, setRoles = RoleBuff_FindGearSet(setNameArg), RoleBuff_GetRoleName(setRoleArg), RoleBuff_GetEquipmentSetRoles();
+	local equipmentSetName, roleName, setRoles = RoleBuff_FindGearSet(setNameArg), RoleBuff_GetRoleName(setRoleArg), self:GetEquipmentSetRoles();
 
 	if equipmentSetName == nil
 	then
-	    print(setCommandFirstArgMessage);
+	    print(self.setCommandFirstArgMessage);
 	    return;
 	end
 
-	if roleName == nil or not RoleBuff_ClassRolesFind(classRoles[playerClassEn], roleName)
+	if roleName == nil or not RoleBuff_ClassRolesFind(self.classRoles[self.playerClassEn], roleName)
 	then
-	    print(setCommandSecondArgMessage);
+	    print(self.setCommandSecondArgMessage);
 	    return;
 	end
 
 	setRoles[equipmentSetName] = roleName;
     else
-	print(setCommandSingleRoleClass);
+	print(self.setCommandSingleRoleClass);
     end
 end
 
-function RoleBuff_GearSpecCheck()
-    if RoleBuff_CheckEquipmentSet
+function RoleBuffAddOn:GearSpecCheck()
+    if self.CheckEquipmentSet
     then
 	if multipleRoleClass
 	then
@@ -276,22 +278,22 @@ function RoleBuff_GearSpecCheck()
 	    then
 		if equipmentMissmatchCount > 0
 		then
-		    print(equipmentMissmatchMessage);
+		    print(self.equipmentMissmatchMessage);
 		else
 		    if equipmentMatchCount > 0
 		    then
-			print(equipmentMatchMessage);
+			print(self.equipmentMatchMessage);
 		    else
-			print(equipmentMatchNeededMessage);
+			print(self.equipmentMatchNeededMessage);
 		    end
 		end
 	    else
-		RoleBuff_GearSetRoleAnnounce();
+		self:GearSetRoleAnnounce();
 	    end
 	else
-	    print(equipmentMatchSingleRoleClass);
+	    print(self.equipmentMatchSingleRoleClass);
 	end
     else
-	print(equipmentMatchDisabled);
+	print(self.equipmentMatchDisabled);
     end
 end

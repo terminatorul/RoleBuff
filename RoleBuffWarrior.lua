@@ -1,3 +1,5 @@
+local this = RoleBuffAddOn;
+
 local checkWarriorStance, checkWarriorShield, checkWarriorVigilance = true, true, true;
 
 local battleStanceIndex = 1;
@@ -17,27 +19,30 @@ vigilanceIntervalReported = false;
 stanceIndex = 0;
 RoleBuff_WarriorAttacked, RoleBuff_WarriorAttacking = false, false;
 
-function RoleBuff_CheckProtectionWarrior()
-    local specIndex, specName = RoleBuff_GetPlayerBuild();
+local vigilanceSpellName, vigilanceBuffName = this.vigilanceSpellName, this.vigilanceBuffName;
+local unitTarget, unitPlayer = this.unitTarget, this.unitPlayer;
+
+local function RoleBuff_CheckProtectionWarrior()
+    local specIndex, specName = this:GetPlayerBuild();
 
     if specIndex ~= nil
     then
-	print(RoleBuff_FormatSpecialization(playerClassLocalized, specName));
-	return specName == protectionSpecName;
+	print(this:FormatSpecialization(this.playerClassLocalized, specName));
+	return specName == this.protectionSpecName;
     else
 	return nil;
     end
 end
 
-function RoleBuff_InitialPlayerAliveWarrior(frame, event, ...)
+local function RoleBuff_InitialPlayerAliveWarrior(frame, event, ...)
     isProtectionWarrior = RoleBuff_CheckProtectionWarrior();
-    hasDefensiveStance = RoleBuff_CheckPlayerHasAbility(defensiveStanceSpellName);
-    hasVigilance = RoleBuff_CheckPlayerHasAbility(vigilanceSpellName);
-    hasBlock = RoleBuff_CheckPlayerHasAbility(blockSpellName);
+    hasDefensiveStance = this:CheckPlayerHasAbility(this.defensiveStanceSpellName);
+    hasVigilance = this:CheckPlayerHasAbility(vigilanceSpellName);
+    hasBlock = this:CheckPlayerHasAbility(this.blockSpellName);
     stanceIndex = GetShapeshiftForm();
 end
 
-function RoleBuff_UpdateShapeshiftFormsWarrior(frame, event, ...)
+local function RoleBuff_UpdateShapeshiftFormsWarrior(frame, event, ...)
     local newStanceIndex = GetShapeshiftForm();
     if newStanceIndex ~= 0 and newStanceIndex ~= stanceIndex
     then
@@ -49,13 +54,13 @@ function RoleBuff_UpdateShapeshiftFormsWarrior(frame, event, ...)
 	    print("RoleBuff: stance " .. newStanceIndex .. " active.");
 	end
     else
-	RoleBuff_DebugMessage(warningNoWarriorStance);
+	this:DebugMessage(this.warningNoWarriorStance);
     end
 
     stanceIndex = newStanceIndex
 end
 
-function RoleBuff_CheckVigilanceTargetWarrior(chatOnly)
+local function RoleBuff_CheckVigilanceTargetWarrior(chatOnly)
     if hasVigilance
     then
 	if vigilanceExpireTime - 15 < GetTime()
@@ -66,28 +71,28 @@ function RoleBuff_CheckVigilanceTargetWarrior(chatOnly)
 	    vigilanceExpireTime = 0;
 	end
 
-	if RoleBuff_PlayerIsInGroup()
+	if this:PlayerIsInGroup()
 	then
 	    if vigilanceTargetUnit == nil 
 	    then
 		-- warrior is in group and Vigilance expired
-		RoleBuff_ReportMessage(RoleBuff_AbilityToCastMessage(vigilanceSpellName), chatOnly);
+		this:ReportMessage(this:AbilityToCastMessage(vigilanceSpellName), chatOnly);
 	    else
 		-- check active vigilance
 		-- name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, ..
-		local vigilanceName, _, _, _, _, _, expirationTime, unitCaster = UnitBuff(vigilanceTargetUnit, vigilanceBuffName, vigilanceRank, filterPlayer);
+		local vigilanceName, _, _, _, _, _, expirationTime, unitCaster = UnitBuff(vigilanceTargetUnit, vigilanceBuffName, vigilanceRank, this.filterPlayer);
 
 		if vigilanceName and UnitIsUnit(unitCaster, unitPlayer)
 		then
 		    local expirationInterval = expirationTime - GetTime();
 		    local intervalSec = expirationInterval % 60;
 		    local intervalMin = (expirationInterval - intervalSec) / 60;
-		    RoleBuff_DebugMessage(vigilanceName .. " on " .. vigilanceTargetUnit .. " for the next " .. intervalMin .. " min " .. intervalSec .. " sec.")
+		    this:DebugMessage(vigilanceName .. " on " .. vigilanceTargetUnit .. " for the next " .. intervalMin .. " min " .. intervalSec .. " sec.")
 		else
 		    if UnitIsVisible(vigilanceTargetUnit) or not (UnitPlayerOrPetInParty(vigilanceTargetUnit) or UnitPlayerOrPetInRaid(vigilanceTargetUnit))
 		    then
 		    -- Last vigilance target no longer has the buff, or has it from some other warrior now 
-			RoleBuff_ReportMessage(RoleBuff_AbilityToCastMessage(vigilanceSpellName), chatOnly);
+			this:ReportMessage(this:AbilityToCastMessage(vigilanceSpellName), chatOnly);
 		    end
 		end
 	    end
@@ -95,17 +100,17 @@ function RoleBuff_CheckVigilanceTargetWarrior(chatOnly)
     end
 end
 
-function RoleBuff_CombatCheckWarrior(chatOnly)
+local function RoleBuff_CombatCheckWarrior(chatOnly)
     if isProtectionWarrior
     then
 	if checkWarriorStance and hasDefensiveStance and (stanceIndex ~= defensiveStanceIndex)
 	then
-	    RoleBuff_ReportMessage(RoleBuff_SwitchFormMessage(defensiveStanceSpellName), chatOnly);
+	    this:ReportMessage(this:SwitchFormMessage(this.defensiveStanceSpellName), chatOnly);
 	end
 
-	if checkWarriorShield and hasBlock and not IsEquippedItemType(itemTypeShields)
+	if checkWarriorShield and hasBlock and not IsEquippedItemType(this.itemTypeShields)
 	then
-	    RoleBuff_ReportMessage(RoleBuff_ItemEquipMessage(itemShield), chatOnly);
+	    this:ReportMessage(this:ItemEquipMessage(this.itemShield), chatOnly);
 	end
 
 	if checkWarriorVigilance
@@ -115,7 +120,7 @@ function RoleBuff_CombatCheckWarrior(chatOnly)
     end
 end
 
-function RoleBuff_UnitSpellCastSucceededWarrior(unit, spellName, spellRank, lineIDCounter)
+local function RoleBuff_UnitSpellCastSucceededWarrior(unit, spellName, spellRank, lineIDCounter)
     if spellName == vigilanceSpellName and UnitIsUnit(unit, unitPlayer)
     then
 	vigilanceTargetUnit = (UnitName(unitTarget));
@@ -124,7 +129,7 @@ function RoleBuff_UnitSpellCastSucceededWarrior(unit, spellName, spellRank, line
     end
 end
 
-function RoleBuff_UnitAuraChange(unit)
+local function RoleBuff_UnitAuraChange(unit)
     if unit and vigilanceTargetUnit and UnitIsUnit(unit, vigilanceTargetUnit)
     then
 	local spellName = nil;
@@ -139,12 +144,12 @@ function RoleBuff_UnitAuraChange(unit)
 		local expirationInterval = vigilanceExpireTime - GetTime();
 		local intervalSec = expirationInterval % 60;
 		local intervalMin = (expirationInterval - intervalSec) / 60;
-		RoleBuff_DebugMessage(displayName .. ": " .. spellName .. " cast on " .. vigilanceTargetUnit .. " for " .. intervalMin .. " min " .. intervalSec .. " sec.");
+		this:DebugMessage(this.displayName .. ": " .. spellName .. " cast on " .. vigilanceTargetUnit .. " for " .. intervalMin .. " min " .. intervalSec .. " sec.");
 		vigilanceIntervalReported = true;
 	    end
 	else
 	    -- Vigilance buff either lost or belongs to other warrior
-	    RoleBuff_DebugMessage(displayName .. ": " .. vigilanceBuffName .. " on " .. vigilanceTargetUnit .. " now off.");
+	    this:DebugMessage(this.displayName .. ": " .. vigilanceBuffName .. " on " .. vigilanceTargetUnit .. " now off.");
 	    vigilanceTargetUnit = nil;
 	    vigilanceRank = nil;
 	    vigilanceExpireTime = 0;
@@ -152,43 +157,43 @@ function RoleBuff_UnitAuraChange(unit)
     end
 end
 
-RoleBuff_EventHandlerTableWarrior = 
+RoleBuffAddOn.EventHandlerTableWarrior = 
 {
-    [eventPlayerAlive] = function(frame, event, ...)
+    [this.eventPlayerAlive] = function(frame, event, ...)
 	--xpcall(RoleBuff_InitialPlayerAliveWarrior, RoleBuff_ErrorHandler, frame, event, ...)
 	RoleBuff_InitialPlayerAliveWarrior(frame, event, ...);
 
-	frame:RegisterEvent(eventActiveTalentGroupChanged);
-	frame:RegisterEvent(eventUpdateShapeshiftForms);
-	frame:RegisterEvent(eventUpdateShapeshiftForm);
-	frame:RegisterEvent(eventPlayerRegenDisabled);
-	frame:RegisterEvent(eventPlayerRegenEnabled);
-	frame:RegisterEvent(eventPlayerEnterCombat);
-	frame:RegisterEvent(eventPlayerLeaveCombat);
-	frame:RegisterEvent(eventUnitSpellCastSucceeded);
-	frame:RegisterEvent(eventUnitAura);
+	frame:RegisterEvent(this.eventActiveTalentGroupChanged);
+	frame:RegisterEvent(this.eventUpdateShapeshiftForms);
+	frame:RegisterEvent(this.eventUpdateShapeshiftForm);
+	frame:RegisterEvent(this.eventPlayerRegenDisabled);
+	frame:RegisterEvent(this.eventPlayerRegenEnabled);
+	frame:RegisterEvent(this.eventPlayerEnterCombat);
+	frame:RegisterEvent(this.eventPlayerLeaveCombat);
+	frame:RegisterEvent(this.eventUnitSpellCastSucceeded);
+	frame:RegisterEvent(this.eventUnitAura);
     end,
 
-    [eventActiveTalentGroupChanged] = function(frame, event, ...)
+    [this.eventActiveTalentGroupChanged] = function(frame, event, ...)
 	RoleBuff_InitialPlayerAliveWarrior(frame, event, ...);
 	vigilanceTargetUnit = nil;
 	vigilanceExpireTime = 0;
     end,
 
-    [eventPlayerDead] = function(frame, event, ...)
+    [this.eventPlayerDead] = function(frame, event, ...)
 	vigilanceTargetUnit = nil;
 	vigilanceExpireTime = 0;
     end,
 
-    [eventUpdateShapeshiftForms] = function(frame, event, ...)
+    [this.eventUpdateShapeshiftForms] = function(frame, event, ...)
 	RoleBuff_UpdateShapeshiftFormsWarrior(frame, event, ...);
     end,
 
-    [eventUpdateShapeshiftForm] = function(frame, event, ...)
+    [this.eventUpdateShapeshiftForm] = function(frame, event, ...)
 	RoleBuff_UpdateShapeshiftFormsWarrior(frame, event, ...);
     end,
 
-    [eventPlayerRegenDisabled] = function(frame, event, ...)
+    [this.eventPlayerRegenDisabled] = function(frame, event, ...)
 	if not RoleBuff_WarriorAttacked and not RoleBuff_WarriorAttacking
 	then
 	    RoleBuff_CombatCheckWarrior(false);
@@ -196,11 +201,11 @@ RoleBuff_EventHandlerTableWarrior =
 	RoleBuff_WarriorAttacked = true;
     end,
 
-    [eventPlayerRegenEnabled] = function(frame, event, ...)
+    [this.eventPlayerRegenEnabled] = function(frame, event, ...)
 	RoleBuff_WarriorAttacked = false;
     end,
 
-    [eventPlayerEnterCombat] = function(frame, event, ...)
+    [this.eventPlayerEnterCombat] = function(frame, event, ...)
 	if not RoleBuff_WarriorAttacked and not RoleBuff_WarriorAttacking
 	then
 	    RoleBuff_CombatCheckWarrior(false);
@@ -208,43 +213,43 @@ RoleBuff_EventHandlerTableWarrior =
 	RoleBuff_WarriorAttacking = true;
     end,
 
-    [eventPlayerLeaveCombat] = function(frame, event, ...)
+    [this.eventPlayerLeaveCombat] = function(frame, event, ...)
 	RoleBuff_WarriorAttacking = false;
     end,
 
-    [eventUnitSpellCastSucceeded] = function(frame, event, ...)
+    [this.eventUnitSpellCastSucceeded] = function(frame, event, ...)
 	local unit, spellName, spellRank, lineIDCounterargsList = ...;
 	RoleBuff_UnitSpellCastSucceededWarrior(unit, spellName, spellRank, lineIDCounter);
     end,
 
-    [eventUnitAura] = function(frame, event, ...)
+    [this.eventUnitAura] = function(frame, event, ...)
 	local args = { ... };
 	RoleBuff_UnitAuraChange(args[1]);
     end
 };
 
-RoleBuff_SlashCommandHandlerWarrior =
+RoleBuffAddOn.SlashCommandHandlerWarrior =
 {
-    [slashCommandPlayerCheck] = function()
+    [this.slashCommandPlayerCheck] = function()
 	RoleBuff_InitialPlayerAliveWarrior(nil, nil)
     end,
 
-    [slashCommandCombatCheck] = function()
+    [this.slashCommandCombatCheck] = function()
 	RoleBuff_CombatCheckWarrior(true)
     end
 };
 
-function RoleBuff_GetWarriorRole()
+function RoleBuffAddOn.GetWarriorRole()
     if isProtectionWarrior
     then
-	return roleTank;
+	return this.roleTank;
     end
 
-    return roleDPS;
+    return this.roleDPS;
 end
 
-function RoleBuff_WarriorOptionsFrame_Load(panel)
-    panel.name = classNameWarrior;
-    panel.parent = displayName;
+function RoleBuffAddOn:WarriorOptionsFrameLoad(panel)
+    panel.name = self.classNameWarrior;
+    panel.parent = self.displayName;
     InterfaceOptions_AddCategory(panel);
 end

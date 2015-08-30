@@ -2,7 +2,7 @@
 	   ..\..\FrameXML\UI.xsd">
     <Frame name="RoleBuff_PaladinOptionsFrame" parent="RoleBuff_OptionsFrame" enableMouse="true">
 	<Scripts>
-	    <OnLoad>RoleBuff_PaladinOptionsFrame_Load(self);</OnLoad>
+	    <OnLoad>RoleBuffAddOn:PaladinOptionsFrameLoad(self);</OnLoad>
 	</Scripts>
 	<Layers>
 	    <Layer level="OVERLAY">

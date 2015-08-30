@@ -8,18 +8,20 @@
 --	- soul shard for combat spells
 --
 
+local mod = RoleBuffAddOn;
 local checkWarlockArmor, checkWarlockMinion, checkWarlockHealthstone, checkWarlockSoulstone, checkWarlockWeapon, checkWarlockSoulShard = true, true, true, true, true, true;
 local checkWarlockMinionBuff, minShardsCount = true, 6;
-local warlockArmorList = { [demonSkin] = true, [demonArmor] = true, [felArmor] = true };
+
+local warlockArmorList = { [mod.demonSkin] = true, [mod.demonArmor] = true, [mod.felArmor] = true };
 local warlockMinionList =
 {
-    [summonImp] = true, [summonVoidwalker] = true, [summonSuccubuss] = true, [summonFelhunter] = true,
-    [summonFelgurard] = true, [summonInfernal] = true, [summonDoomguard] = true
+    [mod.summonImp] = true, [mod.summonVoidwalker] = true, [mod.summonSuccubuss] = true, [mod.summonFelhunter] = true,
+    [mod.summonFelgurard] = true, [mod.summonInfernal] = true, [mod.summonDoomguard] = true
 };
-local warlockMinionBuff = { [creatureFamilyImp] = bloodPact, [creatureFamilyFelhunter] = felIntelligence };
-local warlockHealthstoneList = { [createHealthstone] = true, [ritualOfSouls] = true };
-local warlockWeaponStoneList = { [createFirestone] = true, [createSpellstone] = true };
-local warlockSoulShardCombatList = { [shadowburnSpellName] = true, [soulFireSpellName] = true };
+local warlockMinionBuff = { [mod.creatureFamilyImp] = mod.bloodPact, [mod.creatureFamilyFelhunter] = mod.felIntelligence };
+local warlockHealthstoneList = { [mod.createHealthstone] = true, [mod.ritualOfSouls] = true };
+local warlockWeaponStoneList = { [mod.createFirestone] = true, [mod.createSpellstone] = true };
+local warlockSoulShardCombatList = { [mod.shadowburnSpellName] = true, [mod.soulFireSpellName] = true };
 
 local hasWarlockArmorAbilities = false;
 local hasMinion = false;
@@ -42,43 +44,43 @@ local warlockSoulshatterRank = 0;
 
 local healthstoneRank =
 {
-    [1] = minorHealthstone, [2] = lesserHealthstone, [3] = plainHealthstone, [4] = greaterHealthstone, [5] = majorHealthstone,
-    [6] = masterHealthstone, [7] = demonicHealthstone, [8] = felHealthstone
+    [1] = mod.minorHealthstone, [2] = mod.lesserHealthstone, [3] = mod.plainHealthstone, [4] = mod.greaterHealthstone, [5] = mod.majorHealthstone,
+    [6] = mod.masterHealthstone, [7] = mod.demonicHealthstone, [8] = mod.felHealthstone
 };
 
 local soulwellHealthstoneRank = 6;
 
 local soulstoneRank = 
 {
-    [1] = minorSoulstone, [2] = lesserSoulstone, [3] = plainSoulstone, [4] = greaterSoulstone, [5] = majorSoulstone,
-    [6] = masterSoulstone, [7] = demonicSoulstone
+    [1] = mod.minorSoulstone, [2] = mod.lesserSoulstone, [3] = mod.plainSoulstone, [4] = mod.greaterSoulstone, [5] = mod.majorSoulstone,
+    [6] = mod.masterSoulstone, [7] = mod.demonicSoulstone
 };
 
 function RoleBuff_InitialPlayerAliveWarlock(event, frame, ...)
-    hasWarlockArmorAbilities =	RoleBuff_GetPlayerAbilityRanks(warlockArmorList, warlockArmorRank);
-    hasMinion =			RoleBuff_GetPlayerAbilityRanks(warlockMinionList, warlockMinionRank);
-    hasHealthstone =		RoleBuff_GetPlayerAbilityRanks(warlockHealthstoneList, warlockHealthstoneRank);
-    hasWeaponStone =		RoleBuff_GetPlayerAbilityRanks(warlockWeaponStoneList, warlockWeaponStoneRank);
-    hasSoulShardCombat =	RoleBuff_GetPlayerAbilityRanks(warlockSoulShardCombatList, warlockSoulShardCombatRank);
+    hasWarlockArmorAbilities =	mod:GetPlayerAbilityRanks(warlockArmorList, warlockArmorRank);
+    hasMinion =			mod:GetPlayerAbilityRanks(warlockMinionList, warlockMinionRank);
+    hasHealthstone =		mod:GetPlayerAbilityRanks(warlockHealthstoneList, warlockHealthstoneRank);
+    hasWeaponStone =		mod:GetPlayerAbilityRanks(warlockWeaponStoneList, warlockWeaponStoneRank);
+    hasSoulShardCombat =	mod:GetPlayerAbilityRanks(warlockSoulShardCombatList, warlockSoulShardCombatRank);
 
-    hasSoulstone, warlockSoulstoneRank =	RoleBuff_GetPlayerAbilityAndRank(createSoulstone);
-    hasDrainSoul, warlockDrainSoulRank =	RoleBuff_GetPlayerAbilityAndRank(drainSoulSpellName);
-    hasSoulshatter, warlockSoulshatterRank =	RoleBuff_GetPlayerAbilityAndRank(soulShatterSpellName);
+    hasSoulstone, warlockSoulstoneRank =	mod:GetPlayerAbilityAndRank(mod.createSoulstone);
+    hasDrainSoul, warlockDrainSoulRank =	mod:GetPlayerAbilityAndRank(mod.drainSoulSpellName);
+    hasSoulshatter, warlockSoulshatterRank =	mod:GetPlayerAbilityAndRank(mod.soulShatterSpellName);
 end
 
-function RoleBuff_CheckWarlockArmor(chatOnly)
+local function RoleBuff_CheckWarlockArmor(chatOnly)
     if checkWarlockArmor and hasWarlockArmorAbilities
     then
 	local i = 1;
 	repeat
-	    buffName, rank, icon, count, debuffType, duration, expirationTime, unitCaster = UnitBuff(unitPlayer, i);
+	    local buffName, rank, icon, count, debuffType, duration, expirationTime, unitCaster = UnitBuff(mod.unitPlayer, i);
 	    i = i + 1;
 
 	    if buffName ~= nil
 	    then
-		if type(rank) == "string" and string.find(rank, rankTooltipPrefix, 1, true) == 1
+		if type(rank) == "string" and string.find(rank, mod.rankTooltipPrefix, 1, true) == 1
 		then
-		    rank = string.sub(rank, string.len(rankTooltipPrefix) + 1)
+		    rank = string.sub(rank, string.len(mod.rankTooltipPrefix) + 1)
 		end
 		if rank == nil or rank == "" or rank == 0
 		then
@@ -94,43 +96,43 @@ function RoleBuff_CheckWarlockArmor(chatOnly)
 
 		-- RoleBuff_DebugMessage("Player buff " .. buffName .. " rank " .. rank .. ".");
 
-		if warlockArmorRank[buffName] ~= nil and warlockArmorRank[buffName] <= rank and (buffName ~= demonSkin or not warlockArmorRank[demonArmor])
+		if warlockArmorRank[buffName] ~= nil and warlockArmorRank[buffName] <= rank and (buffName ~= mod.demonSkin or not warlockArmorRank[mod.demonArmor])
 		then
 		    return;	    -- warlock armor buff of sufficient rank found
 		end
 	    end
 	until buffName == nil;
 
-	RoleBuff_ReportMessage(RoleBuff_AbilityToCastMessage(warlockArmor), chatOnly);
+	mod:ReportMessage(mod:AbilityToCastMessage(mod.warlockArmor), chatOnly);
     end
 end
 
-function RoleBuff_CheckWarlockMinion(chatOnly)
+local function RoleBuff_CheckWarlockMinion(chatOnly)
     if checkWarlockMinion and hasMinion
     then
-	if not UnitExists(unitPet) and not IsMounted()
+	if not UnitExists(mod.unitPet) and not IsMounted()
 	then
-	    RoleBuff_ReportMessage(RoleBuff_SummonUnitMessage(warlockMinion), chatOnly)
+	    mod:ReportMessage(mod:SummonUnitMessage(mod.warlockMinion), chatOnly)
 	end
     end
 end
 
-function RoleBuff_CheckWarlockMinionBuff(chatOnly)
-    if checkWarlockMinionBuff and hasMinion and UnitExists(unitPet)
+local function RoleBuff_CheckWarlockMinionBuff(chatOnly)
+    if checkWarlockMinionBuff and hasMinion and UnitExists(mod.unitPet)
     then
-	local creatureFamily = UnitCreatureFamily(unitPet);
+	local creatureFamily = UnitCreatureFamily(mod.unitPet);
 
-	if warlockMinionBuff[creatureFamily] ~= nil
+	if warlockMinionBuff[mod.creatureFamily] ~= nil
 	then
-	    local daemonHasBuffAbility, demonAbilityRank = RoleBuff_GetPlayerAbilityAndRank(warlockMinionBuff[creatureFamily]);
+	    local daemonHasBuffAbility, demonAbilityRank = mod:GetPlayerAbilityAndRank(warlockMinionBuff[mod.creatureFamily]);
 
 	    if daemonHasBuffAbility
 	    then
-		local autocastable, autocast = GetSpellAutocast(warlockMinionBuff[creatureFamily], BOOKTYPE_PET);
+		local autocastable, autocast = GetSpellAutocast(warlockMinionBuff[mod.creatureFamily], BOOKTYPE_PET);
 
 		if not autocast
 		then
-		    local minionBuffName, minionBuffRank = UnitBuff(unitPlayer, warlockMinionBuff[creatureFamily]);
+		    local minionBuffName, minionBuffRank = UnitBuff(mod.unitPlayer, warlockMinionBuff[mod.creatureFamily]);
 
 		    if not minionBuffRank or minionBuffRank == "" or minionBuffRank == 0
 		    then
@@ -152,7 +154,7 @@ function RoleBuff_CheckWarlockMinionBuff(chatOnly)
 
 		    if minionBuffName == nil or minionBuffRank < demonAbilityRank
 		    then
-			RoleBuff_ReportMessage(RoleBuff_AbilityToCastMessage(warlockMinionBuff[creatureFamily]), chatOnly);
+			mod:ReportMessage(mod:AbilityToCastMessage(warlockMinionBuff[mod.creatureFamily]), chatOnly);
 		    end
 		end
 	    end
@@ -160,14 +162,14 @@ function RoleBuff_CheckWarlockMinionBuff(chatOnly)
     end
 end
 
-function RoleBuff_CheckWarlockHasHealthstone(chatOnly)
+local function RoleBuff_CheckWarlockHasHealthstone(chatOnly)
     if checkWarlockHealthstone and hasHealthstone
     then
 	local minHealthstoneRank = 1;
 	
-	if warlockHealthstoneRank[createHealthstone] ~= nil
+	if warlockHealthstoneRank[mod.createHealthstone] ~= nil
 	then
-	    minHealthstoneRank = warlockHealthstoneRank[createHealthstone];
+	    minHealthstoneRank = warlockHealthstoneRank[mod.createHealthstone];
 	else
 	    minHealthstoneRank = soulwellHealthstoneRank;
 	end
@@ -183,23 +185,23 @@ function RoleBuff_CheckWarlockHasHealthstone(chatOnly)
 	    currentHealthstoneRank = currentHealthstoneRank + 1;
 	end
 
-	RoleBuff_ReportMessage(RoleBuff_CreateItemMessage(healthstoneRank[minHealthstoneRank]), chatOnly);
+	mod:ReportMessage(mod:CreateItemMessage(healthstoneRank[minHealthstoneRank]), chatOnly);
     end
 end
 
-function RoleBuff_CheckWarlockHasSoulstone(chatOnly)
+local function RoleBuff_CheckWarlockHasSoulstone(chatOnly)
     if checkWarlockSoulstone and hasSoulstone
     then
-	local soulstoneItemId = RoleBuff_GetItemId(soulstoneRank[warlockSoulstoneRank]);
+	local soulstoneItemId = mod:GetItemId(soulstoneRank[warlockSoulstoneRank]);
 
 	if soulstoneItemId == nil
 	then
 	    -- no way to get remaining cooldown, a soulstone item was never seen before
-	    buffName, buffRank = UnitBuff(unitPlayer, soulstoneResurrection, nil, filterPlayer);
+	    local buffName, buffRank = UnitBuff(mod.unitPlayer, mod.soulstoneResurrection, nil, mod.filterPlayer);
 	    if buffName == nil
 	    then
 		-- player is not soulstoned by herself
-		RoleBuff_ReportMessage(RoleBuff_CreateItemMessage(soulstoneRank[warlockSoulstoneRank]), chatOnly)
+		mod:ReportMessage(mod:CreateItemMessage(soulstoneRank[warlockSoulstoneRank]), chatOnly)
 	    end
 	else
 	    local startTime, soulstoneCooldown = GetItemCooldown(soulstoneItemId);
@@ -207,10 +209,10 @@ function RoleBuff_CheckWarlockHasSoulstone(chatOnly)
 	    then
 		-- soulstone on cooldown
 	    else
-		buffName, buffRank = UnitBuff(unitPlayer, soulstoneResurrection, nil, filterPlayer);
+		local buffName, buffRank = UnitBuff(mod.unitPlayer, mod.soulstoneResurrection, nil, mod.filterPlayer);
 		if buffName == nil
 		then
-		    RoleBuff_ReportMessage(RoleBuff_UseItemMessage(soulstoneRank[warlockSoulstoneRank]), chatOnly)
+		    mod:ReportMessage(mod:UseItemMessage(soulstoneRank[warlockSoulstoneRank]), chatOnly)
 		-- else
 		--	Player has soulstone buff (although soulstone is off couldown, can happen after login)
 		end
@@ -219,30 +221,31 @@ function RoleBuff_CheckWarlockHasSoulstone(chatOnly)
     end
 end
 
-function RoleBuff_CheckWarlockWeaponStone(chatOnly)
+local function RoleBuff_CheckWarlockWeaponStone(chatOnly)
     if checkWarlockWeapon and hasWeaponStone
     then
-	local hasMainHandEnchant, hasOffHandEnchant = RoleBuff_HasWeaponEnchants();
+	local hasMainHandEnchant, hasOffHandEnchant = mod:HasWeaponEnchants();
 
 	if hasMainHandEnchant ~= nil and (hasOffhandEnchant ~= nil or not OffhandHasWeapon())
 	then
 	else
-	    RoleBuff_ReportMessage(RoleBuff_ApplyEnchantmentMessage(warlockWeaponEnchantment), chatOnly);
+	    mod:ReportMessage(mod:ApplyEnchantmentMessage(mod.warlockWeaponEnchantment), chatOnly);
 	end
     end
 end
 
-function RoleBuff_CheckWarlockHasSoulShard(chatOnly)
-    if checkWarlockSoulShard and hasDrainSoul and (hasSoulShardCombat or hasSoulshatter and RoleBuff_PlayerIsInGroup())
+local function RoleBuff_CheckWarlockHasSoulShard(chatOnly)
+    if checkWarlockSoulShard and hasDrainSoul and (hasSoulShardCombat or hasSoulshatter and mod:PlayerIsInGroup())
     then
+	local soulShard = mod.soulShard;
 	local shardsCount = GetItemCount(soulShard, false, false);
 	if shardsCount < minShardsCount -- Expect 6 shards at all times
 	then
 	    if shardsCount > 0
 	    then
-		RoleBuff_ShowMessage(RoleBuff_CreateItemMessage(soulShard), chatOnly);
+		mod:ShowMessage(mod:CreateItemMessage(soulShard), chatOnly);
 	    else
-		RoleBuff_ReportMessage(RoleBuff_CreateItemMessage(soulShard), chatOnly);
+		mod:ReportMessage(mod:CreateItemMessage(soulShard), chatOnly);
 	    end
 	end
     end
@@ -250,19 +253,19 @@ end
 
 local warlockDismountToMinionTime = 0;
 
-function RoleBuff_CheckWarlockDismountToMinionInterval(elapsedTime)
+local function RoleBuff_CheckWarlockDismountToMinionInterval(elapsedTime)
     warlockDismountToMinionTime = warlockDismountToMinionTime + 1;
 
     if warlockDismountToMinionTime >= 10
     then
 	RoleBuff_CheckWarlockMinion(false);
-	RoleBuff_RemoveUpdateHandler("warlockDismountToMinionTime");
+	mod:RemoveUpdateHandler("warlockDismountToMinionTime");
 	warlockDismountToMinionTime = 0
     end
 end
 
 
-function RoleBuff_CombatCheckWarlock(chatOnly, event, frame, ...)
+local function RoleBuff_CombatCheckWarlock(chatOnly, event, frame, ...)
     RoleBuff_CheckWarlockArmor(chatOnly);
     RoleBuff_CheckWarlockMinion(chatOnly);
     RoleBuff_CheckWarlockMinionBuff(chatOnly);
@@ -272,22 +275,22 @@ function RoleBuff_CombatCheckWarlock(chatOnly, event, frame, ...)
     RoleBuff_CheckWarlockHasSoulShard(chatOnly)
 end
 
-RoleBuff_EventHandlerTableWarlock = 
+RoleBuffAddOn.EventHandlerTableWarlock = 
 {
-    [eventPlayerAlive] = function(frame, event, ...)
+    [mod.eventPlayerAlive] = function(frame, event, ...)
 	RoleBuff_InitialPlayerAliveWarlock(frame, event, ...);
 
-	frame:RegisterEvent(eventActiveTalentGroupChanged);
-	frame:RegisterEvent(eventPlayerEnterCombat);
-	frame:RegisterEvent(eventPlayerLeaveCombat);
-	frame:RegisterEvent(eventPlayerRegenDisabled);
-	frame:RegisterEvent(eventPlayerRegenEnabled);
-	frame:RegisterEvent(eventCompanionUpdate);
+	frame:RegisterEvent(mod.eventActiveTalentGroupChanged);
+	frame:RegisterEvent(mod.eventPlayerEnterCombat);
+	frame:RegisterEvent(mod.eventPlayerLeaveCombat);
+	frame:RegisterEvent(mod.eventPlayerRegenDisabled);
+	frame:RegisterEvent(mod.eventPlayerRegenEnabled);
+	frame:RegisterEvent(mod.eventCompanionUpdate);
     end,
 
-    [eventActiveTalentGroupChanged] = RoleBuff_InitialPlayerAliveWarlock,
+    [mod.eventActiveTalentGroupChanged] = RoleBuff_InitialPlayerAliveWarlock,
 
-    [eventPlayerEnterCombat] = function(frame, event, ...)
+    [mod.eventPlayerEnterCombat] = function(frame, event, ...)
 	if not RoleBuff_WarlockAttacked and not RoleBuff_WarlockAttacking
 	then
 	    RoleBuff_CombatCheckWarlock(false, frame, event, ...)
@@ -297,12 +300,12 @@ RoleBuff_EventHandlerTableWarlock =
 	RoleBuff_WarlockMountedAttack = IsMounted();
     end,
 
-    [eventPlayerLeaveCombat] = function(frame, event, ...)
+    [mod.eventPlayerLeaveCombat] = function(frame, event, ...)
 	RoleBuff_WarlockAttacking = false;
 	RoleBuff_WarlockMountedAttack = false;
     end,
 
-    [eventPlayerRegenDisabled] = function(frame, event, ...)
+    [mod.eventPlayerRegenDisabled] = function(frame, event, ...)
 	if not RoleBuff_WarlockAttacked and not RoleBuff_WarlockAttacking
 	then
 	    RoleBuff_CombatCheckWarlock(false, frame, event, ...)
@@ -312,41 +315,41 @@ RoleBuff_EventHandlerTableWarlock =
 	RoleBuff_WarlockMountedAttack = IsMounted()
     end,
 
-    [eventPlayerRegenEnabled] = function(frame, event, ...)
+    [mod.eventPlayerRegenEnabled] = function(frame, event, ...)
 	RoleBuff_WarlockAttacked = false;
 	RoleBuff_WarlockMountedAttack = false
     end,
 
-    [eventCompanionUpdate] = function(frame, event, arg1, arg2, ...)
+    [mod.eventCompanionUpdate] = function(frame, event, arg1, arg2, ...)
 	if RoleBuff_WarlockMountedAttack and not IsMounted()
 	then
 	    -- Warlock dismounted during combat
-	    RoleBuff_AddUpdateHandler("warlockDismountToMinionTime", RoleBuff_CheckWarlockDismountToMinionInterval);	 -- wait for 0.5 sec. and check minion
+	    mod:AddUpdateHandler("warlockDismountToMinionTime", RoleBuff_CheckWarlockDismountToMinionInterval);	 -- wait for 0.5 sec. and check minion
 	    RoleBuff_WarlockMountedAttack = false
 	end
     end
 };
 
-RoleBuff_SlashCommandHandlerWarlock =
+RoleBuffAddOn.SlashCommandHandlerWarlock =
 {
-    [slashCommandPlayerCheck] = function()
+    [mod.slashCommandPlayerCheck] = function()
 	RoleBuff_InitialPlayerAliveWarlock(nil, nil)
     end,
 
-    [slashCommandCombatCheck] = function()
+    [mod.slashCommandCombatCheck] = function()
 	RoleBuff_CombatCheckWarlock(true, nil, nil)
     end
 };
 
-function RoleBuff_GetWarlockRole()
-    return roleDPS
+function RoleBuffAddOn.GetWarlockRole()
+    return mod.roleDPS
 end
 
-function RoleBuff_WarlockOptionsFrame_Load(panel)
+function RoleBuffAddOn:WarlockOptionsFrameLoad(panel)
     RoleBuff_WarlockSoulshardCountBox:SetNumber(minShardsCount);
     RoleBuff_WarlockSoulshardCountBox:SetCursorPosition(0);
 
-    panel.name = classNameWarlock;
-    panel.parent = displayName;
+    panel.name = self.classNameWarlock;
+    panel.parent = self.displayName;
     InterfaceOptions_AddCategory(panel);
 end

@@ -1,39 +1,40 @@
 -- Check Rogue for:
 --	- weapon enchantment (poisons)
 
+local this = RoleBuffAddOn;
 local checkRoguePoisons = true;
 
 local hasRoguePoisons = false;
 local RoleBuff_RogueAttacked, RoleBuff_RogueAttacking = false, false;
 
-function RoleBuff_InitialPlayerAliveRogue(frame, event, ...)
-    hasRoguePoisons = RoleBuff_CheckPlayerHasAbility(poisonsSpellName);
+local function RoleBuff_InitialPlayerAliveRogue(frame, event, ...)
+    hasRoguePoisons = this:CheckPlayerHasAbility(this.poisonsSpellName);
 end
 
-function RoleBuff_CombatCheckRogue(chatOnly, frame, event, ...)
+local function RoleBuff_CombatCheckRogue(chatOnly, frame, event, ...)
     if checkRoguePoisons and hasRoguePoisons
     then
-	local hasMainHandEnchant, hasOffHandEnchant = RoleBuff_HasWeaponEnchants();
+	local hasMainHandEnchant, hasOffHandEnchant = this:HasWeaponEnchants();
 
 	if hasMainHandEnchant == nil or (hasOffHandEnchant == nil and OffhandHasWeapon())
 	then
-	    RoleBuff_ReportMessage(RoleBuff_UseEnhancementMessage(rogueWeaponPoison), chatOnly)
+	    this:ReportMessage(this:UseEnhancementMessage(this.rogueWeaponPoison), chatOnly)
 	end
     end
 end
 
-RoleBuff_EventHandlerTableRogue = 
+RoleBuffAddOn.EventHandlerTableRogue = 
 {
-    [eventPlayerAlive] = function(frame, event, ...)
+    [this.eventPlayerAlive] = function(frame, event, ...)
 	RoleBuff_InitialPlayerAliveRogue(frame, event, ...);
 
-	frame:RegisterEvent(eventPlayerEnterCombat);
-	frame:RegisterEvent(eventPlayerLeaveCombat);
-	frame:RegisterEvent(eventPlayerRegenDisabled);
-	frame:RegisterEvent(eventPlayerRegenEnabled)
+	frame:RegisterEvent(this.eventPlayerEnterCombat);
+	frame:RegisterEvent(this.eventPlayerLeaveCombat);
+	frame:RegisterEvent(this.eventPlayerRegenDisabled);
+	frame:RegisterEvent(this.eventPlayerRegenEnabled)
     end,
 
-    [eventPlayerEnterCombat] = function(frame, event, ...)
+    [this.eventPlayerEnterCombat] = function(frame, event, ...)
 	if not RoleBuff_RogueAttacked and not RoleBuff_RogueAttacking
 	then
 	    RoleBuff_CombatCheckRogue(false, frame, event, ...)
@@ -42,15 +43,15 @@ RoleBuff_EventHandlerTableRogue =
 	RoleBuff_RogueAttacking = true
     end,
 
-    [eventPlayerLeaveCombat] = function(frame, event, ...)
+    [this.eventPlayerLeaveCombat] = function(frame, event, ...)
 	RoleBuff_RogueAttacking = false
     end,
 
-    [eventPlayerRegenEnabled] = function(frame, event, ...)
+    [this.eventPlayerRegenEnabled] = function(frame, event, ...)
 	RoleBuff_RogueAttacked = false
     end,
     
-    [eventPlayerRegenDisabled] = function(frame, event, ...)
+    [this.eventPlayerRegenDisabled] = function(frame, event, ...)
 	if not RoleBuff_RogueAttacked and not RoleBuff_RogueAttacking
 	then
 	    RoleBuff_CombatCheckRogue(false, frame, event, ...)
@@ -60,27 +61,27 @@ RoleBuff_EventHandlerTableRogue =
     end
 };
 
-RoleBuff_SlashCommandHandlerRogue = 
+RoleBuffAddOn.SlashCommandHandlerRogue = 
 {
-    [slashCommandPlayerCheck] = function()
+    [this.slashCommandPlayerCheck] = function()
 	return RoleBuff_InitialPlayerAliveRogue(nil, nil)
     end,
 
-    [slashCommandCombatCheck] = function()
+    [this.slashCommandCombatCheck] = function()
 	return RoleBuff_CombatCheckRogue(true, nil, nil)
     end
 };
 
-RoleBuff_CommandHandlerRogue = 
+RoleBuffAddOn.CommandHandlerRogue = 
 {
 };
 
-function RoleBuff_GetRogueRole()
-    return roleDPS;
+function RoleBuffAddOn.GetRogueRole()
+    return this.roleDPS;
 end
 
-function RoleBuff_RogueOptionsFrame_Load(panel)
-    panel.name = classNameRogue;
-    panel.parent = displayName;
+function RoleBuffAddOn:RogueOptionsFrameLoad(panel)
+    panel.name = this.classNameRogue;
+    panel.parent = this.displayName;
     InterfaceOptions_AddCategory(panel)
 end

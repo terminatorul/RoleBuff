@@ -92,7 +92,6 @@ Any ability is checked only if your character has already learned it.
 
 ####Death Knights
 - check pet is present if DK has Master of Ghouls talent
-- check minions for DKs with permanent ghoul
 
 ####Warlocks
 - check for basic healthstone present when improved healthstone can be used

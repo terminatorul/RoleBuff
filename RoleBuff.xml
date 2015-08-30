@@ -2,8 +2,8 @@
 	   ..\..\FrameXML\UI.xsd">
     <Script file="RoleBuffAddOn.lua"/>
     <Script file="WowAPI.lua" />
-    <Script file="RoleBuff-en.lua" />
     <Script file="WowAPI-en.lua" />
+    <Script file="RoleBuff-en.lua" />
     <Script file="RoleBuffLib.lua" />
     <Script file="RoleBuffWarrior.lua" />
     <Script file="RoleBuffDeathKnight.lua" />
@@ -13,13 +13,12 @@
     <Script file="RoleBuffRogue.lua" />
     <Script file="GearSpec.lua" />
     <Script file="RoleBuff.lua" />
-    <Script file="RoleBuffOptionsFrame.lua" />
 
     <Frame name="RoleBuff_Frame">
         <Scripts>
-            <OnLoad>RoleBuff_OnLoad(self);</OnLoad>
-            <OnEvent>RoleBuff_OnEvent(self, event, ...);</OnEvent>
-	    <OnUpdate>RoleBuff_OnUpdate(self, elapsedFrameTime);</OnUpdate>
+            <OnLoad>RoleBuffAddOn:OnLoad(self);</OnLoad>
+            <OnEvent>RoleBuffAddOn:OnEvent(self, event, ...);</OnEvent>
+	    <OnUpdate>RoleBuffAddOn:OnUpdate(self, elapsedFrameTime);</OnUpdate>
         </Scripts>
     </Frame>
 

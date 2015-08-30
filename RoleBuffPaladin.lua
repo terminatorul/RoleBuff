@@ -1,36 +1,38 @@
+local this = RoleBuffAddOn;
+
 local checkPaladinAura, checkPaladinSeal, checkPaladinBlessing = true, true, true;
 local checkProtectionPaladinShield, checkBlessingOfSanctuary, checkRighteousFury = true, true, true;
 
-hasPaladinAura = false;
-hasPaladinBlessing = false;
-paladinBlessingRank = { };
-isProtectionPaladin = false;
-isHolyPaladin = false;
-hasBlock = false;
-hasRighteousFury = false;
-hasBlessingOfSanctuaryRank = 0;
-hasGreaterBlessingOfSanctuaryRank = 0;
+local hasPaladinAura = false;
+local hasPaladinBlessing = false;
+local paladinBlessingRank = { };
+local isProtectionPaladin = false;
+local isHolyPaladin = false;
+local hasBlock = false;
+local hasRighteousFury = false;
+local hasBlessingOfSanctuaryRank = 0;
+local hasGreaterBlessingOfSanctuaryRank = 0;
 
-auraIndex, auraCount = 0, 0;
-RoleBuff_PaladinAttacked, RoleBuff_PaladinAttacking = false, false;
+local auraIndex, auraCount = 0, 0;
+local RoleBuff_PaladinAttacked, RoleBuff_PaladinAttacking = false, false;
 
-function RoleBuff_InitialPlayerAlivePaladin(event, frame, ...)
-    local specIndex, specName = RoleBuff_GetPlayerBuild();
+local function RoleBuff_InitialPlayerAlivePaladin(event, frame, ...)
+    local specIndex, specName = this:GetPlayerBuild();
 
     if specIndex ~= nil
     then
-	print(RoleBuff_FormatSpecialization(playerClassLocalized, specName));
-	isProtectionPaladin = (specName == protectionSpecName);
-	isHolyPaladin = (specName == holySpecName);
+	print(this:FormatSpecialization(this.playerClassLocalized, specName));
+	isProtectionPaladin = (specName == this.protectionSpecName);
+	isHolyPaladin = (specName == this.holySpecName);
     end
 
     if checkPaladinAura
     then
 	hasPaladinAura = false;
 	local idx, paladinAura;
-        for idx, paladinAura in pairs( { devotionAura, retributionAura, concentrationAura, frostResistanceAura, shadowReistanceAura, fireResistanceAura } )
+        for idx, paladinAura in pairs( { this.devotionAura, this.retributionAura, this.concentrationAura, this.frostResistanceAura, this.shadowReistanceAura, this.fireResistanceAura } )
         do
-            if RoleBuff_CheckPlayerHasAbility(paladinAura)
+            if this:CheckPlayerHasAbility(paladinAura)
             then
         	hasPaladinAura = true;
         	break;
@@ -42,9 +44,9 @@ function RoleBuff_InitialPlayerAlivePaladin(event, frame, ...)
     then
 	hasPaladinSeal = false;
 	local idx, paladinSeal;
-	for idx, paladinSeal in pairs( { sealOfWisdom, sealOfLight, sealOfRighteousness, sealOfJustice, sealOfCommand, sealOfVengeance, sealOfTruth, sealOfInsight } )
+	for idx, paladinSeal in pairs( { this.sealOfWisdom, this.sealOfLight, this.sealOfRighteousness, this.sealOfJustice, this.sealOfCommand, this.sealOfVengeance, this.sealOfTruth, this.sealOfInsight } )
 	do
-	    if RoleBuff_CheckPlayerHasAbility(paladinSeal)
+	    if this:CheckPlayerHasAbility(paladinSeal)
 	    then
 		hasPaladinSeal = true;
 		break;
@@ -56,8 +58,8 @@ function RoleBuff_InitialPlayerAlivePaladin(event, frame, ...)
     then
 	paladinBlessingRank = { ["wisdom"] = { }, ["might"] = { }, ["kings"] = { }, ["sanctuary"] = { } };
 
-	for kind, list in pairs( { ["wisdom"] = { blessingOfWisdom, greaterBlessingOfWisdom }, ["might"] = { blessingOfMight, greaterBlessingOfMight },
-	    ["kings"] = { blessingOfKings, greaterBlessingOfKings }, ["sanctuary"] = { blessingOfSanctuary, greaterBlessingOfSanctuary } } )
+	for kind, list in pairs( { ["wisdom"] = { this.blessingOfWisdom, this.greaterBlessingOfWisdom }, ["might"] = { this.blessingOfMight, this.greaterBlessingOfMight },
+	    ["kings"] = { this.blessingOfKings, this.greaterBlessingOfKings }, ["sanctuary"] = { this.blessingOfSanctuary, this.greaterBlessingOfSanctuary } } )
 	do
 	    for idx, paladinBlessing in pairs( list )
 	    do
@@ -80,7 +82,7 @@ function RoleBuff_InitialPlayerAlivePaladin(event, frame, ...)
 
     if checkBlessingOfSanctury
     then
-	local name, rank = GetSpellInfo(blessingOfSanctuary);
+	local name, rank = GetSpellInfo(this.blessingOfSanctuary);
 	if name == nill
 	then
 	    hasBlessingOfSanctuaryRank = 0;
@@ -90,10 +92,10 @@ function RoleBuff_InitialPlayerAlivePaladin(event, frame, ...)
 		rank = 1;
 	    end
 	    hasBlessingOfSanctuaryRank = rank;
-	    RoleBuff_DebugMessage("Found " .. blessingOfSanctuary .. " rank " .. rank);
+	    this:DebugMessage("Found " .. this.blessingOfSanctuary .. " rank " .. rank);
 	end
 
-	name, rank = GetSpellInfo(greaterBlessingOfSanctuary);
+	name, rank = GetSpellInfo(this.greaterBlessingOfSanctuary);
 	if name == nill
 	then
 	    hasGreaterBlessingOfSanctuaryRank = 0;
@@ -103,41 +105,41 @@ function RoleBuff_InitialPlayerAlivePaladin(event, frame, ...)
 		rank = 1;
 	    end
 	    hasGreaterBlessingOfSanctuaryRank = rank;
-	    RoleBuff_DebugMessage("Found " .. greaterBlessingOfSanctuary .. " rank " .. rank);
+	    this:DebugMessage("Found " .. this.greaterBlessingOfSanctuary .. " rank " .. rank);
 	end
     end
 
     if checkProtectionPaladinShield and isProtectionPaladin
     then
-	hasBlock = RoleBuff_CheckPlayerHasAbility(blockSpellName);
+	hasBlock = this:CheckPlayerHasAbility(this.blockSpellName);
     end
 
     if checkRighteousFury
     then
-	hasRighteousFury = RoleBuff_CheckPlayerHasAbility(righteousFury);
+	hasRighteousFury = this:CheckPlayerHasAbility(this.righteousFury);
     end
 end
 
-function RoleBuff_UpdatePaladinAura(event, frame, ...)
+local function RoleBuff_UpdatePaladinAura(event, frame, ...)
     auraIndex, auraCount = GetShapeshiftForm(), GetNumShapeshiftForms();
 end
 
 local paladinSealList =
 {
-    [sealOfCommand] = true, [sealOfLight] = true, [sealOfWisdom] = true, [sealOfJustice] = true,
-    [sealOfVengeance] = true, [sealOfTruth] = true, [sealOfRighteousness] = true, 
-    [sealOfInsight] = true
+    [this.sealOfCommand] = true, [this.sealOfLight] = true, [this.sealOfWisdom] = true, [this.sealOfJustice] = true,
+    [this.sealOfVengeance] = true, [this.sealOfTruth] = true, [this.sealOfRighteousness] = true, 
+    [this.sealOfInsight] = true
 };
 
 local paladinBlessingBuffList = 
 {
-    [blessingOfWisdom] = { ["kind"] = "wisdom" }, [greaterBlessingOfWisdom] = { ["kind"] = "wisdom" },
-    [blessingOfMight] = { ["kind"] = "might" }, [greaterBlessingOfMight] = { ["kind"] = "might" }, [battleShout] = { ["kind"] = "might" },
-    [blessingOfKings] = { ["kind"] = "kings" }, [greaterBlessingOfKings] = { ["kind"] = "kings" }, [blessingOfForgottenKings] = { ["kind"] = "kings" },
-    [blessingOfSanctuary] = { ["kind"] = "sanctuary" }, [greaterBlessingOfSanctuary] = { ["kind"] = "sanctuary" }
+    [this.blessingOfWisdom] = { ["kind"] = "wisdom" }, [this.greaterBlessingOfWisdom] = { ["kind"] = "wisdom" },
+    [this.blessingOfMight] = { ["kind"] = "might" }, [this.greaterBlessingOfMight] = { ["kind"] = "might" }, [this.battleShout] = { ["kind"] = "might" },
+    [this.blessingOfKings] = { ["kind"] = "kings" }, [this.greaterBlessingOfKings] = { ["kind"] = "kings" }, [this.blessingOfForgottenKings] = { ["kind"] = "kings" },
+    [this.blessingOfSanctuary] = { ["kind"] = "sanctuary" }, [this.greaterBlessingOfSanctuary] = { ["kind"] = "sanctuary" }
 };
 
-function RoleBuff_CheckPaladinBlessings(paladinBlessingRank, paladinBlessingBuffs)
+local function RoleBuff_CheckPaladinBlessings(paladinBlessingRank, paladinBlessingBuffs)
     for kind, list in pairs(paladinBlessingRank)
     do
 	for blessing, rank in pairs(list)
@@ -145,7 +147,7 @@ function RoleBuff_CheckPaladinBlessings(paladinBlessingRank, paladinBlessingBuff
 	    if rank ~= 0
 	    then
 		-- paladin can cast this kind of blessing
-		RoleBuff_DebugMessage("[" .. kind .. "] " .. blessing .. " Rank " .. rank);
+		this:DebugMessage("[" .. kind .. "] " .. blessing .. " Rank " .. rank);
 		if paladinBlessingBuffs[kind] == nil or paladinBlessingBuffs[kind][blessing] == nil or paladinBlessingBuffs[kind][blessing] < rank
 		then
 		    -- blessing is not buffed or is lower rank than paladin ability
@@ -156,10 +158,10 @@ function RoleBuff_CheckPaladinBlessings(paladinBlessingRank, paladinBlessingBuff
     end
 end
 
-function RoleBuff_CombatCheckPaladin(chatOnly, event, frame, ...)
+local function RoleBuff_CombatCheckPaladin(chatOnly, event, frame, ...)
     if checkPaladinAura and auraIndex <= 0 and auraCount > 0
     then
-	RoleBuff_ReportMessage(RoleBuff_AbilityToCastMessage(paladinAura), chatOnly);
+	this:ReportMessage(this:AbilityToCastMessage(this.paladinAura), chatOnly);
     end
 
     local checkSealBuff, checkBlessingBuffs = (checkPaladinSeal and hasPaladinSeal), (checkPaladinBlessing and hasPaladinBlessing);
@@ -174,14 +176,14 @@ function RoleBuff_CombatCheckPaladin(chatOnly, event, frame, ...)
 	local buffName, rank, icon, count, debuffType, duration, expirationTime, unitCaster = nil, nil, nil, nil, nil, nil, nil, nil;
 	local i = 1;
 
-	RoleBuff_DebugMessage("Paladin Blessings:")
+	this:DebugMessage("Paladin Blessings:")
 	for blessing, props in pairs(paladinBlessingBuffList)
 	do
-	    RoleBuff_DebugMessage("  " .. blessing);
+	    this:DebugMessage("  " .. blessing);
 	end
 
 	repeat
-	    buffName, rank, icon, count, debuffType, duration, expirationTime, unitCaster = UnitBuff(unitPlayer, i);
+	    buffName, rank, icon, count, debuffType, duration, expirationTime, unitCaster = UnitBuff(this.unitPlayer, i);
 	    i = i + 1;
 
 	    if buffName ~= nil
@@ -198,9 +200,9 @@ function RoleBuff_CombatCheckPaladin(chatOnly, event, frame, ...)
 
 		if checkBlessingBuffs and not hasBlessingSelfBuff and paladinBlessingBuffList[buffName] ~= nil
 		then
-		    if UnitIsUnit(unitCaster, unitPlayer)
+		    if UnitIsUnit(unitCaster, this.unitPlayer)
 		    then
-			RoleBuff_DebugMessage("Paladin self-blessing: " .. buffName);
+			this:DebugMessage("Paladin self-blessing: " .. buffName);
 			hasBlessingSelfBuff = true;
 		    else
 			paladinBlessingBuffs[paladinBlessingList[buffName]["kind"]] = { [buffName] = rank };
@@ -209,15 +211,15 @@ function RoleBuff_CombatCheckPaladin(chatOnly, event, frame, ...)
 
 		if checkSanctuaryBlessingBuff and not hasSanctuaryBlessingBuff
 		then
-		    if buffName == blessingOfSanctuary and rank >= hasBlessingOfSanctuaryRank
+		    if buffName == this.blessingOfSanctuary and rank >= hasBlessingOfSanctuaryRank
 		    then
-			RoleBuff_DebugMessage("Has " .. blessingOfSanctuary .. " buff");
+			this:DebugMessage("Has " .. this.blessingOfSanctuary .. " buff");
 			hasSanctuaryBlessingBuff = true;
 		    end
 
-		    if buffName == greaterBlessingOfSanctuary and rank >= hasGreaterBlessingOfSanctuaryRank
+		    if buffName == this.greaterBlessingOfSanctuary and rank >= hasGreaterBlessingOfSanctuaryRank
 		    then
-			RoleBuff_DebugMessage("Has " .. greaterBlessingOfSanctuary .. " buff");
+			this:DebugMessage("Has " .. this.greaterBlessingOfSanctuary .. " buff");
 			hasSanctuaryBlessingBuff = true
 		    end
 		end
@@ -226,64 +228,64 @@ function RoleBuff_CombatCheckPaladin(chatOnly, event, frame, ...)
 
 	if checkSealBuff and not hasPaladinSealBuff
 	then
-	    RoleBuff_ReportMessage(RoleBuff_AbilityToCastMessage(paladinSeal), chatOnly);
+	    this:ReportMessage(this:AbilityToCastMessage(this.paladinSeal), chatOnly);
 	end
 
 	if checkSanctuaryBlessingBuff and not hasSanctuaryBlessingBuff
 	then
-	    RoleBuff_ReportMessage(RoleBuff_AbilityToCastMessage(blessingOfSanctuary), chatOnly)
+	    this:ReportMessage(this:AbilityToCastMessage(this.blessingOfSanctuary), chatOnly)
 	else
 	    if checkBlessingBuffs and not hasBlessingSelfBuff
 	    then
 		local blessingToCast = RoleBuff_CheckPaladinBlessings(paladinBlessingRank, paladinBlessingBuffs);
 		if blessingToCast ~= nil 
 		then
-		    RoleBuff_ReportMessage(RoleBuff_AbilityToCastMessage(paladinBlessing), chatOnly);
+		    this:ReportMessage(this:AbilityToCastMessage(this.paladinBlessing), chatOnly);
 		end
 	    end
 	end
     end
 
-    if checkProtectionPaladinShield and isProtectionPaladin and hasBlock and not IsEquippedItemType(itemTypeShields)
+    if checkProtectionPaladinShield and isProtectionPaladin and hasBlock and not IsEquippedItemType(this.itemTypeShields)
     then
-	RoleBuff_ReportMessage(RoleBuff_ItemEquipMessage(itemShield), chatOnly);
+	this:ReportMessage(this:ItemEquipMessage(this.itemShield), chatOnly);
     end
 
     if checkRighteousFury and hasRighteousFury
     then
-	local name, rank = UnitBuff(unitPlayer, righteousFury);
+	local name, rank = UnitBuff(this.unitPlayer, this.righteousFury);
 
-	if isProtectionPaladin and name == nil and RoleBuff_PlayerIsInGroup()
+	if isProtectionPaladin and name == nil and this:PlayerIsInGroup()
 	then
-	    RoleBuff_ReportMessage(RoleBuff_AbilityToCastMessage(righteousFury), chatOnly);
+	    this:ReportMessage(this:AbilityToCastMessage(this.righteousFury), chatOnly);
 	end
 
-	if not isProtectionPaladin and name ~= nill and RoleBuff_PlayerIsInGroup()
+	if not isProtectionPaladin and name ~= nill and this:PlayerIsInGroup()
 	then
-	    RoleBuff_ReportMessage(RoleBuff_AbilityActiveMessage(righteousFury), chatOnly);
+	    this:ReportMessage(this:AbilityActiveMessage(this.righteousFury), chatOnly);
 	end
     end
 end
 
-RoleBuff_EventHandlerTablePaladin = 
+RoleBuffAddOn.EventHandlerTablePaladin = 
 {
-    [eventPlayerAlive] = function(frame, event, ...)
+    [this.eventPlayerAlive] = function(frame, event, ...)
 	RoleBuff_InitialPlayerAlivePaladin(frame, event, ...);
 
-	frame:RegisterEvent(eventActiveTalentGroupChanged);
-	frame:RegisterEvent(eventUpdateShapeshiftForm);
-	frame:RegisterEvent(eventUpdateShapeshiftForms);
-	frame:RegisterEvent(eventPlayerEnterCombat);
-	frame:RegisterEvent(eventPlayerLeaveCombat);
-	frame:RegisterEvent(eventPlayerRegenDisabled);
-	frame:RegisterEvent(eventPlayerRegenEnabled);
+	frame:RegisterEvent(this.eventActiveTalentGroupChanged);
+	frame:RegisterEvent(this.eventUpdateShapeshiftForm);
+	frame:RegisterEvent(this.eventUpdateShapeshiftForms);
+	frame:RegisterEvent(this.eventPlayerEnterCombat);
+	frame:RegisterEvent(this.eventPlayerLeaveCombat);
+	frame:RegisterEvent(this.eventPlayerRegenDisabled);
+	frame:RegisterEvent(this.eventPlayerRegenEnabled);
     end,
 
-    [eventActiveTalentGroupChanged] = RoleBuff_InitialPlayerAlivePaladin,
-    [eventUpdateShapeshiftForm] = RoleBuff_UpdatePaladinAura,
-    [eventUpdateShapeshiftForms] = RoleBuff_UpdatePaladinAura,
+    [this.eventActiveTalentGroupChanged] = RoleBuff_InitialPlayerAlivePaladin,
+    [this.eventUpdateShapeshiftForm] = RoleBuff_UpdatePaladinAura,
+    [this.eventUpdateShapeshiftForms] = RoleBuff_UpdatePaladinAura,
 
-    [eventPlayerEnterCombat] = function(frame, event, ...)
+    [this.eventPlayerEnterCombat] = function(frame, event, ...)
 	if not RoleBuff_PaladinAttacked and not RoleBuff_PaladinAttacking
 	then
 	    RoleBuff_CombatCheckPaladin(false, frame, event, ...)
@@ -292,11 +294,11 @@ RoleBuff_EventHandlerTablePaladin =
 	RoleBuff_PaladinAttacking = true;
     end,
 
-    [eventPlayerLeaveCombat] = function(frame, event, ...)
+    [this.eventPlayerLeaveCombat] = function(frame, event, ...)
 	RoleBuff_PaladinAttacking = false;
     end,
 
-    [eventPlayerRegenDisabled] = function(frame, event, ...)
+    [this.eventPlayerRegenDisabled] = function(frame, event, ...)
 	if not RoleBuff_PaladinAttacked and not RoleBuff_PaladinAttacking
 	then
 	    RoleBuff_CombatCheckPaladin(false, frame, event, ...)
@@ -305,38 +307,38 @@ RoleBuff_EventHandlerTablePaladin =
 	RoleBuff_PaladinAttacked = true;
     end,
 
-    [eventPlayerRegenEnabled] = function(frame, event, ...)
+    [this.eventPlayerRegenEnabled] = function(frame, event, ...)
 	RoleBuff_PaladinAttacked = false;
     end
 };
 
-RoleBuff_SlashCommandHandlerPaladin =
+RoleBuffAddOn.SlashCommandHandlerPaladin =
 {
-    [slashCommandPlayerCheck] = function()
+    [this.slashCommandPlayerCheck] = function()
 	RoleBuff_InitialPlayerAlivePaladin(nil, nil);
     end,
 
-    [slashCommandCombatCheck] = function()
+    [this.slashCommandCombatCheck] = function()
 	RoleBuff_CombatCheckPaladin(true, nil, nil);
     end
 };
 
-function RoleBuff_GetPaladinRole()
+function RoleBuffAddOn.GetPaladinRole()
     if isProtectionPaladin
     then
-	return roleTank;
+	return this.roleTank;
     else
 	if isHolyPaladin
 	then
-	    return roleHealer;
+	    return this.roleHealer;
 	else
-	    return roleDPS;
+	    return this.roleDPS;
 	end
     end
 end
 
-function RoleBuff_PaladinOptionsFrame_Load(panel)
-    panel.name = classNamePaladin;
-    panel.parent = displayName;
+function RoleBuffAddOn:PaladinOptionsFrameLoad(panel)
+    panel.name = self.classNamePaladin;
+    panel.parent = self.displayName;
     InterfaceOptions_AddCategory(panel)
 end

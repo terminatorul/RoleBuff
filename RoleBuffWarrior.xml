@@ -2,7 +2,7 @@
 	   ..\..\FrameXML\UI.xsd">
     <Frame name="RoleBuff_WarriorOptionsFrame" parent="RoleBuff_OptionsFrame" enableMouse="true">
 	<Scripts>
-	    <OnLoad>RoleBuff_WarriorOptionsFrame_Load(self);</OnLoad>
+	    <OnLoad>RoleBuffAddOn:WarriorOptionsFrameLoad(self);</OnLoad>
 	</Scripts>
 	<Layers>
 	    <Layer level="OVERLAY">

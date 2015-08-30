@@ -4,134 +4,143 @@
 --	Timothy Madden <terminatorul@gmail.com>
 --
 
-if GetLocale() == enGB or GetLocale() == enUS
+local mod = RoleBuffAddOn;
+
+if GetLocale() == mod.enGB or GetLocale() == mod.enUS
 then
+    mod.displayName = "RoleBuff";	-- this is usually not translated
 
-displayName = "RoleBuff";	-- this is usually not translated
-playerRoleTank = "Tank";
-playerRoleHealer = "Healer";
-playerRoleDPS = "DPS";
-hybridPlayerBuildIntroLine = "Hybrid player build:";
-paladinAura = "Paladin Aura";
-paladinSeal = "Paladin Seal";
-paladinBlessing = "Paladin Blessing";
-warlockMinion = "Warlock Minion";
-warlockArmor = "Warlock Armor";
-warlockWeaponEnchantment = "Warlock Weapon Enchantment";
-rogueWeaponPoison = "Rogue Weapon Posion";
-commandSyntaxIntroLine = "Syntax: ";
-addonLoadedMessage = displayName .. " loaded.";
-addonEnabledMessage = displayName .. " enabled.";
-addonDisabledMessage = displayName .. " disabled.";
+    local translationTableEn = 
+    {
+	playerRoleTank = "Tank";
+	playerRoleHealer = "Healer";
+	playerRoleDPS = "DPS";
+	hybridPlayerBuildIntroLine = "Hybrid player build:";
+	paladinAura = "Paladin Aura";
+	paladinSeal = "Paladin Seal";
+	paladinBlessing = "Paladin Blessing";
+	warlockMinion = "Warlock Minion";
+	warlockArmor = "Warlock Armor";
+	warlockWeaponEnchantment = "Warlock Weapon Enchantment";
+	rogueWeaponPoison = "Rogue Weapon Posion";
+	commandSyntaxIntroLine = "Syntax: ";
+	addonLoadedMessage = mod.displayName .. " loaded.";
+	addonEnabledMessage = mod.displayName .. " enabled.";
+	addonDisabledMessage = mod.displayName .. " disabled.";
 
-setCommandArgsMessage = displayName .. ": <EquipmentSet> and <ExpectedRole> arguments expected.";
-setCommandSingleRoleClass = displayName .. ": set command only used for classes with multiple roles.";
-setCommandFirstArgMessage = displayName ..  ": First argument to set command should give the name of one of your existing equipment sets.";
-setCommandSecondArgMessage = displayName .. ": Second argument to set command must be a player role name: DPS, Tank or Healer .";
-setCommandUsageIntroLine = "Use:";
-setCommandUsageClosingLine = "and set a role for each equipment set.";
-equipmentMissmatchMessage = displayName .. ": Equipment set missmatch.";
-equipmentMatchMessage = displayName .. ": Equipment set match.";
-equipmentMatchNeededMessage = displayName ..": Multiple equipment sets with different player roles needed to check gear specialization.";
-equipmentMatchSingleRoleClass = displayName .. ": Gear specialization check only used for classes with multiple roles.";
-equipmentMatchDisabled = displayName .. ": Gear specialization check disabled.";
+	setCommandArgsMessage = mod.displayName .. ": <EquipmentSet> and <ExpectedRole> arguments expected.";
+	setCommandSingleRoleClass = mod.displayName .. ": set command only used for classes with multiple roles.";
+	setCommandFirstArgMessage = mod.displayName ..  ": First argument to set command should give the name of one of your existing equipment sets.";
+	setCommandSecondArgMessage = mod.displayName .. ": Second argument to set command must be a player role name: DPS, Tank or Healer .";
+	setCommandUsageIntroLine = "Use:";
+	setCommandUsageClosingLine = "and set a role for each equipment set.";
+	equipmentMissmatchMessage = mod.displayName .. ": Equipment set missmatch.";
+	equipmentMatchMessage = mod.displayName .. ": Equipment set match.";
+	equipmentMatchNeededMessage = mod.displayName ..": Multiple equipment sets with different player roles needed to check gear specialization.";
+	equipmentMatchSingleRoleClass = mod.displayName .. ": Gear specialization check only used for classes with multiple roles.";
+	equipmentMatchDisabled = mod.displayName .. ": Gear specialization check disabled.";
 
-itemMainHandWeapon = "Main Hand Weapon";
-itemOffHand = "Off Hand";
+	itemMainHandWeapon = "Main Hand Weapon";
+	itemOffHand = "Off Hand";
 
--- warrior
-itemShield = "Shield";
-warningNoWarriorStance = "No Warrior stance!";
+	-- warrior
+	itemShield = "Shield";
+	warningNoWarriorStance = "No Warrior stance!";
 
--- Death Knight
-itemOneHandWeapon = "One-Hand weapon";
-abilityDualWielding = "Dual-wielding";
-warningNoDeathKnightPresence = "No Death Knight presence!";
-warningSwitchGear = "Switch gear";
+	-- Death Knight
+	itemOneHandWeapon = "One-Hand weapon";
+	abilityDualWielding = "Dual-wielding";
+	warningNoDeathKnightPresence = "No Death Knight presence!";
+	warningSwitchGear = "Switch gear";
 
-function RoleBuff_NoClassSupportMessage(className)
-    return displayName .. ": No support for " .. className .. " class.";
-end
+	slashCommandSpec = "spec";
+	slashCommandPlayerCheck = "player-check";
+	slashCommandCombatCheck = "combat-check";
+	slashCommandEnable = "enable";
+	slashCommandDisable = "disable";
+	slashCommandEquipmentSet = "set";
+	slashCommandGearSpec = "gear-spec";
+	slashCommandSetDebug = "verbose";
+    };
 
-function RoleBuff_ClassDisabledMessage(className)
-    return displayName .. ": " .. className .. " " .. " class disabled.";
-end
-
-function RoleBuff_AbilityFoundMessage(abilityName)
-    return "Found " .. abilityName .. " ability.";
-end
-
--- Compose for example "Dual-wielding Frost Death Knight" from the base "Death Knight"
--- and the spcializations "Frost", "Dual-wielding"
-function RoleBuff_FormatSpecialization(base, ...)
-    local specList = { ... };
-    local resultString = base;
-
-    for specIndex = 1, #specList
+    for key, val in pairs(translationTableEn)
     do
-	resultString = specList[specIndex] .. " " .. resultString;
+	RoleBuffAddOn[key] = val
     end
 
-    return resultString;
-end
+    function RoleBuffAddOn:NoClassSupportMessage(className)
+	return self.displayName .. ": No support for " .. className .. " class.";
+    end
 
--- e.g. "Switch to Dire Bear"
-function RoleBuff_SwitchFormMessage(classForm)
-    return "Switch to " .. classForm
-end
+    function RoleBuffAddOn:ClassDisabledMessage(className)
+	return self.displayName .. ": " .. className .. " " .. " class disabled.";
+    end
 
--- e.g. "Cast Warlock Armor"
-function RoleBuff_AbilityToCastMessage(abilityName)
-    return "Cast " .. abilityName
-end
+    function RoleBuffAddOn:AbilityFoundMessage(abilityName)
+	return "Found " .. abilityName .. " ability.";
+    end
 
--- e.g. "Create Greater Healthstone"
-function RoleBuff_CreateItemMessage(itemName)
-    return "Create " .. itemName
-end
+    -- Compose for example "Dual-wielding Frost Death Knight" from the base "Death Knight"
+    -- and the spcializations "Frost", "Dual-wielding"
+    function RoleBuffAddOn:FormatSpecialization(base, ...)
+	local specList = { ... };
+	local resultString = base;
 
--- e.g. "Equip shield"
-function RoleBuff_ItemEquipMessage(itemName)
-    return "Equip " .. itemName
-end
+	for specIndex = 1, #specList
+	do
+	    resultString = specList[specIndex] .. " " .. resultString;
+	end
 
--- e..g "Fishing Pole equipped"
-function RoleBuff_ItemEquippedMessage(itemName)
-    return itemName .. " equipped"
-end
+	return resultString;
+    end
 
--- e.g. "Righteous Fury" (when active for non-tanks)
-function RoleBuff_AbilityActiveMessage(abilityName)
-    return abilityName
-end
+    -- e.g. "Switch to Dire Bear"
+    function RoleBuffAddOn:SwitchFormMessage(classForm)
+	return "Switch to " .. classForm
+    end
 
--- e.g. "Use Greater Soulstone"
-function RoleBuff_UseItemMessage(itemName)
-    return "Use " .. itemName
-end
+    -- e.g. "Cast Warlock Armor"
+    function RoleBuffAddOn:AbilityToCastMessage(abilityName)
+	return "Cast " .. abilityName
+    end
 
--- e.g. "Use Rogue Weapon Poison"
-function RoleBuff_UseEnhancementMessage(enhancementName)
-    return "Use " .. enhancementName
-end
+    -- e.g. "Create Greater Healthstone"
+    function RoleBuffAddOn:CreateItemMessage(itemName)
+	return "Create " .. itemName
+    end
 
-function RoleBuff_SummonUnitMessage(unitReference)
-    return "Summon " .. unitReference
-end
+    -- e.g. "Equip shield"
+    function RoleBuffAddOn:ItemEquipMessage(itemName)
+	return "Equip " .. itemName
+    end
 
-function RoleBuff_ApplyEnchantmentMessage(enchantmentReference)
-    return "Apply " .. enchantmentReference
-end
+    -- e..g "Fishing Pole equipped"
+    function RoleBuffAddOn:ItemEquippedMessage(itemName)
+	return itemName .. " equipped"
+    end
 
-slashCommandSpec = "spec";
-slashCommandPlayerCheck = "player-check";
-slashCommandCombatCheck = "combat-check";
-slashCommandEnable = "enable";
-slashCommandDisable = "disable";
-slashCommandEquipmentSet = "set";
-slashCommandGearSpec = "gear-spec";
-slashCommandSetDebug = "verbose";
+    -- e.g. "Righteous Fury" (when active for non-tanks)
+    function RoleBuffAddOn:AbilityActiveMessage(abilityName)
+	return abilityName
+    end
 
-RoleBuff_UserStringsLocalized = true
+    -- e.g. "Use Greater Soulstone"
+    function RoleBuffAddOn:UseItemMessage(itemName)
+	return "Use " .. itemName
+    end
 
+    -- e.g. "Use Rogue Weapon Poison"
+    function RoleBuffAddOn:UseEnhancementMessage(enhancementName)
+	return "Use " .. enhancementName
+    end
+
+    function RoleBuffAddOn:SummonUnitMessage(unitReference)
+	return "Summon " .. unitReference
+    end
+
+    function RoleBuffAddOn:ApplyEnchantmentMessage(enchantmentReference)
+	return "Apply " .. enchantmentReference
+    end
+
+    RoleBuffAddOn.UserStringsLocalized = true
 end
