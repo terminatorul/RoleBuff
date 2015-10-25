@@ -43,6 +43,7 @@ local apiStringsTable =
     eventEquipmentSwapFinished = "EQUIPMENT_SWAP_FINISHED";
     eventWearEquipmentSet = "WEAR_EQUIPMENT_SET";
     eventCompanionUpdate = "COMPANION_UPDATE";			-- companion or mount
+    eventReadyCheck = "READY_CHECK";
 
     playerClassLocalized = "";
     playerClassEn = nil;

@@ -98,6 +98,10 @@ local RoleBuff_BaseEventHandlerTable =
 	RoleBuff_PlayerAttacking = false;
     end,
 
+    [this.eventReadyCheck] = function(frame, event, ...)
+	RoleBuffAddOn:SlashCmdHandler(this.slashCommandCombatCheck);
+    end,
+
     [this.eventUnitInventoryChanged] = function(frame, event, ...) return this:OnGearSetEvent(frame, event, ...) end,
     [this.eventEquipmentSetsChanged] = function(frame, event, ...) return this:OnGearSetEvent(frame, event, ...) end,
     [this.eventEquipmentSwapPending] = function(frame, event, ...) return this:OnGearSetEvent(frame, event, ...) end,
@@ -243,6 +247,7 @@ local function RoleBuff_OnInitialPlayerAlive(frame, event, ...)
 	    frame:RegisterEvent(this.eventPlayerRegenDisabled);
 	    frame:RegisterEvent(this.eventPlayerEnterCombat);
 	    frame:RegisterEvent(this.eventPlayerLeaveCombat);
+	    frame:RegisterEvent(this.eventReadyCheck);
 
 	    if opt.classes[this.playerClassEn] ~= nil
 	    then

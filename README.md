@@ -84,6 +84,7 @@ Any ability is checked only if your character has already learned it.
 - only show warnings if the mob being fought is not trivial (not grey mobs, but green, yellow or red).
   The problem here is the game client does not really know the level of a world mob untill user or her
   party targets the mob, or user hovers the mouse over the mob.
+- fix add-on behavior on /reloadui
 
 ####Warrior
 - for DPSes

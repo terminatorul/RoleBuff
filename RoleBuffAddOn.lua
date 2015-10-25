@@ -6,6 +6,8 @@ RoleBuffAddOn_StorageTable = nil;
 RoleBuffAddOn_CharacterStorageTable = nil;
 
 SLASH_ROLEBUFF1 = "/rolebuff";
+SLASH_ROLEBUFF2 = "/rbf";
+
 function SlashCmdList.ROLEBUFF(msgLine, editbox)
     RoleBuffAddOn:SlashCmdHandler(msgLine)
 end
