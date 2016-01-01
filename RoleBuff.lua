@@ -4,7 +4,7 @@
 --	- fishing pole equipped
 --	- missing gear items above some level
 
-local this = RoleBuffAddOn;
+local this, mod = RoleBuffAddOn, RoleBuffAddOn;
 
 local RoleBuff_Enabled = true;
 
@@ -102,7 +102,10 @@ local RoleBuff_BaseEventHandlerTable =
 	RoleBuffAddOn:SlashCmdHandler(this.slashCommandCombatCheck);
     end,
 
-    [this.eventUnitInventoryChanged] = function(frame, event, ...) return this:OnGearSetEvent(frame, event, ...) end,
+    [this.eventUnitInventoryChanged] = function(frame, event, unitId, ...)
+	this:UnitInventoryChanged(unitId);
+	return this:OnGearSetEvent(frame, event, ...)
+    end,
     [this.eventEquipmentSetsChanged] = function(frame, event, ...) return this:OnGearSetEvent(frame, event, ...) end,
     [this.eventEquipmentSwapPending] = function(frame, event, ...) return this:OnGearSetEvent(frame, event, ...) end,
     [this.eventEquipmentSwapFinished] = function(frame, event, ...) return this:OnGearSetEvent(frame, event, ...) end,

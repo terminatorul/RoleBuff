@@ -142,5 +142,9 @@ then
 	return "Apply " .. enchantmentReference
     end
 
+    function RoleBuffAddOn:MissingItemMessage(itemName)
+	return "Missing " .. itemName
+    end
+
     RoleBuffAddOn.UserStringsLocalized = true
 end

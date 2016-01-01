@@ -17,6 +17,14 @@ then
 	itemTypeTwoHand = "Two-Hand";
 	itemTypeFishingPole = "Fishing Pole";	    -- used before 2.3 (build number 7561)
 	itemTypeFishingPoles = "Fishing Poles";	    -- used on 2.3
+	itemTypeBows = "Bows";
+	itemTypeCrossbows = "Crossbows";
+	itemTypeGuns = "Guns";
+	itemTypeProjectile = "Projectile";
+	itemTypeArrow = "Arrow";
+	itemDisplayTypeArrows = "Arrows";
+	itemTypeBullet = "Bullet";
+	itemDisplayTypeBullets = "Bullets";
 	mainHandSlot = "MainHandSlot";
 	secondaryHandSlot = "SecondaryHandSlot";
 	creatureFamilyImp = "Imp";		    -- warlock minion (daemon)

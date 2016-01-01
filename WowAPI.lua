@@ -94,7 +94,7 @@ local apiStringsTable =
     mainHandSlot = "MainHandSlot";
     offHandSlot = "SecondaryHandSlot";
     rangedSlot = "RangedSlot";		-- removed in Cataclysm
-    ammoSlot = "AmmoSlot";			-- removed in Cataclysm
+    ammoSlot = "AmmoSlot";		-- removed in Cataclysm
 };
 
 for key, val in pairs(apiStringsTable)

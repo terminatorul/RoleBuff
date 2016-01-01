@@ -2,7 +2,7 @@
 -- Check if items from sets for other roles are quipped instead of items for current player role sets.
 -- Note only some of the classes classes can perform different roles with different specializations
 
-local this = RoleBuffAddOn;
+local this, mod = RoleBuffAddOn, RoleBuffAddOn;
 
 this.CheckEquipmentSet = this:ReadAddOnStorage(true, { "options", "global" }, "optGearSpec")["optGearSpec"];
 
@@ -143,6 +143,81 @@ function RoleBuffAddOn:GearSetRoleAnnounce(frame, event, ...)
 	print(self.setCommandUsageClosingLine);
     end
 end
+
+-- scan containers for the expected item type
+local function UseContainerItemWithType(scanAmmoItemType, itemDisplayType, chatOnly)
+    local ammoItemId, foundContainer, foundSlotId = nil, nil, nil;
+
+    for containerId = 0, NUM_BAG_SLOTS
+    do
+	for containerSlotId = 1, GetContainerNumSlots(containerId)
+	do
+	    local containerItemId = GetContainerItemID(containerId, containerSlotId)
+	    if containerItemId ~= nil
+	    then
+		local _, _, _, _, _, _, itemType = GetItemInfo(containerItemId);
+
+		if itemType == scanAmmoItemType
+		then
+		    if ammoItemId == nil
+		    then
+			ammoItemId, foundContainer, foundSlotId = containerItemId, containerId, containerSlotId
+		    else
+			if ammoItemId == containerItemId
+			then
+			    mod:DebugMessage("Container item with ID " .. ammoItemId .. " found in bags.");
+			    -- same item found multiple times in player bags, ignore
+			else
+			    -- Two kinds of items with given itemType found in player backpack/containers
+			    mod:ShowMessage(mod:ItemEquipMessage(itemDisplayType), chatOnly);
+			    return
+			end
+		    end
+		end
+	    end
+	end
+    end
+
+    if ammoItemId ~= nil
+    then
+	mod:DebugMessage("Container item ID " .. ammoItemId .. " found in bags.");
+	if CursorHasItem()
+	then
+	    mod:ShowMessage(mod:ItemEquipMessage(itemDisplayType), chatOnly)
+	else
+	    PickupContainerItem(foundContainer, foundSlotId);
+	    AutoEquipCursorItem();
+	end
+    else
+	mod:ShowMessage(mod:MissingItemMessage(itemDisplayType), chatOnly)
+    end
+end
+
+function RoleBuffAddOn:UnitInventoryChanged(unitID, chatOnly)
+    if tonumber(mod.clientBuildNumber) < 13164  -- Patch 4.0.1 "Cataclysm Systems"
+    then
+	if UnitIsUnit(unitID, self.unitPlayer)
+	then
+	    local scanAmmoItemType, scanAmmoDisplayType = nil, nil;
+	    if (IsEquippedItemType(mod.itemTypeBows) or IsEquippedItemType(mod.itemTypeCrossbows)) and not IsEquippedItemType(mod.itemTypeArrow)
+	    then
+		scanAmmoItemType, scanAmmoDisplayType = mod.itemTypeArrow, mod.itemDisplayTypeArrows;
+		mod:DebugMessage("Missing arrows.")
+	    else
+		if IsEquippedItemType(mod.itemTypeGuns) and not IsEquippedItemType(mod.itemTypeBullet)
+		then
+		    scanAmmoItemType, scanAmmoDisplayType = mod.itemTypeBullet, mod.itemDisplayTypeBullets;
+		    mod:DebugMessage("Missing bullets")
+		else
+		    mod:DebugMessage("No Ranged weapon missing the ammo.");
+		    return
+		end
+	    end
+	    UseContainerItemWithType(scanAmmoItemType, scanAmmoDisplayType, chatOnly);
+	end
+    end
+end
+
 
 function RoleBuffAddOn:OnGearSetEvent(frame, event, ...)
     if event == self.eventEquipmentSwapPending
