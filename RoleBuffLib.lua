@@ -82,6 +82,18 @@ local function RoleBuff_WriteStorageTable(storageTable, categories, entries)
     end
 end
 
+-- return unitType, unitNpcID, unitPetID from a given unit GUID
+function RoleBuffAddOn:GetTypeAndID(guid)
+    local baseIndex = 0;
+
+    if guid:sub(1, 2) == "0x"
+    then
+	baseIndex = 2
+    end
+
+    return tonumber(guid:sub(baseIndex + 3, baseIndex + 3), 16) % 8, tonumber(guid:sub(baseIndex + 7, baseIndex + 10), 16), tonumber(guid:sub(baseIndex + 4, baseIndex + 10), 16)
+end
+
 function RoleBuffAddOn:ReadAddOnStorage(defaultVal, categories, ...)
     return RoleBuff_ReadStorageTable(RoleBuffAddOn_StorageTable, defaultVal, categories, ...)
 end

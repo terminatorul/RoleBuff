@@ -69,8 +69,37 @@ local function RoleBuff_CombatCheckPlayer(chatOnly)
     this:CombatCheckGearSpec(chatOnly)
 end
 
+mod.trivialNpcCache, mod.trivialNpcIdCache = { }, { };
+
+local function ReadUnitID(unitID)
+    if UnitExists(unitID) and not UnitIsFriend(mod.unitPlayer, unitID) and UnitIsTrivial(unitID)
+    then
+	local unitGUID = UnitGUID(unitID);
+	if unitGUID ~= nil
+	then
+	    local unitType, npcID, petID = mod:GetTypeAndID(unitGUID);
+
+	    if unitType == mod.guidTypeNPC and mod.trivialNpcIdCache[npcID] == nil
+	    then
+		table.insert(mod.trivialNpcCache, 1, npcID);
+		mod.trivialNpcIdCache[npcID] = true;
+
+		if #mod.trivialNpcCache > 32
+		then
+		    mod.trivialNpcIdCache[mod.trivialNpcCache[#mod.trivialNpcCache]] = nil;
+		    table.remove(mod.trivialNpcCache)
+		end
+
+		print("NPC " .. UnitName(unitID) .. " with ID " .. npcID .. " is trivial.")
+	    end
+	end
+    end
+end
+
 local RoleBuff_BaseEventHandlerTable = 
 {
+    [this.eventUpdateMouseoverUnit] = function(frame, event, ...) ReadUnitID(mod.unitMouseover) end,
+    [this.eventUnitTarget] = function(frame, event, unitId) ReadUnitID(unitId .. "-target") end,
     [this.eventPlayerRegenDisabled] = function(frame, event, ...)
 	if not RoleBuff_PlayerAttacking and not RoleBuff_PlayerAttacked
 	then
@@ -251,6 +280,8 @@ local function RoleBuff_OnInitialPlayerAlive(frame, event, ...)
 	    frame:RegisterEvent(this.eventPlayerEnterCombat);
 	    frame:RegisterEvent(this.eventPlayerLeaveCombat);
 	    frame:RegisterEvent(this.eventReadyCheck);
+	    frame:RegisterEvent(mod.eventUpdateMouseoverUnit);
+	    frame:RegisterEvent(mod.eventUnitTarget);
 
 	    if opt.classes[this.playerClassEn] ~= nil
 	    then

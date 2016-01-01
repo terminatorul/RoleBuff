@@ -44,6 +44,8 @@ local apiStringsTable =
     eventWearEquipmentSet = "WEAR_EQUIPMENT_SET";
     eventCompanionUpdate = "COMPANION_UPDATE";			-- companion or mount
     eventReadyCheck = "READY_CHECK";
+    eventUpdateMouseoverUnit = "UPDATE_MOUSEOVER_UNIT";
+    eventUnitTarget = "UNIT_TARGET";
 
     playerClassLocalized = "";
     playerClassEn = nil;
@@ -69,6 +71,14 @@ local apiStringsTable =
     unitPlayer = "player";
     unitTarget = "target";
     unitPet = "pet";
+    unitMouseover = "mouseover";
+
+    -- from wowwiki.wikia.com/wiki/API_UnitGUID
+    guidTypePlayer = 0;
+    guidTypeObject = 1;
+    guidTypeNPC = 3;	-- NPCs or temporary pets
+    guidTypePet = 4;	-- permanent pets only
+    guidTypeVehicle = 5;
 
     filterPlayer = "PLAYER";
 
