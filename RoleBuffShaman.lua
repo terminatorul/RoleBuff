@@ -92,7 +92,7 @@ local function CheckShamanShield(chatOnly)
 
 	    if buffName ~= nil
 	    then
-		if shamanShieldList[buffName] ~= nil and UnitIsUnit(unitCaster)
+		if shamanShieldList[buffName] ~= nil and UnitIsUnit(unitCaster, mod.unitPlayer)
 		then
 		    return
 		end
