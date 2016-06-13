@@ -23,6 +23,8 @@ then
 	warlockArmor = "Warlock Armor";
 	warlockWeaponEnchantment = "Warlock Weapon Enchantment";
 	rogueWeaponPoison = "Rogue Weapon Posion";
+	shamanWeaponEnchantment = "Imbue Shaman Weapon";
+	shamanElementalShield = "Shaman Elemental Shield";
 	commandSyntaxIntroLine = "Syntax: ";
 	addonLoadedMessage = mod.displayName .. " loaded.";
 	addonEnabledMessage = mod.displayName .. " enabled.";

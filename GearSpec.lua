@@ -2,21 +2,21 @@
 -- Check if items from sets for other roles are quipped instead of items for current player role sets.
 -- Note only some of the classes classes can perform different roles with different specializations
 
-local this, mod = RoleBuffAddOn, RoleBuffAddOn;
+local mod = RoleBuffAddOn;
 
-this.CheckEquipmentSet = this:ReadAddOnStorage(true, { "options", "global" }, "optGearSpec")["optGearSpec"];
+mod.CheckEquipmentSet = mod:ReadAddOnStorage(true, { "options", "global" }, "optGearSpec")["optGearSpec"];
 
 local multipleRoleClass, equipmentMatchCount, equipmentMissmatchCount, equipmentSwapPending = false, nil, nil, false;
 
 local gearSlotList =
 {
-    [this.headSlot] = true, [this.neckSlot] = true, [this.shoulderSlot] = true, [this.chestSlot] = true, [this.shirtSlot] = true, [this.tabardSlot] = true,
-    [this.handsSlot] = true, [this.wristSlot] = true, [this.waistSlot] = true, [this.fingerSlot0] = true, [this.fingerSlot1] = true, [this.trinketSlot0] = true,
-    [this.trinketSlot1] = true, [this.mainHandSlot] = true, [this.offHandSlot] = true, [this.rangedSlot] = true, [this.ammoSlot] = true
+    [mod.headSlot] = true, [mod.neckSlot] = true, [mod.shoulderSlot] = true, [mod.chestSlot] = true, [mod.shirtSlot] = true, [mod.tabardSlot] = true,
+    [mod.handsSlot] = true, [mod.wristSlot] = true, [mod.waistSlot] = true, [mod.fingerSlot0] = true, [mod.fingerSlot1] = true, [mod.trinketSlot0] = true,
+    [mod.trinketSlot1] = true, [mod.mainHandSlot] = true, [mod.offHandSlot] = true, [mod.rangedSlot] = true, [mod.ammoSlot] = true
 };
 
 local function RoleBuff_EquipmentSetUsage(currentRole)
-    local setRoles = this:GetEquipmentSetRoles();
+    local setRoles = mod:GetEquipmentSetRoles();
 
     local currentSetNo, setName, numEquipmentSets = 1, nil, GetNumEquipmentSets();
     local roleMatch, setUsage = false, { };
@@ -32,7 +32,7 @@ local function RoleBuff_EquipmentSetUsage(currentRole)
 	setName = GetEquipmentSetInfo(currentSetNo);
 	if setRoles[setName] == nil
 	then
-	    this:DebugMessage("Equipment set " .. setName .. " needs to be assigned a role.");
+	    mod:DebugMessage("Equipment set " .. setName .. " needs to be assigned a role.");
 	    return nil, nil;
 	end
 
@@ -114,9 +114,9 @@ end
 local function RoleBuff_PlayerEquipmentUsage()
     local playerRole = nil;
     
-    if this.ClassGetRoleTable[this.playerClassEn] ~= nil
+    if mod.ClassGetRoleTable[mod.playerClassEn] ~= nil
     then
-	playerRole = this.ClassGetRoleTable[this.playerClassEn]();
+	playerRole = mod.ClassGetRoleTable[mod.playerClassEn]();
     end
 
     if playerRole ~= nil and playerRole ~= ""
@@ -193,18 +193,31 @@ local function UseContainerItemWithType(scanAmmoItemType, itemDisplayType, chatO
     end
 end
 
+local ammoSlotID = GetInventorySlotInfo(mod.ammoSlot);
+
+local function IsAmmoItemSubtype(expectedItemSubtype)
+    -- name, link, rarity, level, minLevel, type, subType, ...
+    _, _, _, _, _, _, ammoItemSubtype = GetItemInfo(GetInventoryItemID(mod.unitPlayer, ammoSlotID));
+    if ammoItemSubtype ~= nil and ammoItemSubtype == expectedItemSubtype
+    then
+	return true;
+    end
+
+    return false;
+end
+
 function RoleBuffAddOn:UnitInventoryChanged(unitID, chatOnly)
     if tonumber(mod.clientBuildNumber) < 13164  -- Patch 4.0.1 "Cataclysm Systems"
     then
-	if UnitIsUnit(unitID, self.unitPlayer)
+	if not equipmentSwapPending and UnitIsUnit(unitID, self.unitPlayer)
 	then
 	    local scanAmmoItemType, scanAmmoDisplayType = nil, nil;
-	    if (IsEquippedItemType(mod.itemTypeBows) or IsEquippedItemType(mod.itemTypeCrossbows)) and not IsEquippedItemType(mod.itemTypeArrow)
+	    if (IsEquippedItemType(mod.itemTypeBows) or IsEquippedItemType(mod.itemTypeCrossbows)) and not IsEquippedItemType(mod.itemTypeArrow) and not IsAmmoItemSubtype(mod.itemTypeArrow)
 	    then
 		scanAmmoItemType, scanAmmoDisplayType = mod.itemTypeArrow, mod.itemDisplayTypeArrows;
 		mod:DebugMessage("Missing arrows.")
 	    else
-		if IsEquippedItemType(mod.itemTypeGuns) and not IsEquippedItemType(mod.itemTypeBullet)
+		if IsEquippedItemType(mod.itemTypeGuns) and not IsEquippedItemType(mod.itemTypeBullet) and not IsAmmoItemSubtype(mod.itemTypeBullet)
 		then
 		    scanAmmoItemType, scanAmmoDisplayType = mod.itemTypeBullet, mod.itemDisplayTypeBullets;
 		    mod:DebugMessage("Missing bullets")
@@ -233,6 +246,7 @@ function RoleBuffAddOn:OnGearSetEvent(frame, event, ...)
 	if event == self.eventEquipmentSwapFinished
 	then
 	    equipmentSwapPending = false;
+	    self:UnitInventoryChanged(self.unitPlayer, false);   -- check ammo after switching gear
 	    self:DebugMessage("Equipment swapped.");
 	end
 
@@ -275,9 +289,9 @@ end
 
 local playerRolesMap =
 {
-    [string.lower(this.playerRoleDPS)] = this.roleDPS,
-    [string.lower(this.playerRoleTank)] = this.roleTank,
-    [string.lower(this.playerRoleHealer)] = this.roleHealer
+    [string.lower(mod.playerRoleDPS)] = mod.roleDPS,
+    [string.lower(mod.playerRoleTank)] = mod.roleTank,
+    [string.lower(mod.playerRoleHealer)] = mod.roleHealer
 };
 
 local function RoleBuff_GetRoleName(roleName)

@@ -4,19 +4,21 @@
 --	- fishing pole equipped
 --	- missing gear items above some level
 
-local this, mod = RoleBuffAddOn, RoleBuffAddOn;
+local mod = RoleBuffAddOn;
 
 local RoleBuff_Enabled = true;
 
 local opt =
 {
-    ["global"] = this:ReadAddOnStorage(true, { "options", "global" }, "optMainHandOffHand", "optFishingPole", "optEmptyGear"),
-    ["classes"] = this:ReadAddOnStorage(true, { "options", "classes" },
+    ["global"] = mod:ReadAddOnStorage(true, { "options", "global" }, "optMainHandOffHand", "optFishingPole", "optEmptyGear"),
+    ["classes"] = mod:ReadAddOnStorage(true, { "options", "classes" },
 	{
-	    this.playerClassEnDeathKnight, -- this.playerClassEnDruid, this.playerClassEnHunter, this.playerClassEnMage, this.playerClassEnMonk, 
-	    this.playerClassEnPaladin, -- this.playerClassEnPriest, 
-	    this.playerClassEnRogue, -- this.playerClassEnShaman, 
-	    this.playerClassEnWarlock, this.playerClassEnWarrior
+	    mod.playerClassEnDeathKnight, -- mod.playerClassEnDruid, mod.playerClassEnHunter, mod.playerClassEnMage, mod.playerClassEnMonk,
+	    mod.playerClassEnPaladin, -- mod.playerClassEnPriest,
+	    mod.playerClassEnRogue,
+	    mod.playerClassEnShaman,
+	    mod.playerClassEnWarlock,
+	    mod.playerClassEnWarrior
 	})
 }
 
@@ -36,29 +38,29 @@ end
 local function RoleBuff_CombatCheckFishingPole(chatOnly)
     if opt.global.optFishingPole and
 	(
-	    tonumber(this.clientBuildNumber) < 7561 and IsEquippedItemType(this.itemTypeFishingPole)
+	    tonumber(mod.clientBuildNumber) < 7561 and IsEquippedItemType(mod.itemTypeFishingPole)
 		or
-	    tonumber(this.clientBuildNumber) >= 7561 and IsEquippedItemType(this.itemTypeFishingPoles)	-- patch 2.3 The Gods of Zul'Aman
+	    tonumber(mod.clientBuildNumber) >= 7561 and IsEquippedItemType(mod.itemTypeFishingPoles)	-- patch 2.3 The Gods of Zul'Aman
 	)
     then
-	this:ReportMessage(this:ItemEquippedMessage(this.itemTypeFishingPole), chatOnly);
+	mod:ReportMessage(mod:ItemEquippedMessage(mod.itemTypeFishingPole), chatOnly);
     end
 end
 
 local function RoleBuff_CombatCheckMainHandOffHand(chatOnly)
     if opt.global.optMainHandOffHand
     then
-	local mainHandSlot, _ = GetInventorySlotInfo(this.mainHandSlot);
-	local offHandSlot, _ = GetInventorySlotInfo(this.secondaryHandSlot);
+	local mainHandSlot, _ = GetInventorySlotInfo(mod.mainHandSlot);
+	local offHandSlot, _ = GetInventorySlotInfo(mod.secondaryHandSlot);
 
-	if GetInventoryItemID(this.unitPlayer, mainHandSlot) == nil
+	if GetInventoryItemID(mod.unitPlayer, mainHandSlot) == nil
 	then
-	    this:ReportMessage(this:ItemEquipMessage(this.itemMainHandWeapon), chatOnly)
+	    mod:ReportMessage(mod:ItemEquipMessage(mod.itemMainHandWeapon), chatOnly)
 	end
 
-	if GetInventoryItemID(this.unitPlayer, offHandSlot) == nil and not IsEquippedItemType(this.itemTypeTwoHand)
+	if GetInventoryItemID(mod.unitPlayer, offHandSlot) == nil and not IsEquippedItemType(mod.itemTypeTwoHand)
 	then
-	    this:ReportMessage(this:ItemEquipMessage(this.itemOffHand), chatOnly)
+	    mod:ReportMessage(mod:ItemEquipMessage(mod.itemOffHand), chatOnly)
 	end
     end
 end
@@ -66,7 +68,7 @@ end
 local function RoleBuff_CombatCheckPlayer(chatOnly)
     RoleBuff_CombatCheckFishingPole(chatOnly);
     RoleBuff_CombatCheckMainHandOffHand(chatOnly);
-    this:CombatCheckGearSpec(chatOnly)
+    mod:CombatCheckGearSpec(chatOnly)
 end
 
 mod.trivialNpcCache, mod.trivialNpcIdCache = { }, { };
@@ -90,17 +92,57 @@ local function ReadUnitID(unitID)
 		    table.remove(mod.trivialNpcCache)
 		end
 
-		print("NPC " .. UnitName(unitID) .. " with ID " .. npcID .. " is trivial.")
+		mod:DebugMessage("NPC " .. UnitName(unitID) .. " with ID " .. npcID .. " is trivial.")
 	    end
 	end
     end
 end
 
-local RoleBuff_BaseEventHandlerTable = 
+local function combatEventHandler(frame, event, timestamp, eventType, sourceGUID, sourceName, sourceFlags, destGUID, destName, destFlags)
+    if UnitIsUnit(destName, mod.unitPlayer) and bit.band(sourceFlags, COMBATLOG_OBJECT_REACTION_HOSTILE)
+    then
+	-- A hostile unit does something to you in combat log
+	local npcID = tonumber(sourceGUID:sub(9, 12), 16);
+	local trivialString = "";
+	if UnitIsTrivial(npcID)
+	then
+	    trivialString = "trivial "
+	end
+	print(eventType .. " from " .. trivialString .. " "  .. sourceName .. " (, NPC ID: " .. npcID .. ", GUID" .. sourceGUID .. ")")
+    end
+end
+
+local RoleBuff_BaseEventHandlerTable =
 {
-    [this.eventUpdateMouseoverUnit] = function(frame, event, ...) ReadUnitID(mod.unitMouseover) end,
-    [this.eventUnitTarget] = function(frame, event, unitId) ReadUnitID(unitId .. "-target") end,
-    [this.eventPlayerRegenDisabled] = function(frame, event, ...)
+    [mod.eventPlayerAlive] = function (frame, event, ...)
+	mod:GearSpec_InitialPlayerAlive(frame, event, ...)
+	frame:UnregisterEvent(mod.eventPlayerAlive);
+    end,
+
+    [mod.eventUpdateMouseoverUnit] = function(frame, event, ...) ReadUnitID(mod.unitMouseover) end,
+    [mod.eventUnitTarget] = function(frame, event, unitId) ReadUnitID(unitId .. "-target") end,
+    -- ["ADDON_LOADED"] = function(frame, even, addOnName)
+    --     if addOnName == "RoleBuff"
+    --     then
+    --         -- RoleBuffAddOn:GetPlayerBuild()
+    --         print("AddOn loaded: " .. mod.displayName)
+    --     end
+    -- end,
+    --
+    -- ["UNIT_THREAT_LIST_UPDATE"] = function(frame, event, unitId)
+    --     print("Threat list update for " .. unitId)
+    -- end,
+
+    -- ["UNIT_THREAT_SITUATION_UPDATE"] = function(frame, event, unitId)
+    --     print("Threat situation update for " .. unitId)
+    -- end,
+
+    -- ["COMBAT_LOG_EVENT_UNFILTERED"] = combatEventHandler,
+    -- ["SWING_DAMAGE"] = combatEventHandler,
+    -- ["SPELL_DAMAGE"] = combatEventHandler,
+    -- ["RANGE_DAMAGE"] = combatEventHandler,
+
+    [mod.eventPlayerRegenDisabled] = function(frame, event, ...)
 	if not RoleBuff_PlayerAttacking and not RoleBuff_PlayerAttacked
 	then
 	    RoleBuff_CombatCheckPlayer(false);
@@ -109,12 +151,12 @@ local RoleBuff_BaseEventHandlerTable =
 	RoleBuff_PlayerAttacked = true;
     end,
 
-    [this.eventPlayerRegenEnabled] = function(frame, event, ...)
+    [mod.eventPlayerRegenEnabled] = function(frame, event, ...)
 	RoleBuff_PlayerAttacked = false;
-	this:GearSetRoleAnnounce(frame, event, ...)
+	mod:GearSetRoleAnnounce(frame, event, ...)
     end,
 
-    [this.eventPlayerEnterCombat] = function(frame, event, ...)
+    [mod.eventPlayerEnterCombat] = function(frame, event, ...)
 	if not RoleBuff_PlayerAttacking and not RoleBuff_PlayerAttacked
 	then
 	    RoleBuff_CombatCheckPlayer(false);
@@ -123,112 +165,112 @@ local RoleBuff_BaseEventHandlerTable =
 	RoleBuff_PlayerAttacking = true;
     end,
 
-    [this.eventPlayerLeaveCombat] = function(frame, event, ...)
+    [mod.eventPlayerLeaveCombat] = function(frame, event, ...)
 	RoleBuff_PlayerAttacking = false;
     end,
 
-    [this.eventReadyCheck] = function(frame, event, ...)
-	RoleBuffAddOn:SlashCmdHandler(this.slashCommandCombatCheck);
+    [mod.eventReadyCheck] = function(frame, event, ...)
+	RoleBuffAddOn:SlashCmdHandler(mod.slashCommandCombatCheck);
     end,
 
-    [this.eventUnitInventoryChanged] = function(frame, event, unitId, ...)
-	this:UnitInventoryChanged(unitId);
-	return this:OnGearSetEvent(frame, event, ...)
+    [mod.eventUnitInventoryChanged] = function(frame, event, unitId, ...)
+	mod:UnitInventoryChanged(unitId);
+	return mod:OnGearSetEvent(frame, event, ...)
     end,
-    [this.eventEquipmentSetsChanged] = function(frame, event, ...) return this:OnGearSetEvent(frame, event, ...) end,
-    [this.eventEquipmentSwapPending] = function(frame, event, ...) return this:OnGearSetEvent(frame, event, ...) end,
-    [this.eventEquipmentSwapFinished] = function(frame, event, ...) return this:OnGearSetEvent(frame, event, ...) end,
-    [this.eventWearEquipmentSet] = function(frame, event, ...) return this:OnGearSetEvent(frame, event, ...) end,
-    [this.eventActiveTalentGroupChanged] = function(frame, event, ...) return this:OnGearSetEvent(frame, event, ...) end
+    [mod.eventEquipmentSetsChanged] = function(frame, event, ...) return mod:OnGearSetEvent(frame, event, ...) end,
+    [mod.eventEquipmentSwapPending] = function(frame, event, ...) return mod:OnGearSetEvent(frame, event, ...) end,
+    [mod.eventEquipmentSwapFinished] = function(frame, event, ...) return mod:OnGearSetEvent(frame, event, ...) end,
+    [mod.eventWearEquipmentSet] = function(frame, event, ...) return mod:OnGearSetEvent(frame, event, ...) end,
+    [mod.eventActiveTalentGroupChanged] = function(frame, event, ...) return mod:OnGearSetEvent(frame, event, ...) end
 };
 
 local RoleBuff_ClassEventHandlerTable =
 {
-    [this.playerClassEnWarrior] = this.EventHandlerTableWarrior,
-    [this.playerClassEnDeathKnight] = this.EventHandlerTableDeathKnight,
-    [this.playerClassEnPaladin] = this.EventHandlerTablePaladin,
-    [this.playerClassEnWarlock] = this.EventHandlerTableWarlock,
-    [this.playerClassEnShaman] = nil,
-    [this.playerClassEnRogue] = this.EventHandlerTableRogue
+    [mod.playerClassEnWarrior] = mod.EventHandlerTableWarrior,
+    [mod.playerClassEnDeathKnight] = mod.EventHandlerTableDeathKnight,
+    [mod.playerClassEnPaladin] = mod.EventHandlerTablePaladin,
+    [mod.playerClassEnWarlock] = mod.EventHandlerTableWarlock,
+    [mod.playerClassEnShaman] = mod.EventHandlerTableShaman,
+    [mod.playerClassEnRogue] = mod.EventHandlerTableRogue
 };
 
 RoleBuffAddOn.ClassGetRoleTable =
 {
-    [this.playerClassEnWarrior] = this.GetWarriorRole,
-    [this.playerClassEnDeathKnight] = this.GetDeathKnightRole,
-    [this.playerClassEnPaladin] = this.GetPaladinRole,
-    [this.playerClassEnWarlock] = this.GetWarlockRole,
-    [this.playerClassEnShaman] = this.GetShamanRole,
-    [this.playerClassEnRogue] = this.GetRogueRole,
-    [this.playerClassEnPriest] = function()
-	local specIndex, specName = this:GetPlayerBuild()
+    [mod.playerClassEnWarrior] = mod.GetWarriorRole,
+    [mod.playerClassEnDeathKnight] = mod.GetDeathKnightRole,
+    [mod.playerClassEnPaladin] = mod.GetPaladinRole,
+    [mod.playerClassEnWarlock] = mod.GetWarlockRole,
+    [mod.playerClassEnShaman] = mod.GetShamanRole,
+    [mod.playerClassEnRogue] = mod.GetRogueRole,
+    [mod.playerClassEnPriest] = function()
+	local specIndex, specName = mod:GetPlayerBuild()
 
-	if specName == this.holySpecName
+	if specName == mod.holySpecName
 	then
-	    return this.roleHealer;
+	    return mod.roleHealer;
 	else
-	    return this.roleDPS;
+	    return mod.roleDPS;
 	end
     end,
-    [this.playerClassEnDruid] = function() return nil; end
+    [mod.playerClassEnDruid] = function() return nil; end
 };
 
-local RoleBuff_SlashCommandHandlerTable = 
+local RoleBuff_SlashCommandHandlerTable =
 {
 };
 
-local RoleBuff_ClassCommandHandlerTable = 
+local RoleBuff_ClassCommandHandlerTable =
 {
-    [this.playerClassEnWarrior] = this.SlashCommandHandlerWarrior,
-    [this.playerClassEnDeathKnight] = this.SlashCommandHandlerDeathKnight,
-    [this.playerClassEnPaladin] = this.SlashCommandHandlerPaladin,
-    [this.playerClassEnWarlock] = this.SlashCommandHandlerWarlock,
-    [this.playerClassEnShaman] = nil,
-    [this.playerClassEnRogue] = this.SlashCommandHandlerRogue
+    [mod.playerClassEnWarrior] = mod.SlashCommandHandlerWarrior,
+    [mod.playerClassEnDeathKnight] = mod.SlashCommandHandlerDeathKnight,
+    [mod.playerClassEnPaladin] = mod.SlashCommandHandlerPaladin,
+    [mod.playerClassEnWarlock] = mod.SlashCommandHandlerWarlock,
+    [mod.playerClassEnShaman] = mod.SlashCommandHandlerShaman,
+    [mod.playerClassEnRogue] = mod.SlashCommandHandlerRogue
 };
 
 local RoleBuff_BaseCommandHandlerTable =
 {
-    [this.slashCommandEnable] = function()
+    [mod.slashCommandEnable] = function()
 	RoleBuff_Enabled = true;
-	print(this.addonEnabledMessage);
+	print(mod.addonEnabledMessage);
     end,
 
-    [this.slashCommandDisable] = function()
+    [mod.slashCommandDisable] = function()
 	RoleBuff_Enabled = false;
-	print(this.addonDisabledMessage);
+	print(mod.addonDisabledMessage);
     end,
 
-    [this.slashCommandSpec] = function()
-	if this.playerClassEn ~= nil
+    [mod.slashCommandSpec] = function()
+	if mod.playerClassEn ~= nil
 	then
-	    local specIndex, specName = this:GetPlayerBuild();
-	    print(this:FormatSpecialization(this.playerClassLocalized, specName));
+	    local specIndex, specName = mod:GetPlayerBuild();
+	    print(mod:FormatSpecialization(mod.playerClassLocalized, specName));
 	end
 
 	if not RoleBuff_Enabled
 	then
-	    print(this.addonDisabledMessage);
+	    print(mod.addonDisabledMessage);
 	end
     end,
 
-    [this.slashCommandPlayerCheck] = function()
-	if RoleBuff_ClassEventHandlerTable[this.playerClassEn] == nil
+    [mod.slashCommandPlayerCheck] = function()
+	if RoleBuff_ClassEventHandlerTable[mod.playerClassEn] == nil
 	then
-	    print(this:NoClassSupportMessage(this.playerClassLocalized));
+	    print(mod:NoClassSupportMessage(mod.playerClassLocalized));
 	else
-	    if opt.classes[this.playerClassEn] ~= nil and not opt.classes[this.playerClassEn]
+	    if opt.classes[mod.playerClassEn] ~= nil and not opt.classes[mod.playerClassEn]
 	    then
-		print(this:ClassDisabledMessage(this.playerClassLocalized));
+		print(mod:ClassDisabledMessage(mod.playerClassLocalized));
 	    end
 	end
     end,
 
-    [this.slashCommandEquipmentSet] = function(cmdLine) return this:SlashCommandEquipmentSet(cmdLine) end,
+    [mod.slashCommandEquipmentSet] = function(cmdLine) return mod:SlashCommandEquipmentSet(cmdLine) end,
 
-    [this.slashCommandGearSpec] = function(cmdLine) return this:GearSpecCheck() end,
+    [mod.slashCommandGearSpec] = function(cmdLine) return mod:GearSpecCheck() end,
 
-    [this.slashCommandSetDebug] = function(cmdLine)
+    [mod.slashCommandSetDebug] = function(cmdLine)
 	if cmdLine[2] ~= nil and cmdLine[2] == "on"
 	then
 	    RoleBuff_Debug = true
@@ -241,16 +283,16 @@ local RoleBuff_BaseCommandHandlerTable =
     end
 };
 
-RoleBuff_BaseCommandHandlerTable[this.slashCommandCombatCheck] = function()
+RoleBuff_BaseCommandHandlerTable[mod.slashCommandCombatCheck] = function()
     RoleBuff_CombatCheckPlayer(true);
-    RoleBuff_BaseCommandHandlerTable[this.slashCommandPlayerCheck]();
+    RoleBuff_BaseCommandHandlerTable[mod.slashCommandPlayerCheck]();
 end;
 
 -- called from XML
 function RoleBuffAddOn:OnLoad(frame)
     if self.AddOnLocalized and self.UserStringsLocalized
     then
-	frame:RegisterEvent(self.eventPlayerAlive);
+	frame:RegisterEvent(mod.eventAddOnLoaded);
     else
 	print("RoleBuff: New add-on translation is needed for your World of Warcraft client language.");
 	print("RoleBuff: Not loaded.");
@@ -258,61 +300,81 @@ function RoleBuffAddOn:OnLoad(frame)
 end
 
 local function RoleBuff_ErrorHandler(errorMessage)
-    print(this.displayName .. ": " .. errorMessage);
-    return errorMessage;
+    print(mod.displayName .. ": " .. errorMessage);
+    return errorMessage
 end
 
 local RoleBuff_EventHandlerTable =
 {
-    [this.eventPlayerAlive] = 'RoleBuff_OnInitialPlayerAlive'
 };
 
-local function RoleBuff_OnInitialPlayerAlive(frame, event, ...)
-    if this.playerClassEn == nil
+local function OnAddOnLoaded(frame, event, ...)
+    opt =
+    {
+	["global"] = mod:ReadAddOnStorage(true, { "options", "global" }, "optMainHandOffHand", "optFishingPole", "optEmptyGear"),
+	["classes"] = mod:ReadAddOnStorage(true, { "options", "classes" },
+	    {
+		mod.playerClassEnDeathKnight, -- mod.playerClassEnDruid, mod.playerClassEnHunter, mod.playerClassEnMage, mod.playerClassEnMonk,
+		mod.playerClassEnPaladin, -- mod.playerClassEnPriest,
+		mod.playerClassEnRogue,
+		mod.playerClassEnShaman,
+		mod.playerClassEnWarlock,
+		mod.playerClassEnWarrior
+	    })
+    };
+
+    if mod.playerClassEn == nil
     then
-	if event == this.eventPlayerAlive
+	mod.playerClassLocalized, mod.playerClassEn, mod.playerClassIndex = UnitClass(mod.unitPlayer);
+
+	frame:UnregisterEvent(mod.eventPlayerAlive);
+	-- frame:RegisterEvent("UNIT_THREAT_SITUATION_UPDATE");
+	-- frame:RegisterEvent("UNIT_THREAT_LIST_UPDATE");
+	frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED");
+	frame:RegisterEvent(mod.eventPlayerAlive);
+	frame:RegisterEvent(mod.eventPlayerRegenEnabled);
+	frame:RegisterEvent(mod.eventPlayerRegenDisabled);
+	frame:RegisterEvent(mod.eventPlayerEnterCombat);
+	frame:RegisterEvent(mod.eventPlayerLeaveCombat);
+	frame:RegisterEvent(mod.eventReadyCheck);
+	frame:RegisterEvent(mod.eventUpdateMouseoverUnit);
+	frame:RegisterEvent(mod.eventUnitTarget);
+
+	if opt.classes[mod.playerClassEn] ~= nil
 	then
-	    this.playerClassLocalized, this.playerClassEn, this.playerClassIndex = UnitClass(this.unitPlayer);
-
-	    frame:UnregisterEvent(this.eventPlayerAlive);
-	    frame:RegisterEvent(this.eventPlayerRegenEnabled);
-	    frame:RegisterEvent(this.eventPlayerRegenDisabled);
-	    frame:RegisterEvent(this.eventPlayerEnterCombat);
-	    frame:RegisterEvent(this.eventPlayerLeaveCombat);
-	    frame:RegisterEvent(this.eventReadyCheck);
-	    frame:RegisterEvent(mod.eventUpdateMouseoverUnit);
-	    frame:RegisterEvent(mod.eventUnitTarget);
-
-	    if opt.classes[this.playerClassEn] ~= nil
+	    if opt.classes[mod.playerClassEn]
 	    then
-		if opt.classes[this.playerClassEn]
+		if RoleBuff_ClassEventHandlerTable[mod.playerClassEn] ~= nil
 		then
-		    if RoleBuff_ClassEventHandlerTable[this.playerClassEn] ~= nil
+		    RoleBuff_EventHandlerTable = RoleBuff_ClassEventHandlerTable[mod.playerClassEn];
+		    RoleBuffAddOn:OnEvent(frame, event, ...);
+
+		    if RoleBuff_EventHandlerTable[mod.eventPlayerAlive] ~= nil
 		    then
-			RoleBuff_EventHandlerTable = RoleBuff_ClassEventHandlerTable[this.playerClassEn];
-			RoleBuffAddOn:OnEvent(frame, event, ...);
-			print(this.addonLoadedMessage);
-		    else
-			print(this:NoClassSupportMessage(this.playerClassLocalized));
+			RoleBuff_EventHandlerTable[mod.eventPlayerAlive](frame, event, ...)
 		    end
+
+		    print(mod.addonLoadedMessage)
 		else
-		    print(this:ClassDisabledMessage(this.playerClassLocalized));
+		    print(mod:NoClassSupportMessage(mod.playerClassLocalized))
 		end
 	    else
-		print(this:NoClassSupportMessage(this.playerClassLocalized));
+		print(mod:ClassDisabledMessage(mod.playerClassLocalized))
 	    end
-
-	    if RoleBuff_ClassCommandHandlerTable[this.playerClassEn] ~= nil
-	    then
-		RoleBuff_SlashCommandHandlerTable = RoleBuff_ClassCommandHandlerTable[this.playerClassEn];
-	    end
-
-	    this:GearSpec_InitialPlayerAlive(frame, event, ...)
+	else
+	    print(mod:NoClassSupportMessage(mod.playerClassLocalized))
 	end
+
+	if RoleBuff_ClassCommandHandlerTable[mod.playerClassEn] ~= nil
+	then
+	    RoleBuff_SlashCommandHandlerTable = RoleBuff_ClassCommandHandlerTable[mod.playerClassEn]
+	end
+
+	mod:GearSpec_InitialPlayerAlive(frame, event, ...)
     end
 end
 
-RoleBuff_EventHandlerTable[this.eventPlayerAlive] = RoleBuff_OnInitialPlayerAlive;
+RoleBuff_EventHandlerTable[mod.eventAddOnLoaded] = OnAddOnLoaded;
 
 -- called from XML
 function RoleBuffAddOn:OnEvent(frame, event, ...)
@@ -355,21 +417,21 @@ function RoleBuffAddOn:SlashCmdHandler(msg)
 
     if #cmdLine == 0
     then
-	msg = "";
+	msg = ""
     else
-	msg = string.lower(cmdLine[1]);
+	msg = string.lower(cmdLine[1])
     end
 
     if RoleBuff_SlashCommandHandlerTable[msg] ~= nil or RoleBuff_BaseCommandHandlerTable[msg] ~= nil
     then
 	if RoleBuff_SlashCommandHandlerTable[msg] ~= nil
 	then
-	    RoleBuff_SlashCommandHandlerTable[msg](cmdLine);
+	    RoleBuff_SlashCommandHandlerTable[msg](cmdLine)
 	end
 
 	if RoleBuff_BaseCommandHandlerTable[msg] ~= nil
 	then
-	    RoleBuff_BaseCommandHandlerTable[msg](cmdLine);
+	    RoleBuff_BaseCommandHandlerTable[msg](cmdLine)
 	end
     else
 	print(self.commandSyntaxIntroLine);
@@ -382,6 +444,20 @@ function RoleBuffAddOn:SlashCmdHandler(msg)
 	print("  " .. SLASH_ROLEBUFF1 .. " " .. self.slashCommandGearSpec);
 	print("  " .. SLASH_ROLEBUFF1 .. " " .. self.slashCommandSetDebug .. " on|off");
     end
+end
+
+function RoleBuffAddOn:OptionValueChanged(panelName, optionName, optionValue)
+    if self.optionsCache == nil
+    then
+	self.optionsCache = { }
+    end
+
+    if self.optionsCache[panelName] == nil
+    then
+	self.optionsCache[panelName] = { }
+    end
+
+    self.optionsCache[panelName][optionName] = optionValue
 end
 
 function RoleBuffAddOn:OptionsFrameLoad(panel)

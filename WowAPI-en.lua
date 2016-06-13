@@ -146,6 +146,14 @@ then
 	restaurationSpecName = "Restauration";
 	elementalSpecName = "Elemental";
 	enhancementSpecName = "Enhancement";
+	flametongueWeapon = "Flametongue Weapon";
+	earthlivingWeapon = "Earthliving Weapon";
+	frostbrandWeapon = "Frostband Weapon";
+	rockbiterWeapon = "Rockbiter Weapon";
+	windfuryWeapon = "Windfury Weapon";
+	lightningShield = "Lightning Shield";
+	waterShield = "Water Shield";
+	earthShield = "Earth Shield";
 
 	-- Rogue
 	poisonsSpellName = "Poisons";

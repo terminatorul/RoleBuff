@@ -123,14 +123,14 @@ end
 local function RoleBuff_UnitSpellCastSucceededWarrior(unit, spellName, spellRank, lineIDCounter)
     if spellName == vigilanceSpellName and UnitIsUnit(unit, unitPlayer)
     then
-	vigilanceTargetUnit = (UnitName(unitTarget));
+	vigilanceTargetUnit = UnitName(unitTarget);
 	vigilanceRank = spellRank;
 	vigilanceIntervalReported = false;
     end
 end
 
 local function RoleBuff_UnitAuraChange(unit)
-    if unit and vigilanceTargetUnit and UnitIsUnit(unit, vigilanceTargetUnit)
+    if unit and vigilanceTargetUnit and UnitIsUnit(unit, vigilanceTargetUnit) and UnitIsVisible(vigilanceTargetUnit)
     then
 	local spellName = nil;
 

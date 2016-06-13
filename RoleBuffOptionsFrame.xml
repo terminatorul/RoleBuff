@@ -28,6 +28,9 @@
 			<FontString name="RoleBuff_CheckMainHandOffHandText" text="Equipped Main Hand and Off Hand" inherits="RoleBuff_CheckBoxText"/>
 		    </Layer>
 		</Layers>
+		<Scripts>
+		    <OnClick>RoleBuffAddOn:OptionValueChange("RoleBuff", "MainHandOffHand", this:GetCheck());</OnClick>
+		</Scripts>
 	    </CheckButton>
 	    <CheckButton name="RoleBuff_CheckFishingPoleOption" parent="RoleBuff_OptionsFrame" checked="true" inherits="InterfaceOptionsCheckButtonTemplate">
 		<Anchors>
@@ -38,6 +41,9 @@
 			<FontString name="RoleBuff_CheckFishingPoleText" text="Fishing Pole" inherits="RoleBuff_CheckBoxText"/>
 		    </Layer>
 		</Layers>
+		<Scripts>
+		    <OnClick>RoleBuffAddOn:OptionValueChange("RoleBuff", "FishingPole", this:GetCheck());</OnClick>
+		</Scripts>
 	    </CheckButton>
 	    <CheckButton name="RoleBuff_CheckGearSetOption" parent="RoleBuff_OptionsFrame" checked="true" inherits="InterfaceOptionsCheckButtonTemplate">
 		<Anchors>
@@ -53,6 +59,9 @@
 			</FontString>
 		    </Layer>
 		</Layers>
+		<Scripts>
+		    <OnClick>RoleBuffAddOn:OptionValueChanged("RoleBuff", "GearSet", this:GetCheck());</OnClick>
+		</Scripts>
 	    </CheckButton>
 	    <CheckButton name="RoleBuff_EnableDeathKnightOption" parent="RoleBuff_OptionsFrame" checked="true" inherits="InterfaceOptionsCheckButtonTemplate">
 		<Anchors>
@@ -63,6 +72,9 @@
 			<FontString name="RoleBuff_EnableDeathKnightText" text="Death Knight" inherits="RoleBuff_CheckBoxText"/>
 		    </Layer>
 		</Layers>
+		<Scripts>
+		    <OnClick>RoleBuffAddOn:OptionValueChanged("RoleBuff", "DeathKinght", this:GetCheck());</OnClick>
+		</Scripts>
 	    </CheckButton>
 	    <CheckButton name="RoleBuff_EnablePaladinOption" parent="RoleBuff_OptionsFrame" checked="true" inherits="InterfaceOptionsCheckButtonTemplate">
 		<Anchors>
@@ -73,6 +85,9 @@
 			<FontString name="RoleBuff_EnablePaladinText" text="Paladin" inherits="RoleBuff_CheckBoxText"/>
 		    </Layer>
 		</Layers>
+		<Scripts>
+		    <OnClick>RoleBuffAddOn:OptionValueChanged("RoleBuff", "Paladin", this:GetCheck());</OnClick>
+		</Scripts>
 	    </CheckButton>
 	    <CheckButton name="RoleBuff_EnableRogueOption" parent="RoleBuff_OptionsFrame" checked="true" inherits="InterfaceOptionsCheckButtonTemplate">
 		<Anchors>
@@ -83,6 +98,9 @@
 			<FontString name="RoleBuff_EnableRogueText" text="Rogue" inherits="RoleBuff_CheckBoxText"/>
 		    </Layer>
 		</Layers>
+		<Scripts>
+		    <OnClick>RoleBuffAddOn:OptionValueChanged("RoleBuff", "Rogue", this:GetCheck());</OnClick>
+		</Scripts>
 	    </CheckButton>
 	    <CheckButton name="RoleBuff_EnableWarlockOption" parent="RoleBuff_OptionsFrame" checked="true" inherits="InterfaceOptionsCheckButtonTemplate">
 		<Anchors>
@@ -93,6 +111,9 @@
 			<FontString name="RoleBuff_EnableWarlockText" text="Warlock" inherits="RoleBuff_CheckBoxText"/>
 		    </Layer>
 		</Layers>
+		<Scripts>
+		    <OnClick>RoleBuffAddOn:OptionValueChanged("RoleBuff", "Warlock", this:GetCheck());</OnClick>
+		</Scripts>
 	    </CheckButton>
 	    <CheckButton name="RoleBuff_EnableWarriorOption" parent="RoleBuff_OptionsFrame" checked="true" inherits="InterfaceOptionsCheckButtonTemplate">
 		<Anchors>
@@ -103,6 +124,9 @@
 			<FontString name="RoleBuff_EnableWarriorText" text="Warrior" inherits="RoleBuff_CheckBoxText"/>
 		    </Layer>
 		</Layers>
+		<Scripts>
+		    <OnClick>RoleBuffAddOn:OptionValueChanged("RoleBuff", "Warrior", this:GetCheck());</OnClick>
+		</Scripts>
 	    </CheckButton>
 	</Frames>
     </Frame>
