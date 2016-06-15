@@ -14,14 +14,15 @@ buffs are missing.
 It only covers some of the classes, because I do not own a character for every class in the game, and most
 of the buffs that are checked are selected from my own experience.
 
-Currently included classes are Warrior, Paladin, Death Knight, Warlock and to some extent Rogue. A
-few basic checks exist for other classes.
+Currently included classes are Warrior, Paladin, Death Knight, Warlock and to some extent Rogue, Shaman. A
+few basic checks exist for any character, regardless of class.
 
 The buff and gear checks depend mostly on what role the add-on believes your character has:
 Tank, Healer or DPS (damager, from damage-per-second). Hence the add-on name: RoleBuff.
 
 Your character role sometimes can be seen easily from your spec, other times some non-intuitive rules
-must be used.
+must be used. Following game expansions have removed these rules, so that your spec always indicates
+your intended role in a group.
 
 The gear checks are based on the _Equipment Manager_ game feature. This feature is disabled by default
 so if you are new to the game this may be new to you. The addon will ask that you assing a role
@@ -101,5 +102,5 @@ Any ability is checked only if your character has already learned it.
 - check pet is present when DK has Master of Ghouls talent
 
 ####Warlocks
-- check for basic healthstone present when improved healthstone can be used
+- check for basic healthstone present when improved (talented) healthstone can be used
 

@@ -15,7 +15,7 @@ local gearSlotList =
     [mod.trinketSlot1] = true, [mod.mainHandSlot] = true, [mod.offHandSlot] = true, [mod.rangedSlot] = true, [mod.ammoSlot] = true
 };
 
-local function RoleBuff_EquipmentSetUsage(currentRole)
+local function equipmentSetUsage(currentRole)
     local setRoles = mod:GetEquipmentSetRoles();
 
     local currentSetNo, setName, numEquipmentSets = 1, nil, GetNumEquipmentSets();
@@ -111,7 +111,7 @@ local function RoleBuff_EquipmentSetUsage(currentRole)
     return matches, missmatches;
 end
 
-local function RoleBuff_PlayerEquipmentUsage()
+local function playerEquipmentUsage()
     local playerRole = nil;
     
     if mod.ClassGetRoleTable[mod.playerClassEn] ~= nil
@@ -121,13 +121,13 @@ local function RoleBuff_PlayerEquipmentUsage()
 
     if playerRole ~= nil and playerRole ~= ""
     then
-	equipmentMatchCount, equipmentMissmatchCount = RoleBuff_EquipmentSetUsage(playerRole);
+	equipmentMatchCount, equipmentMissmatchCount = equipmentSetUsage(playerRole);
     end
 end
 
 -- display chat window message to the player asking to assign 
 -- a role to an equipment set
-function RoleBuffAddOn:GearSetRoleAnnounce(frame, event, ...)
+function mod:GearSetRoleAnnounce(frame, event, ...)
     if multipleRoleClass and equipmentMissmatchCount == nil
     then
 	print(self.setCommandUsageIntroLine);
@@ -145,7 +145,7 @@ function RoleBuffAddOn:GearSetRoleAnnounce(frame, event, ...)
 end
 
 -- scan containers for the expected item type
-local function UseContainerItemWithType(scanAmmoItemType, itemDisplayType, chatOnly)
+local function useContainerItemWithType(scanAmmoItemType, itemDisplayType, chatOnly)
     local ammoItemId, foundContainer, foundSlotId = nil, nil, nil;
 
     for containerId = 0, NUM_BAG_SLOTS
@@ -195,7 +195,7 @@ end
 
 local ammoSlotID = GetInventorySlotInfo(mod.ammoSlot);
 
-local function IsAmmoItemSubtype(expectedItemSubtype)
+local function isAmmoItemSubtype(expectedItemSubtype)
     -- name, link, rarity, level, minLevel, type, subType, ...
     _, _, _, _, _, _, ammoItemSubtype = GetItemInfo(GetInventoryItemID(mod.unitPlayer, ammoSlotID));
     if ammoItemSubtype ~= nil and ammoItemSubtype == expectedItemSubtype
@@ -206,18 +206,18 @@ local function IsAmmoItemSubtype(expectedItemSubtype)
     return false;
 end
 
-function RoleBuffAddOn:UnitInventoryChanged(unitID, chatOnly)
+function mod:UnitInventoryChanged(unitID, chatOnly)
     if tonumber(mod.clientBuildNumber) < 13164  -- Patch 4.0.1 "Cataclysm Systems"
     then
 	if not equipmentSwapPending and UnitIsUnit(unitID, self.unitPlayer)
 	then
 	    local scanAmmoItemType, scanAmmoDisplayType = nil, nil;
-	    if (IsEquippedItemType(mod.itemTypeBows) or IsEquippedItemType(mod.itemTypeCrossbows)) and not IsEquippedItemType(mod.itemTypeArrow) and not IsAmmoItemSubtype(mod.itemTypeArrow)
+	    if (IsEquippedItemType(mod.itemTypeBows) or IsEquippedItemType(mod.itemTypeCrossbows)) and not IsEquippedItemType(mod.itemTypeArrow) and not isAmmoItemSubtype(mod.itemTypeArrow)
 	    then
 		scanAmmoItemType, scanAmmoDisplayType = mod.itemTypeArrow, mod.itemDisplayTypeArrows;
 		mod:DebugMessage("Missing arrows.")
 	    else
-		if IsEquippedItemType(mod.itemTypeGuns) and not IsEquippedItemType(mod.itemTypeBullet) and not IsAmmoItemSubtype(mod.itemTypeBullet)
+		if IsEquippedItemType(mod.itemTypeGuns) and not IsEquippedItemType(mod.itemTypeBullet) and not isAmmoItemSubtype(mod.itemTypeBullet)
 		then
 		    scanAmmoItemType, scanAmmoDisplayType = mod.itemTypeBullet, mod.itemDisplayTypeBullets;
 		    mod:DebugMessage("Missing bullets")
@@ -226,13 +226,13 @@ function RoleBuffAddOn:UnitInventoryChanged(unitID, chatOnly)
 		    return
 		end
 	    end
-	    UseContainerItemWithType(scanAmmoItemType, scanAmmoDisplayType, chatOnly);
+	    useContainerItemWithType(scanAmmoItemType, scanAmmoDisplayType, chatOnly);
 	end
     end
 end
 
 
-function RoleBuffAddOn:OnGearSetEvent(frame, event, ...)
+function mod:OnGearSetEvent(frame, event, ...)
     if event == self.eventEquipmentSwapPending
     then
 	equipmentSwapPending = true;
@@ -250,7 +250,7 @@ function RoleBuffAddOn:OnGearSetEvent(frame, event, ...)
 	    self:DebugMessage("Equipment swapped.");
 	end
 
-	RoleBuff_PlayerEquipmentUsage();
+	playerEquipmentUsage();
 
 	if event == self.eventEquipmentSetsChanged
 	then
@@ -260,14 +260,14 @@ function RoleBuffAddOn:OnGearSetEvent(frame, event, ...)
     end
 end
 
-function RoleBuffAddOn:GearSpec_InitialPlayerAlive(frame, event, ...)
+function mod:GearSpec_InitialPlayerAlive(frame, event, ...)
     if self.CheckEquipmentSet
     then
 	multipleRoleClass = (self.classRolesCount[self.playerClassEn] ~= nil and self.classRolesCount[self.playerClassEn] > 1);
 
 	if multipleRoleClass
 	then
-	    RoleBuff_PlayerEquipmentUsage();
+	    playerEquipmentUsage();
 
 	    frame:RegisterEvent(self.eventUnitInventoryChanged);
 	    frame:RegisterEvent(self.eventEquipmentSetsChanged);
@@ -280,7 +280,7 @@ function RoleBuffAddOn:GearSpec_InitialPlayerAlive(frame, event, ...)
     end
 end
 
-function RoleBuffAddOn:CombatCheckGearSpec(chatOnly)
+function mod:CombatCheckGearSpec(chatOnly)
     if self.CheckEquipmentSet and equipmentMissmatchCount ~= nil and equipmentMissmatchCount > 0
     then
 	self:ReportMessage(self.warningSwitchGear, chatOnly);
@@ -294,11 +294,11 @@ local playerRolesMap =
     [string.lower(mod.playerRoleHealer)] = mod.roleHealer
 };
 
-local function RoleBuff_GetRoleName(roleName)
+local function getRoleName(roleName)
     return playerRolesMap[string.lower(roleName)];
 end
 
-function RoleBuff_FindGearSet(setName)
+local function findGearSet(setName)
     for i = 1, GetNumEquipmentSets()
     do
 	currentSetName = GetEquipmentSetInfo(i)
@@ -312,7 +312,7 @@ function RoleBuff_FindGearSet(setName)
     return nil;
 end
 
-local function RoleBuff_ClassRolesFind(classRoles, roleName)
+local function classRolesFind(classRoles, roleName)
     for index, name in pairs(classRoles)
     do
 	if name == roleName
@@ -324,7 +324,7 @@ local function RoleBuff_ClassRolesFind(classRoles, roleName)
     return false;
 end
 
-function RoleBuffAddOn:SlashCommandEquipmentSet(cmdLine)
+function mod:SlashCommandEquipmentSet(cmdLine)
     if cmdLine[2] == nil or cmdLine[3] == nil or cmdLine[4] ~= nil
     then
 	-- <EquipmentSet> and <ExpectedRole> arguments are expected --
@@ -336,7 +336,7 @@ function RoleBuffAddOn:SlashCommandEquipmentSet(cmdLine)
 
     if multipleRoleClass
     then
-	local equipmentSetName, roleName, setRoles = RoleBuff_FindGearSet(setNameArg), RoleBuff_GetRoleName(setRoleArg), self:GetEquipmentSetRoles();
+	local equipmentSetName, roleName, setRoles = findGearSet(setNameArg), getRoleName(setRoleArg), self:GetEquipmentSetRoles();
 
 	if equipmentSetName == nil
 	then
@@ -344,7 +344,7 @@ function RoleBuffAddOn:SlashCommandEquipmentSet(cmdLine)
 	    return;
 	end
 
-	if roleName == nil or not RoleBuff_ClassRolesFind(self.classRoles[self.playerClassEn], roleName)
+	if roleName == nil or not classRolesFind(self.classRoles[self.playerClassEn], roleName)
 	then
 	    print(self.setCommandSecondArgMessage);
 	    return;
@@ -356,12 +356,12 @@ function RoleBuffAddOn:SlashCommandEquipmentSet(cmdLine)
     end
 end
 
-function RoleBuffAddOn:GearSpecCheck()
+function mod:GearSpecCheck()
     if self.CheckEquipmentSet
     then
 	if multipleRoleClass
 	then
-	    RoleBuff_PlayerEquipmentUsage();
+	    playerEquipmentUsage();
 
 	    if equipmentMissmatchCount ~= nil
 	    then

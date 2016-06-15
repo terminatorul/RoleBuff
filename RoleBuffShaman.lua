@@ -13,7 +13,7 @@
 
 local mod = RoleBuffAddOn;
 
-local checkShamanWeaponEnchant, checkShamanShield, checkElementalShield = true, true, true;
+local checkElementalWeapon, checkShamanShield, checkElementalShield = true, true, true;
 
 local checkShamanTotems, checkShamanWeapon, cheackShamanShielding = true, true, true;
 
@@ -21,11 +21,11 @@ local isRestaurationShaman, hasWeaponEnchantment, hasElementalShield, hasShamanS
 
 local ShamanAttacked, ShamanAttacking = false, false;
 
-local function OnPlayerAlive(frame, event, ...)
+local function onPlayerAlive(frame, event, ...)
     local specIndex, specName = mod:GetPlayerBuild();
     isRestaurationShaman = (specName == mod.restaurationSpecName);
 
-    if checkShamanWeaponEnchant
+    if checkElementalWeapon
     then
 	hasWeaponEnchantment = false;
 
@@ -66,8 +66,8 @@ local function OnPlayerAlive(frame, event, ...)
     end
 end
 
-local function CheckShamanWeaponEnchant(chatOnly)
-    if checkShamanWeaponEnchant and hasWeaponEnchantment
+local function checkShamanWeaponEnchant(chatOnly)
+    if checkElementalWeapon and hasWeaponEnchantment
     then
 	local hasMainHandEnchant, hasOffHandEnchant = mod:HasWeaponEnchants();
 
@@ -103,7 +103,7 @@ local function CheckShamanShield(chatOnly)
     end
 end
 
-function RoleBuffAddOn.GetShamanRole()
+function mod.GetShamanRole()
     if isRestaurationShaman 
     then
 	return mod.roleHealer;
@@ -112,20 +112,20 @@ function RoleBuffAddOn.GetShamanRole()
     end
 end
 
-local function CombatCheckShaman(chatOnly, frame, event, ...)
-    CheckShamanWeaponEnchant(chatOnly);
+local function combatCheckShaman(chatOnly, frame, event, ...)
+    checkShamanWeaponEnchant(chatOnly);
     CheckShamanShield(chatOnly)
 end
 
 mod.EventHandlerTableShaman =
 {
-    [mod.eventPlayerAlive] = OnPlayerAlive,
-    [mod.eventActiveTalentGroupChanged] = OnPlayerAlive,
+    [mod.eventPlayerAlive] = onPlayerAlive,
+    [mod.eventActiveTalentGroupChanged] = onPlayerAlive,
 
     [mod.eventPlayerRegenDisabled] = function(frame, event, ...)
 	if not ShamanAttacked and not ShamanAttacking
 	then
-	    CombatCheckShaman(false, frame, event, ...);
+	    combatCheckShaman(false, frame, event, ...);
 	end
 	ShamanAttacked = true;
     end,
@@ -137,7 +137,7 @@ mod.EventHandlerTableShaman =
     [mod.eventPlayerEnterCombat] = function(frame, event, ...)
 	if not ShamanAttacking and not ShamanAttacked
 	then
-	    CombatCheckShaman(false, frame, event, ...);
+	    combatCheckShaman(false, frame, event, ...);
 	end
 	ShamanAttacking = true;
     end,
@@ -150,11 +150,11 @@ mod.EventHandlerTableShaman =
 mod.SlashCommandHandlerShaman =
 {
     [mod.slashCommandPlayerCheck] = function()
-	OnPlayerAlive(nil, nil)
+	onPlayerAlive(nil, nil)
     end,
 
     [mod.slashCommandCombatCheck] = function()
-	CombatCheckShaman(true, nil, nil)
+	combatCheckShaman(true, nil, nil)
     end
 };
 

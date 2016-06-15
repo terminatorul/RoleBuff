@@ -16,7 +16,7 @@ local hasGreaterBlessingOfSanctuaryRank = 0;
 local auraIndex, auraCount = 0, 0;
 local RoleBuff_PaladinAttacked, RoleBuff_PaladinAttacking = false, false;
 
-local function RoleBuff_InitialPlayerAlivePaladin(event, frame, ...)
+local function initialPlayerAlivePaladin(event, frame, ...)
     local specIndex, specName = mod:GetPlayerBuild();
 
     if specIndex ~= nil
@@ -120,7 +120,7 @@ local function RoleBuff_InitialPlayerAlivePaladin(event, frame, ...)
     end
 end
 
-local function RoleBuff_UpdatePaladinAura(event, frame, ...)
+local function updatePaladinAura(event, frame, ...)
     auraIndex, auraCount = GetShapeshiftForm(), GetNumShapeshiftForms();
 end
 
@@ -139,7 +139,7 @@ local paladinBlessingBuffList =
     [mod.blessingOfSanctuary] = { ["kind"] = "sanctuary" }, [mod.greaterBlessingOfSanctuary] = { ["kind"] = "sanctuary" }
 };
 
-local function RoleBuff_CheckPaladinBlessings(paladinBlessingRank, paladinBlessingBuffs)
+local function checkPaladinBlessings(paladinBlessingRank, paladinBlessingBuffs)
     for kind, list in pairs(paladinBlessingRank)
     do
 	for blessing, rank in pairs(list)
@@ -158,7 +158,7 @@ local function RoleBuff_CheckPaladinBlessings(paladinBlessingRank, paladinBlessi
     end
 end
 
-local function RoleBuff_CombatCheckPaladin(chatOnly, event, frame, ...)
+local function combatCheckPaladin(chatOnly, event, frame, ...)
     if checkPaladinAura and auraIndex <= 0 and auraCount > 0
     then
 	mod:ReportMessage(mod:AbilityToCastMessage(mod.paladinAura), chatOnly);
@@ -237,7 +237,7 @@ local function RoleBuff_CombatCheckPaladin(chatOnly, event, frame, ...)
 	else
 	    if checkBlessingBuffs and not hasBlessingSelfBuff
 	    then
-		local blessingToCast = RoleBuff_CheckPaladinBlessings(paladinBlessingRank, paladinBlessingBuffs);
+		local blessingToCast = checkPaladinBlessings(paladinBlessingRank, paladinBlessingBuffs);
 		if blessingToCast ~= nil 
 		then
 		    mod:ReportMessage(mod:AbilityToCastMessage(mod.paladinBlessing), chatOnly);
@@ -267,10 +267,10 @@ local function RoleBuff_CombatCheckPaladin(chatOnly, event, frame, ...)
     end
 end
 
-RoleBuffAddOn.EventHandlerTablePaladin = 
+mod.EventHandlerTablePaladin =
 {
     [mod.eventPlayerAlive] = function(frame, event, ...)
-	RoleBuff_InitialPlayerAlivePaladin(frame, event, ...);
+	initialPlayerAlivePaladin(frame, event, ...);
 
 	frame:RegisterEvent(mod.eventActiveTalentGroupChanged);
 	frame:RegisterEvent(mod.eventUpdateShapeshiftForm);
@@ -281,14 +281,14 @@ RoleBuffAddOn.EventHandlerTablePaladin =
 	frame:RegisterEvent(mod.eventPlayerRegenEnabled);
     end,
 
-    [mod.eventActiveTalentGroupChanged] = RoleBuff_InitialPlayerAlivePaladin,
-    [mod.eventUpdateShapeshiftForm] = RoleBuff_UpdatePaladinAura,
-    [mod.eventUpdateShapeshiftForms] = RoleBuff_UpdatePaladinAura,
+    [mod.eventActiveTalentGroupChanged] = initialPlayerAlivePaladin,
+    [mod.eventUpdateShapeshiftForm] = updatePaladinAura,
+    [mod.eventUpdateShapeshiftForms] = updatePaladinAura,
 
     [mod.eventPlayerEnterCombat] = function(frame, event, ...)
 	if not RoleBuff_PaladinAttacked and not RoleBuff_PaladinAttacking
 	then
-	    RoleBuff_CombatCheckPaladin(false, frame, event, ...)
+	    combatCheckPaladin(false, frame, event, ...)
 	end
 
 	RoleBuff_PaladinAttacking = true;
@@ -301,7 +301,7 @@ RoleBuffAddOn.EventHandlerTablePaladin =
     [mod.eventPlayerRegenDisabled] = function(frame, event, ...)
 	if not RoleBuff_PaladinAttacked and not RoleBuff_PaladinAttacking
 	then
-	    RoleBuff_CombatCheckPaladin(false, frame, event, ...)
+	    combatCheckPaladin(false, frame, event, ...)
 	end
 	
 	RoleBuff_PaladinAttacked = true;
@@ -312,18 +312,18 @@ RoleBuffAddOn.EventHandlerTablePaladin =
     end
 };
 
-RoleBuffAddOn.SlashCommandHandlerPaladin =
+mod.SlashCommandHandlerPaladin =
 {
     [mod.slashCommandPlayerCheck] = function()
-	RoleBuff_InitialPlayerAlivePaladin(nil, nil);
+	initialPlayerAlivePaladin(nil, nil);
     end,
 
     [mod.slashCommandCombatCheck] = function()
-	RoleBuff_CombatCheckPaladin(true, nil, nil);
+	combatCheckPaladin(true, nil, nil);
     end
 };
 
-function RoleBuffAddOn.GetPaladinRole()
+function mod.GetPaladinRole()
     if isProtectionPaladin
     then
 	return mod.roleTank;
@@ -337,7 +337,7 @@ function RoleBuffAddOn.GetPaladinRole()
     end
 end
 
-function RoleBuffAddOn:PaladinOptionsFrameLoad(panel)
+function mod:PaladinOptionsFrameLoad(panel)
     panel.name = self.classNamePaladin;
     panel.parent = self.displayName;
     InterfaceOptions_AddCategory(panel)

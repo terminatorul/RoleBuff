@@ -3,7 +3,7 @@
 
 local mod = RoleBuffAddOn;
 
-local function RoleBuff_TableSelection(sourceTable, entries, defaultVal)
+local function tableSelection(sourceTable, entries, defaultVal)
     local resultTable = { };
 
     if sourceTable == nil
@@ -30,7 +30,7 @@ local function RoleBuff_TableSelection(sourceTable, entries, defaultVal)
     return resultTable;
 end
 
-local function RoleBuff_ReadStorageTable(storageTable, defaultVal, categories, ...)
+local function readStorageTable(storageTable, defaultVal, categories, ...)
     local sourceTable = storageTable;
 
     if type(categories) == "string" or type(categories) == "nil"
@@ -53,10 +53,10 @@ local function RoleBuff_ReadStorageTable(storageTable, defaultVal, categories, .
 	entries = { ... };
     end
 
-    return RoleBuff_TableSelection(sourceTable, entries, defaultVal)
+    return tableSelection(sourceTable, entries, defaultVal)
 end
 
-local function RoleBuff_WriteStorageTable(storageTable, categories, entries)
+local function writeStorageTable(storageTable, categories, entries)
     local destinationTable = storageTable;
 
     if type(categories) == "string" or type(categories) == "nil"
@@ -83,7 +83,7 @@ local function RoleBuff_WriteStorageTable(storageTable, categories, entries)
 end
 
 -- return unitType, unitNpcID, unitPetID from a given unit GUID
-function RoleBuffAddOn:GetTypeAndID(guid)
+function mod:GetTypeAndID(guid)
     local baseIndex = 0;
 
     if guid:sub(1, 2) == "0x"
@@ -94,30 +94,30 @@ function RoleBuffAddOn:GetTypeAndID(guid)
     return tonumber(guid:sub(baseIndex + 3, baseIndex + 3), 16) % 8, tonumber(guid:sub(baseIndex + 7, baseIndex + 10), 16), tonumber(guid:sub(baseIndex + 4, baseIndex + 10), 16)
 end
 
-function RoleBuffAddOn:ReadAddOnStorage(defaultVal, categories, ...)
-    return RoleBuff_ReadStorageTable(RoleBuffAddOn_StorageTable, defaultVal, categories, ...)
+function mod:ReadAddOnStorage(defaultVal, categories, ...)
+    return readStorageTable(RoleBuffAddOn_StorageTable, defaultVal, categories, ...)
 end
 
-function RoleBuffAddOn:ReadCharacterStorage(defaultVal, categories, ...)
-    return RoleBuff_ReadStorageTable(RoleBuffAddOn_CharacterStorageTable, defaultVal, categories, ...)
+function mod:ReadCharacterStorage(defaultVal, categories, ...)
+    return readStorageTable(RoleBuffAddOn_CharacterStorageTable, defaultVal, categories, ...)
 end
 
-function RoleBuffAddOn:WriteAddOnStorage(categories, entries)
+function mod:WriteAddOnStorage(categories, entries)
     if RoleBuffAddOn_StorageTable == nil
     then
 	RoleBuffAddOn_StorageTable = { }
     end
 
-    RoleBuff_WriteStorageTable(RoleBuffAddOn_StorageTable, categories, entries)
+    writeStorageTable(RoleBuffAddOn_StorageTable, categories, entries)
 end
 
-function RoleBuffAddOn:WriteCharacterStorage(categories, entries)
+function mod:WriteCharacterStorage(categories, entries)
     if RoleBuffAddOn_CharacterStorageTable == nil
     then
 	RoleBuffAddOn_CharacterStorageTable = { }
     end
 
-    RoleBuff_WriteStorageTable(RoleBuffAddOn_CharacterStorageTable, categories, entries)
+    writeStorageTable(RoleBuffAddOn_CharacterStorageTable, categories, entries)
 end
 
 local itemCacheEntry = "itemCache";
@@ -126,7 +126,7 @@ local rolesPerSetEntry = "setRoles";
 local localCache = { };
 
 
-function RoleBuffAddOn:GetEquipmentSetRoles()
+function mod:GetEquipmentSetRoles()
     if RoleBuffAddOn_CharacterStorageTable == nil
     then
 	RoleBuffAddOn_CharacterStorageTable = { };
@@ -140,7 +140,7 @@ function RoleBuffAddOn:GetEquipmentSetRoles()
     return RoleBuffAddOn_CharacterStorageTable[rolesPerSetEntry];
 end
 
-function RoleBuffAddOn:GetItemId(itemName)
+function mod:GetItemId(itemName)
     if localCache[itemName] == nil
     then
 	-- Given item not yet cached or not yet validated
@@ -198,7 +198,7 @@ function RoleBuffAddOn:GetItemId(itemName)
     return localCache[itemName];
 end
 
-function RoleBuffAddOn:GetGroupMembersCount()
+function mod:GetGroupMembersCount()
     local groupMembersCount;
 
     if tonumber(mod.clientBuildNumber) < 16016  -- Patch 5.0.4 "Mists of Pandaria Systems"
@@ -221,12 +221,12 @@ function RoleBuffAddOn:GetGroupMembersCount()
     end
 end
 
-function RoleBuffAddOn:PlayerIsInGroup()
+function mod:PlayerIsInGroup()
     return self:GetGroupMembersCount() > 1;
 end
 
 
-function RoleBuffAddOn:CountTalentsInTree(tabIndex)
+function mod:CountTalentsInTree(tabIndex)
     if tonumber(mod.clientBuildNumber) < 13164  -- Patch 4.0.1 "Cataclysm Systems"
     then
 	local tabName, tabIcon, tabPoints = GetTalentTabInfo(tabIndex);
@@ -237,7 +237,7 @@ function RoleBuffAddOn:CountTalentsInTree(tabIndex)
     end
 end
 
-function RoleBuffAddOn:GetPlayerBuild()
+function mod:GetPlayerBuild()
     local specPoints = { };
     local lastName, maxIndex, maxName, maxPoints = nil, 0, 0, -1;
 
@@ -273,7 +273,7 @@ function RoleBuffAddOn:GetPlayerBuild()
     return maxIndex, maxName;
 end
 
-function RoleBuffAddOn:GetPlayerAbilityAndRank(abilityName)
+function mod:GetPlayerAbilityAndRank(abilityName)
     local spellName, spellRank = GetSpellInfo(abilityName);
     if spellName == nil
     then
@@ -302,7 +302,7 @@ function RoleBuffAddOn:GetPlayerAbilityAndRank(abilityName)
     end
 end
 
-function RoleBuffAddOn:CheckPlayerHasAbility(abilityName)
+function mod:CheckPlayerHasAbility(abilityName)
     local spellName, spellRank = GetSpellInfo(abilityName);
     if spellName ~= nil
     then
@@ -311,7 +311,7 @@ function RoleBuffAddOn:CheckPlayerHasAbility(abilityName)
     return spellName ~= nil;
 end
 
-function RoleBuffAddOn:GetPlayerAbilityRanks(playerAbilities, abilityRanks)
+function mod:GetPlayerAbilityRanks(playerAbilities, abilityRanks)
     local hasAbilities = false;
     for playerSpell, enabled in pairs(playerAbilities)
     do
@@ -347,7 +347,7 @@ function RoleBuffAddOn:GetPlayerAbilityRanks(playerAbilities, abilityRanks)
     return hasAbilities;
 end
 
-function RoleBuffAddOn:HasWeaponEnchants()
+function mod:HasWeaponEnchants()
     local hasMainHandEnchant, hasOffHandEnchant = nil, nil;
 
     if tonumber(mod.clientBuildNumber) >= 18482 -- Patch 6.0 The Iron Tide
@@ -360,7 +360,7 @@ function RoleBuffAddOn:HasWeaponEnchants()
     return hasMainHandEnchant, hasOffHandEnchant
 end
 
-function RoleBuffAddOn:ReportMessage(message, chatOnly)
+function mod:ReportMessage(message, chatOnly)
     if chatOnly
     then
 	print(self.displayName .. ": " .. message)
@@ -371,7 +371,7 @@ function RoleBuffAddOn:ReportMessage(message, chatOnly)
     end
 end
 
-function RoleBuffAddOn:ShowMessage(message, chatOnly)
+function mod:ShowMessage(message, chatOnly)
     if chatOnly
     then
 	print(self.displayName .. ": * " .. message)
@@ -380,7 +380,7 @@ function RoleBuffAddOn:ShowMessage(message, chatOnly)
     end
 end
 
-function RoleBuffAddOn:AddUpdateHandler(indexString, handlerFn)
+function mod:AddUpdateHandler(indexString, handlerFn)
     if self.UpdateHandlersSet == nil
     then
 	self.UpdateHandlersSet = { [indexString] = handlerFn }
@@ -389,7 +389,7 @@ function RoleBuffAddOn:AddUpdateHandler(indexString, handlerFn)
     end
 end
 
-function RoleBuffAddOn:RemoveUpdateHandler(indexString)
+function mod:RemoveUpdateHandler(indexString)
     if self.UpdateHandlersSet ~= nil
     then
 	self.UpdateHandlersSet[indexString] = nil;

@@ -6,23 +6,22 @@ local battleStanceIndex = 1;
 local defensiveStanceIndex = 2;
 local bserkerStanceIndex = 3;
 
-isProtectionWarrior = false;
-hasBlock = false;
-hasDefensiveStance = false;
-hasVigilance = false;
+local isProtectionWarrior = false;
+local hasBlock = false;
+local hasDefensiveStance = false;
+local hasVigilance = false;
 
-playerIsInGroup = false;
-vigilanceTargetUnit = nil;
-vigilanceRank = nil;
-vigilanceExpireTime = 0;
-vigilanceIntervalReported = false;
-stanceIndex = 0;
-RoleBuff_WarriorAttacked, RoleBuff_WarriorAttacking = false, false;
+local vigilanceTargetUnit = nil;
+local vigilanceRank = nil;
+local vigilanceExpireTime = 0;
+local vigilanceIntervalReported = false;
+local stanceIndex = 0;
+local RoleBuff_WarriorAttacked, RoleBuff_WarriorAttacking = false, false;
 
 local vigilanceSpellName, vigilanceBuffName = mod.vigilanceSpellName, mod.vigilanceBuffName;
 local unitTarget, unitPlayer = mod.unitTarget, mod.unitPlayer;
 
-local function RoleBuff_CheckProtectionWarrior()
+local function checkProtectionWarrior()
     local specIndex, specName = mod:GetPlayerBuild();
 
     if specIndex ~= nil
@@ -34,15 +33,15 @@ local function RoleBuff_CheckProtectionWarrior()
     end
 end
 
-local function RoleBuff_InitialPlayerAliveWarrior(frame, event, ...)
-    isProtectionWarrior = RoleBuff_CheckProtectionWarrior();
+local function initialPlayerAliveWarrior(frame, event, ...)
+    isProtectionWarrior = checkProtectionWarrior();
     hasDefensiveStance = mod:CheckPlayerHasAbility(mod.defensiveStanceSpellName);
     hasVigilance = mod:CheckPlayerHasAbility(vigilanceSpellName);
     hasBlock = mod:CheckPlayerHasAbility(mod.blockSpellName);
     stanceIndex = GetShapeshiftForm();
 end
 
-local function RoleBuff_UpdateShapeshiftFormsWarrior(frame, event, ...)
+local function updateShapeshiftFormsWarrior(frame, event, ...)
     local newStanceIndex = GetShapeshiftForm();
     if newStanceIndex ~= 0 and newStanceIndex ~= stanceIndex
     then
@@ -60,7 +59,7 @@ local function RoleBuff_UpdateShapeshiftFormsWarrior(frame, event, ...)
     stanceIndex = newStanceIndex
 end
 
-local function RoleBuff_CheckVigilanceTargetWarrior(chatOnly)
+local function checkVigilanceTargetWarrior(chatOnly)
     if hasVigilance
     then
 	if vigilanceExpireTime - 15 < GetTime()
@@ -100,7 +99,7 @@ local function RoleBuff_CheckVigilanceTargetWarrior(chatOnly)
     end
 end
 
-local function RoleBuff_CombatCheckWarrior(chatOnly)
+local function combatCheckWarrior(chatOnly)
     if isProtectionWarrior
     then
 	if checkWarriorStance and hasDefensiveStance and (stanceIndex ~= defensiveStanceIndex)
@@ -115,12 +114,12 @@ local function RoleBuff_CombatCheckWarrior(chatOnly)
 
 	if checkWarriorVigilance
 	then
-	    RoleBuff_CheckVigilanceTargetWarrior(chatOnly);
+	    checkVigilanceTargetWarrior(chatOnly);
 	end
     end
 end
 
-local function RoleBuff_UnitSpellCastSucceededWarrior(unit, spellName, spellRank, lineIDCounter)
+local function unitSpellCastSucceededWarrior(unit, spellName, spellRank, lineIDCounter)
     if spellName == vigilanceSpellName and UnitIsUnit(unit, unitPlayer)
     then
 	vigilanceTargetUnit = UnitName(unitTarget);
@@ -129,7 +128,7 @@ local function RoleBuff_UnitSpellCastSucceededWarrior(unit, spellName, spellRank
     end
 end
 
-local function RoleBuff_UnitAuraChange(unit)
+local function onUnitAuraChange(unit)
     if unit and vigilanceTargetUnit and UnitIsUnit(unit, vigilanceTargetUnit) and UnitIsVisible(vigilanceTargetUnit)
     then
 	local spellName = nil;
@@ -157,11 +156,11 @@ local function RoleBuff_UnitAuraChange(unit)
     end
 end
 
-RoleBuffAddOn.EventHandlerTableWarrior = 
+mod.EventHandlerTableWarrior = 
 {
     [mod.eventPlayerAlive] = function(frame, event, ...)
-	--xpcall(RoleBuff_InitialPlayerAliveWarrior, RoleBuff_ErrorHandler, frame, event, ...)
-	RoleBuff_InitialPlayerAliveWarrior(frame, event, ...);
+	--xpcall(initialPlayerAliveWarrior, RoleBuff_ErrorHandler, frame, event, ...)
+	initialPlayerAliveWarrior(frame, event, ...);
 
 	frame:RegisterEvent(mod.eventActiveTalentGroupChanged);
 	frame:RegisterEvent(mod.eventUpdateShapeshiftForms);
@@ -175,7 +174,7 @@ RoleBuffAddOn.EventHandlerTableWarrior =
     end,
 
     [mod.eventActiveTalentGroupChanged] = function(frame, event, ...)
-	RoleBuff_InitialPlayerAliveWarrior(frame, event, ...);
+	initialPlayerAliveWarrior(frame, event, ...);
 	vigilanceTargetUnit = nil;
 	vigilanceExpireTime = 0;
     end,
@@ -186,17 +185,17 @@ RoleBuffAddOn.EventHandlerTableWarrior =
     end,
 
     [mod.eventUpdateShapeshiftForms] = function(frame, event, ...)
-	RoleBuff_UpdateShapeshiftFormsWarrior(frame, event, ...);
+	updateShapeshiftFormsWarrior(frame, event, ...);
     end,
 
     [mod.eventUpdateShapeshiftForm] = function(frame, event, ...)
-	RoleBuff_UpdateShapeshiftFormsWarrior(frame, event, ...);
+	updateShapeshiftFormsWarrior(frame, event, ...);
     end,
 
     [mod.eventPlayerRegenDisabled] = function(frame, event, ...)
 	if not RoleBuff_WarriorAttacked and not RoleBuff_WarriorAttacking
 	then
-	    RoleBuff_CombatCheckWarrior(false);
+	    combatCheckWarrior(false);
 	end
 	RoleBuff_WarriorAttacked = true;
     end,
@@ -208,7 +207,7 @@ RoleBuffAddOn.EventHandlerTableWarrior =
     [mod.eventPlayerEnterCombat] = function(frame, event, ...)
 	if not RoleBuff_WarriorAttacked and not RoleBuff_WarriorAttacking
 	then
-	    RoleBuff_CombatCheckWarrior(false);
+	    combatCheckWarrior(false);
 	end
 	RoleBuff_WarriorAttacking = true;
     end,
@@ -219,27 +218,27 @@ RoleBuffAddOn.EventHandlerTableWarrior =
 
     [mod.eventUnitSpellCastSucceeded] = function(frame, event, ...)
 	local unit, spellName, spellRank, lineIDCounterargsList = ...;
-	RoleBuff_UnitSpellCastSucceededWarrior(unit, spellName, spellRank, lineIDCounter);
+	unitSpellCastSucceededWarrior(unit, spellName, spellRank, lineIDCounter);
     end,
 
     [mod.eventUnitAura] = function(frame, event, ...)
 	local args = { ... };
-	RoleBuff_UnitAuraChange(args[1]);
+	onUnitAuraChange(args[1]);
     end
 };
 
-RoleBuffAddOn.SlashCommandHandlerWarrior =
+mod.SlashCommandHandlerWarrior =
 {
     [mod.slashCommandPlayerCheck] = function()
-	RoleBuff_InitialPlayerAliveWarrior(nil, nil)
+	initialPlayerAliveWarrior(nil, nil)
     end,
 
     [mod.slashCommandCombatCheck] = function()
-	RoleBuff_CombatCheckWarrior(true)
+	combatCheckWarrior(true)
     end
 };
 
-function RoleBuffAddOn.GetWarriorRole()
+function mod.GetWarriorRole()
     if isProtectionWarrior
     then
 	return mod.roleTank;
@@ -248,7 +247,7 @@ function RoleBuffAddOn.GetWarriorRole()
     return mod.roleDPS;
 end
 
-function RoleBuffAddOn:WarriorOptionsFrameLoad(panel)
+function mod:WarriorOptionsFrameLoad(panel)
     panel.name = self.classNameWarrior;
     panel.parent = self.displayName;
     InterfaceOptions_AddCategory(panel);

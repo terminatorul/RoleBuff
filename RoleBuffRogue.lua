@@ -7,11 +7,11 @@ local checkRoguePoisons = true;
 local hasRoguePoisons = false;
 local RoleBuff_RogueAttacked, RoleBuff_RogueAttacking = false, false;
 
-local function RoleBuff_InitialPlayerAliveRogue(frame, event, ...)
+local function initialPlayerAliveRogue(frame, event, ...)
     hasRoguePoisons = mod:CheckPlayerHasAbility(mod.poisonsSpellName);
 end
 
-local function RoleBuff_CombatCheckRogue(chatOnly, frame, event, ...)
+local function combatCheckRogue(chatOnly, frame, event, ...)
     if checkRoguePoisons and hasRoguePoisons
     then
 	local hasMainHandEnchant, hasOffHandEnchant = mod:HasWeaponEnchants();
@@ -23,10 +23,10 @@ local function RoleBuff_CombatCheckRogue(chatOnly, frame, event, ...)
     end
 end
 
-RoleBuffAddOn.EventHandlerTableRogue = 
+mod.EventHandlerTableRogue = 
 {
     [mod.eventPlayerAlive] = function(frame, event, ...)
-	RoleBuff_InitialPlayerAliveRogue(frame, event, ...);
+	initialPlayerAliveRogue(frame, event, ...);
 
 	frame:RegisterEvent(mod.eventPlayerEnterCombat);
 	frame:RegisterEvent(mod.eventPlayerLeaveCombat);
@@ -37,7 +37,7 @@ RoleBuffAddOn.EventHandlerTableRogue =
     [mod.eventPlayerEnterCombat] = function(frame, event, ...)
 	if not RoleBuff_RogueAttacked and not RoleBuff_RogueAttacking
 	then
-	    RoleBuff_CombatCheckRogue(false, frame, event, ...)
+	    combatCheckRogue(false, frame, event, ...)
 	end
 
 	RoleBuff_RogueAttacking = true
@@ -54,33 +54,33 @@ RoleBuffAddOn.EventHandlerTableRogue =
     [mod.eventPlayerRegenDisabled] = function(frame, event, ...)
 	if not RoleBuff_RogueAttacked and not RoleBuff_RogueAttacking
 	then
-	    RoleBuff_CombatCheckRogue(false, frame, event, ...)
+	    combatCheckRogue(false, frame, event, ...)
 	end
 
 	RoleBuff_RogueAttacked = true
     end
 };
 
-RoleBuffAddOn.SlashCommandHandlerRogue = 
+mod.SlashCommandHandlerRogue = 
 {
     [mod.slashCommandPlayerCheck] = function()
-	return RoleBuff_InitialPlayerAliveRogue(nil, nil)
+	return initialPlayerAliveRogue(nil, nil)
     end,
 
     [mod.slashCommandCombatCheck] = function()
-	return RoleBuff_CombatCheckRogue(true, nil, nil)
+	return combatCheckRogue(true, nil, nil)
     end
 };
 
-RoleBuffAddOn.CommandHandlerRogue = 
+mod.CommandHandlerRogue = 
 {
 };
 
-function RoleBuffAddOn.GetRogueRole()
+function mod.GetRogueRole()
     return mod.roleDPS;
 end
 
-function RoleBuffAddOn:RogueOptionsFrameLoad(panel)
+function mod:RogueOptionsFrameLoad(panel)
     panel.name = mod.classNameRogue;
     panel.parent = mod.displayName;
     InterfaceOptions_AddCategory(panel)
