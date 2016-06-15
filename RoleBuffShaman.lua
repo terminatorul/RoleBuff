@@ -74,7 +74,7 @@ local function CheckShamanWeaponEnchant(chatOnly)
 	if hasMainHandEnchant ~= nil and (hasOffhandEnchant ~= nil or not OffhandHasWeapon())
 	then
 	else
-	    mod:ReportMessage(mod.shamanWeaponEnchantment, chatOnly);
+	    mod:ReportMessage(mod:AbilityToCastMessage(mod.shamanElementalWeapon), chatOnly);
 	end
     end
 end

@@ -1,4 +1,4 @@
-local this = RoleBuffAddOn;
+local mod = RoleBuffAddOn;
 
 local checkDeathKnightPresence, checkDeathKnightDualWielding, checkDeathKnightGhoul = true, true, false;
 
@@ -44,20 +44,20 @@ local function RoleBuff_CheckTankTalentsInvestedDeathKnight()
 	return true;
     else
 	local bloodTabPoints, frostTabPoints, unholyTabPoints = 0, 0, 0;
-	local tabName, tabPoints = this:CountTalentsInTree(bloodTabIndex);
+	local tabName, tabPoints = mod:CountTalentsInTree(bloodTabIndex);
 
 	if tabName ~= nil
 	then
 	    bloodTabPoints = tabPoints;
 	end
 
-	tabName, tabPoints = this:CountTalentsInTree(frostTabIndex);
+	tabName, tabPoints = mod:CountTalentsInTree(frostTabIndex);
 	if tabName ~= nil
 	then
 	    frostTabPoints = tabPoints;
 	end
 
-	tabName, tabPoints = this:CountTalentsInTree(unholyTabIndex);
+	tabName, tabPoints = mod:CountTalentsInTree(unholyTabIndex);
 	if tabName ~= nil
 	then
 	    unholyTabPoints = tabPoints;
@@ -74,18 +74,18 @@ end
 
 local function RoleBuff_InitialPlayerAliveDeathKnight(frame, event, ...)
     hasTankTalentsInvested = RoleBuff_CheckTankTalentsInvestedDeathKnight();
-    hasFrostPresence = this:CheckPlayerHasAbility(this.frostPresenceSpellName);
+    hasFrostPresence = mod:CheckPlayerHasAbility(mod.frostPresenceSpellName);
 
     if hasTankTalentsInvested
     then
-	print(this.displayName .. ": " .. this:FormatSpecialization(this.playerClassLocalized, this.playerRoleTank) .. ".");
+	print(mod.displayName .. ": " .. mod:FormatSpecialization(mod.playerClassLocalized, mod.playerRoleTank) .. ".");
     end
 
     local name, iconPath, tier, column, currentRank, maxRank = GetTalentInfo(frostTabIndex, threatOfThassarianTalentIndex);
     if name ~= nil and currentRank == maxRank
     then
 	hasThreatOfThassarian = true;
-	print(this.displayName .. ": " .. this:FormatSpecialization(this.playerClassLocalized, this.frostSpecName, this.abilityDualWielding) .. ".");
+	print(mod.displayName .. ": " .. mod:FormatSpecialization(mod.playerClassLocalized, mod.frostSpecName, mod.abilityDualWielding) .. ".");
     else
 	hasThreadOfThassarian = false;
     end
@@ -104,12 +104,12 @@ local function RoleBuff_UpdatePresenceDeathKnight(frame, even, ...)
 	local icon, name, active = GetShapeshiftFormInfo(newPresenceIndex)
 	if name ~= nil
 	then
-	    this:DebugMessage(name);
+	    mod:DebugMessage(name);
 	else
 	    print("RoleBuff: presence " .. stanceIndex .. " active.");
 	end
     else
-	this:DebugMessage(this.warningNoDeathKnightPresence);
+	mod:DebugMessage(mod.warningNoDeathKnightPresence);
     end
 
     presenceIndex = newPresenceIndex;
@@ -118,9 +118,9 @@ end
 local function RoleBuff_CombatCheckDeathKnight(chatOnly, frame, event, ...)
     if checkDeathKnightDualWielding and hasThreatOfThassarian
     then
-	if IsEquippedItemType(this.itemTypeTwoHand)
+	if IsEquippedItemType(mod.itemTypeTwoHand)
 	then
-	    this:ReportMessage(this:ItemEquipMessage(this.itemOneHandWeapon), chatOnly);
+	    mod:ReportMessage(mod:ItemEquipMessage(mod.itemOneHandWeapon), chatOnly);
 	end
     end
 
@@ -130,12 +130,12 @@ local function RoleBuff_CombatCheckDeathKnight(chatOnly, frame, event, ...)
 	then
 	    if presenceIndex ~= frostPresenceIndex
 	    then
-		this:ReportMessage(this:SwitchFormMessage(this.frostPresenceSpellName), chatOnly) 
+		mod:ReportMessage(mod:SwitchFormMessage(mod.frostPresenceSpellName), chatOnly) 
 	    end
 	else
 	    if presenceIndex == frostPresenceIndex
 	    then
-		this:ReportMessage(this:AbilityActiveMessage(this.frostPresenceSpellName), chatOnly)
+		mod:ReportMessage(mod:AbilityActiveMessage(mod.frostPresenceSpellName), chatOnly)
 	    end
 	end
     end
@@ -143,24 +143,24 @@ end
 
 RoleBuffAddOn.EventHandlerTableDeathKnight = 
 {
-    [this.eventPlayerAlive] = function(frame, event, ...)
+    [mod.eventPlayerAlive] = function(frame, event, ...)
 	--xpcall(RoleBuff_InitialPlayerAliveDeathKnight, RoleBuff_ErrorHandler, frame, event, ...)
 	RoleBuff_InitialPlayerAliveDeathKnight(frame, event, ...);
 
-	frame:RegisterEvent(this.eventActiveTalentGroupChanged);
-	frame:RegisterEvent(this.eventUpdateShapeshiftForms);
-	frame:RegisterEvent(this.eventUpdateShapeshiftForm);
-	frame:RegisterEvent(this.eventPlayerRegenDisabled);
-	frame:RegisterEvent(this.eventPlayerRegenEnabled);
-	frame:RegisterEvent(this.eventPlayerEnterCombat);
-	frame:RegisterEvent(this.eventPlayerLeaveCombat);
+	frame:RegisterEvent(mod.eventActiveTalentGroupChanged);
+	frame:RegisterEvent(mod.eventUpdateShapeshiftForms);
+	frame:RegisterEvent(mod.eventUpdateShapeshiftForm);
+	frame:RegisterEvent(mod.eventPlayerRegenDisabled);
+	frame:RegisterEvent(mod.eventPlayerRegenEnabled);
+	frame:RegisterEvent(mod.eventPlayerEnterCombat);
+	frame:RegisterEvent(mod.eventPlayerLeaveCombat);
     end,
 
-    [this.eventActiveTalentGroupChanged] = RoleBuff_InitialPlayerAliveDeathKnight,
-    [this.eventUpdateShapeshiftForms] = RoleBuff_UpdatePresenceDeathKnight,
-    [this.eventUpdateShapeshiftForm] = RoleBuff_UpdatePresenceDeathKnight,
+    [mod.eventActiveTalentGroupChanged] = RoleBuff_InitialPlayerAliveDeathKnight,
+    [mod.eventUpdateShapeshiftForms] = RoleBuff_UpdatePresenceDeathKnight,
+    [mod.eventUpdateShapeshiftForm] = RoleBuff_UpdatePresenceDeathKnight,
 
-    [this.eventPlayerRegenDisabled] = function(frame, event, ...)
+    [mod.eventPlayerRegenDisabled] = function(frame, event, ...)
 	if not RoleBuff_DeathKnightAttacked and not RoleBuff_DeathKnightAttacking
 	then
 	    RoleBuff_CombatCheckDeathKnight(false, frame, event, ...);
@@ -168,11 +168,11 @@ RoleBuffAddOn.EventHandlerTableDeathKnight =
 	RoleBuff_DeathKnightAttacked = true;
     end,
 
-    [this.eventPlayerRegenEnabled] = function(frame, event, ...)
+    [mod.eventPlayerRegenEnabled] = function(frame, event, ...)
 	RoleBuff_DeathKnightAttacked = false;
     end,
 
-    [this.eventPlayerEnterCombat] = function(frame, event, ...)
+    [mod.eventPlayerEnterCombat] = function(frame, event, ...)
 	if not RoleBuff_DeathKnightAttacking and not RoleBuff_DeathKnightAttacked
 	then
 	    RoleBuff_CombatCheckDeathKnight(false, frame, event, ...);
@@ -180,18 +180,18 @@ RoleBuffAddOn.EventHandlerTableDeathKnight =
 	RoleBuff_DeathKnightAttacking = true;
     end,
 
-    [this.eventPlayerLeaveCombat] = function(frame, event, ...)
+    [mod.eventPlayerLeaveCombat] = function(frame, event, ...)
 	RoleBuff_DeathKnightAttacking = false;
     end
 };
 
 RoleBuffAddOn.SlashCommandHandlerDeathKnight =
 {
-    [this.slashCommandPlayerCheck] = function()
+    [mod.slashCommandPlayerCheck] = function()
 	RoleBuff_InitialPlayerAliveDeathKnight(nil, nil)
     end,
 
-    [this.slashCommandCombatCheck] = function()
+    [mod.slashCommandCombatCheck] = function()
 	RoleBuff_CombatCheckDeathKnight(true, nil, nil)
     end
 };
@@ -199,14 +199,14 @@ RoleBuffAddOn.SlashCommandHandlerDeathKnight =
 function RoleBuffAddOn.GetDeathKnightRole()
     if hasTankTalentsInvested
     then
-	return this.roleTank;
+	return mod.roleTank;
     else
-	return this.roleDPS;
+	return mod.roleDPS;
     end
 end
 
 function RoleBuffAddOn:DeathKnightOptionsFrameLoad(panel)
-    panel.name = this.classNameDeathKnight;
-    panel.parent = this.displayName;
+    panel.name = mod.classNameDeathKnight;
+    panel.parent = mod.displayName;
     InterfaceOptions_AddCategory(panel)
 end

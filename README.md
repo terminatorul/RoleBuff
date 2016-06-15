@@ -28,19 +28,19 @@ so if you are new to the game this may be new to you. The addon will ask that yo
 for every set of gear that you carray. The role for the currently equipped gear set will be matched
 with your character role (spec) upon entering combat.
 
-These checks are based on the experience of the author in-game, contact me if you have other suggestions.
+These checks are based on the author own experiance in-game, contact me if you have other suggestions.
 
 ####All classes
 - check that a weapon/shield is equipped, check for fishing pole instead of weapon
 - check the role for the current equipment set to match the character build/spec.
 
-####Warriors
+####Warrior
 - for tanks:
     - check that Vigilance ability is cast, if in group.
     - check shield is equipped
     - check for Defensive Stance.
 
-####Paladins
+####Paladin
 - check that the paladin has an aura, a seal and blessing cast
 - for tanks:
     - check that Rightous Fury is active
@@ -49,17 +49,17 @@ These checks are based on the experience of the author in-game, contact me if yo
 - for healers and DPSes
     - check Rightoues Fury is not active
 
-####Death Knights
+####Death Knight
 - character role is Tank if all three talents Blade Barrier, Anticipation, Toughness are learned
   or if they have the most of the invested talent points, DPS otherwise.
-- if Threat of Thassarian talent is learned, character is expected to dual-wield two single-handed
-  weapons, instead of a single two-handed weapon.
+- if Threat of Thassarian talent is learned, character is expected to dual-wield (two single-handed
+  weapons, instead of a single two-handed weapon).
 - for tanks:
     - check Frost Presence is active
 - for DPS:
     - check Blood Presence or Unholy Presence is active
 
-####Warlocks
+####Warlock
 - check for Daemon Skin, Daemon Armor or Fel Armor
 - check for weapon enchantment (warn for Firestone or Spellstone applied)
 - check for a warlock minion or enslaved daemon
@@ -68,8 +68,12 @@ These checks are based on the experience of the author in-game, contact me if yo
 - check for soulshards for combat abilities that consume shards
 - check (without the warning sound) that you have at least 6 shards.
 
-####Rogues
+####Rogue
 - check all equipped weapons have an enchantment, warn user to use poisons otherwise.
+
+####Shaman
+- check Elemental Weapon
+- check Elemental Shield
 
 Any ability is checked only if your character has already learned it.
 
@@ -84,7 +88,9 @@ Any ability is checked only if your character has already learned it.
 - only show warnings if the mob being fought is not trivial (not grey mobs, but green, yellow or red).
   The problem here is the game client does not really know the level of a world mob untill user or her
   party targets the mob, or user hovers the mouse over the mob.
-- fix add-on behavior on /reloadui
+- fix add-on behavior on /reloadui - in progress
+- disable the warnings when player is mounted or in a vehicle
+- party/raid abilities should also check if any of the group members are in the range of most spells.
 
 ####Warrior
 - for DPSes
@@ -92,10 +98,8 @@ Any ability is checked only if your character has already learned it.
     - check for Battle Stance or Berseker Stance
 
 ####Death Knights
-- check pet is present if DK has Master of Ghouls talent
+- check pet is present when DK has Master of Ghouls talent
 
 ####Warlocks
 - check for basic healthstone present when improved healthstone can be used
 
-####Shaman:
-- check shaman healer has Water Shield.
