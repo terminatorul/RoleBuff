@@ -34,8 +34,8 @@ local function initialPlayerAlivePaladin(event, frame, ...)
         do
             if mod:CheckPlayerHasAbility(paladinAura)
             then
-        	hasPaladinAura = true;
-        	break;
+		hasPaladinAura = true;
+		break;
             end
         end
     end
@@ -127,11 +127,11 @@ end
 local paladinSealList =
 {
     [mod.sealOfCommand] = true, [mod.sealOfLight] = true, [mod.sealOfWisdom] = true, [mod.sealOfJustice] = true,
-    [mod.sealOfVengeance] = true, [mod.sealOfTruth] = true, [mod.sealOfRighteousness] = true, 
+    [mod.sealOfVengeance] = true, [mod.sealOfTruth] = true, [mod.sealOfRighteousness] = true,
     [mod.sealOfInsight] = true
 };
 
-local paladinBlessingBuffList = 
+local paladinBlessingBuffList =
 {
     [mod.blessingOfWisdom] = { ["kind"] = "wisdom" }, [mod.greaterBlessingOfWisdom] = { ["kind"] = "wisdom" },
     [mod.blessingOfMight] = { ["kind"] = "might" }, [mod.greaterBlessingOfMight] = { ["kind"] = "might" }, [mod.battleShout] = { ["kind"] = "might" },
@@ -238,7 +238,7 @@ local function combatCheckPaladin(chatOnly, event, frame, ...)
 	    if checkBlessingBuffs and not hasBlessingSelfBuff
 	    then
 		local blessingToCast = checkPaladinBlessings(paladinBlessingRank, paladinBlessingBuffs);
-		if blessingToCast ~= nil 
+		if blessingToCast ~= nil
 		then
 		    mod:ReportMessage(mod:AbilityToCastMessage(mod.paladinBlessing), chatOnly);
 		end
@@ -303,7 +303,7 @@ mod.EventHandlerTablePaladin =
 	then
 	    combatCheckPaladin(false, frame, event, ...)
 	end
-	
+
 	RoleBuff_PaladinAttacked = true;
     end,
 

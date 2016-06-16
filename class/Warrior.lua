@@ -72,7 +72,7 @@ local function checkVigilanceTargetWarrior(chatOnly)
 
 	if mod:PlayerIsInGroup()
 	then
-	    if vigilanceTargetUnit == nil 
+	    if vigilanceTargetUnit == nil
 	    then
 		-- warrior is in group and Vigilance expired
 		mod:ReportMessage(mod:AbilityToCastMessage(vigilanceSpellName), chatOnly);
@@ -90,7 +90,7 @@ local function checkVigilanceTargetWarrior(chatOnly)
 		else
 		    if UnitIsVisible(vigilanceTargetUnit) or not (UnitPlayerOrPetInParty(vigilanceTargetUnit) or UnitPlayerOrPetInRaid(vigilanceTargetUnit))
 		    then
-		    -- Last vigilance target no longer has the buff, or has it from some other warrior now 
+		    -- Last vigilance target no longer has the buff, or has it from some other warrior now
 			mod:ReportMessage(mod:AbilityToCastMessage(vigilanceSpellName), chatOnly);
 		    end
 		end
@@ -156,7 +156,7 @@ local function onUnitAuraChange(unit)
     end
 end
 
-mod.EventHandlerTableWarrior = 
+mod.EventHandlerTableWarrior =
 {
     [mod.eventPlayerAlive] = function(frame, event, ...)
 	--xpcall(initialPlayerAliveWarrior, RoleBuff_ErrorHandler, frame, event, ...)

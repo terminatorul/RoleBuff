@@ -26,15 +26,6 @@ local RoleBuff_CheckEmptyGear = false;
 
 local RoleBuff_PlayerAttacking, RoleBuff_PlayerAttacked = false, false;
 
-local RoleBuff_Debug = false;
-
-function mod:DebugMessage(msg)
-    if RoleBuff_Debug
-    then
-	print(msg);
-    end
-end
-
 local function combatCheckFishingPole(chatOnly)
     if opt.global.optFishingPole and
 	(
@@ -273,12 +264,12 @@ local baseCommandHandlerTable =
     [mod.slashCommandSetDebug] = function(cmdLine)
 	if cmdLine[2] ~= nil and cmdLine[2] == "on"
 	then
-	    RoleBuff_Debug = true
+	    mod.printDebugMessages = true
 	end
 
 	if cmdLine[2] ~= nil and cmdLine[2] == "off"
 	then
-	    RoleBuff_Debug = false
+	    mod.printDebugMessages = false
 	end
     end
 };

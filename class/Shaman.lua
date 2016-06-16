@@ -104,7 +104,7 @@ local function CheckShamanShield(chatOnly)
 end
 
 function mod.GetShamanRole()
-    if isRestaurationShaman 
+    if isRestaurationShaman
     then
 	return mod.roleHealer;
     else

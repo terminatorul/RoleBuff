@@ -130,7 +130,7 @@ local function combatCheckDeathKnight(chatOnly, frame, event, ...)
 	then
 	    if presenceIndex ~= frostPresenceIndex
 	    then
-		mod:ReportMessage(mod:SwitchFormMessage(mod.frostPresenceSpellName), chatOnly) 
+		mod:ReportMessage(mod:SwitchFormMessage(mod.frostPresenceSpellName), chatOnly)
 	    end
 	else
 	    if presenceIndex == frostPresenceIndex
@@ -141,7 +141,7 @@ local function combatCheckDeathKnight(chatOnly, frame, event, ...)
     end
 end
 
-mod.EventHandlerTableDeathKnight = 
+mod.EventHandlerTableDeathKnight =
 {
     [mod.eventPlayerAlive] = function(frame, event, ...)
 	--xpcall(initialPlayerAliveDeathKnight, RoleBuff_ErrorHandler, frame, event, ...)

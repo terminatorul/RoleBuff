@@ -5,12 +5,12 @@
     <Script file="WowAPI-en.lua" />
     <Script file="RoleBuff-en.lua" />
     <Script file="RoleBuffLib.lua" />
-    <Script file="RoleBuffWarrior.lua" />
-    <Script file="RoleBuffDeathKnight.lua" />
-    <Script file="RoleBuffPaladin.lua" />
-    <Script file="RoleBuffWarlock.lua" />
-    <Script file="RoleBuffShaman.lua" />
-    <Script file="RoleBuffRogue.lua" />
+    <Script file="class\Warrior.lua" />
+    <Script file="class\DeathKnight.lua" />
+    <Script file="class\Paladin.lua" />
+    <Script file="class\Warlock.lua" />
+    <Script file="class\Shaman.lua" />
+    <Script file="class\Rogue.lua" />
     <Script file="GearSpec.lua" />
     <Script file="RoleBuff.lua" />
 
@@ -24,9 +24,9 @@
 
     <Include file="RoleBuffTemplates.xml"/>
     <Include file="RoleBuffOptionsFrame.xml"/>
-    <Include file="RoleBuffDeathKnight.xml"/>
-    <Include file="RoleBuffPaladin.xml"/>
-    <Include file="RoleBuffRogue.xml"/>
-    <Include file="RoleBuffWarlock.xml"/>
-    <Include file="RoleBuffWarrior.xml"/>
+    <Include file="class\DeathKnight.xml"/>
+    <Include file="class\Paladin.xml"/>
+    <Include file="class\Rogue.xml"/>
+    <Include file="class\Warlock.xml"/>
+    <Include file="class\Warrior.xml"/>
 </Ui>

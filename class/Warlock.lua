@@ -50,7 +50,7 @@ local healthstoneRank =
 
 local soulwellHealthstoneRank = 6;
 
-local soulstoneRank = 
+local soulstoneRank =
 {
     [1] = mod.minorSoulstone, [2] = mod.lesserSoulstone, [3] = mod.plainSoulstone, [4] = mod.greaterSoulstone, [5] = mod.majorSoulstone,
     [6] = mod.masterSoulstone, [7] = mod.demonicSoulstone
@@ -94,7 +94,7 @@ local function combatCheckWarlockArmor(chatOnly)
 		    rank = 1;
 		end
 
-		-- RoleBuff_DebugMessage("Player buff " .. buffName .. " rank " .. rank .. ".");
+		-- mod:DebugMessage("Player buff " .. buffName .. " rank " .. rank .. ".");
 
 		if warlockArmorRank[buffName] ~= nil and warlockArmorRank[buffName] <= rank and (buffName ~= mod.demonSkin or not warlockArmorRank[mod.demonArmor])
 		then
@@ -166,7 +166,7 @@ local function checkWarlockHasHealthstone(chatOnly)
     if checkWarlockHealthstone and hasHealthstone
     then
 	local minHealthstoneRank = 1;
-	
+
 	if warlockHealthstoneRank[mod.createHealthstone] ~= nil
 	then
 	    minHealthstoneRank = warlockHealthstoneRank[mod.createHealthstone];
@@ -275,7 +275,7 @@ local function combatCheckWarlock(chatOnly, event, frame, ...)
     checkWarlockHasSoulShard(chatOnly)
 end
 
-mod.EventHandlerTableWarlock = 
+mod.EventHandlerTableWarlock =
 {
     [mod.eventPlayerAlive] = function(frame, event, ...)
 	initialPlayerAliveWarlock(frame, event, ...);
@@ -310,7 +310,7 @@ mod.EventHandlerTableWarlock =
 	then
 	    combatCheckWarlock(false, frame, event, ...)
 	end
-	
+
 	RoleBuff_WarlockAttacked = true;
 	RoleBuff_WarlockMountedAttack = IsMounted()
     end,

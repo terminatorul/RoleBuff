@@ -23,7 +23,7 @@ local function combatCheckRogue(chatOnly, frame, event, ...)
     end
 end
 
-mod.EventHandlerTableRogue = 
+mod.EventHandlerTableRogue =
 {
     [mod.eventPlayerAlive] = function(frame, event, ...)
 	initialPlayerAliveRogue(frame, event, ...);
@@ -50,7 +50,7 @@ mod.EventHandlerTableRogue =
     [mod.eventPlayerRegenEnabled] = function(frame, event, ...)
 	RoleBuff_RogueAttacked = false
     end,
-    
+
     [mod.eventPlayerRegenDisabled] = function(frame, event, ...)
 	if not RoleBuff_RogueAttacked and not RoleBuff_RogueAttacking
 	then
@@ -61,7 +61,7 @@ mod.EventHandlerTableRogue =
     end
 };
 
-mod.SlashCommandHandlerRogue = 
+mod.SlashCommandHandlerRogue =
 {
     [mod.slashCommandPlayerCheck] = function()
 	return initialPlayerAliveRogue(nil, nil)
@@ -72,7 +72,7 @@ mod.SlashCommandHandlerRogue =
     end
 };
 
-mod.CommandHandlerRogue = 
+mod.CommandHandlerRogue =
 {
 };
 

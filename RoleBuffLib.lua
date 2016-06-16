@@ -3,6 +3,22 @@
 
 local mod = RoleBuffAddOn;
 
+mod.printDebugMessages, mod.printChatMessages = false, true;
+
+function mod:DebugMessage(msg)
+    if self.printDebugMessages
+    then
+	print(msg)
+    end
+end
+
+function mod:ChatMessage(msg)
+    if self.printChatMessages
+    then
+	print(msg)
+    end
+end
+
 local function tableSelection(sourceTable, entries, defaultVal)
     local resultTable = { };
 
