@@ -271,6 +271,45 @@ local baseCommandHandlerTable =
 	then
 	    mod.printDebugMessages = false
 	end
+
+	if not cmdLine[2]
+	then
+	    local verboseMode
+
+	    if mod.printDebugMessages
+	    then
+		verboseMode = "on"
+	    else
+		verboseMode = "off"
+	    end
+
+	    print(mod.displayName .. ": " .. mod.slashCommandSetDebug .. " " .. verboseMode .. ".")
+	end
+    end,
+
+    [mod.slashCommandInGroup] = function(cmdLine)
+	if cmdLine[2] and cmdLine[2] == "on"
+	then
+	    mod.usePlayerInGroup = true
+	end
+
+	if cmdLine[2] and cmdLine[2] == "off"
+	then
+	    mod.usePlayerInGroup = false
+	end
+
+	if not cmdLine[2]
+	then
+	    local groupMode
+
+	    if mod.usePlayerInGroup
+	    then
+		groupMode = "on"
+	    else
+		groupMode = "off"
+	    end
+	    print(mod.displayName .. ": " .. mod.slashCommandInGroup .. " " .. groupMode .. ".")
+	end
     end
 };
 

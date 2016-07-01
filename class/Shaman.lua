@@ -13,11 +13,11 @@
 
 local mod = RoleBuffAddOn;
 
-local checkElementalWeapon, checkShamanShield, checkElementalShield = true, true, true;
+local checkElementalWeapon, checkShamanShield, checkEarthShield = true, true, true;
 
-local checkShamanTotems, checkShamanWeapon, cheackShamanShielding = true, true, true;
+local checkShamanTotems, checkShamanWeapon = true, true;
 
-local isRestaurationShaman, hasWeaponEnchantment, hasElementalShield, hasShamanShield = nil, false, false, false;
+local isRestaurationShaman, hasWeaponEnchantment, hasEarthShield, hasShamanShield = nil, false, false, false;
 
 local ShamanAttacked, ShamanAttacking = false, false;
 
@@ -52,15 +52,11 @@ local function onPlayerAlive(frame, event, ...)
 	    end
 	end
 
-	if checkElementalShield
+	if checkEarthShield
 	then
-	    for idx, shieldAbility in pairs({ mod.earthShield })
-	    do
-		if mod:CheckPlayerHasAbility(shieldAbility)
-		then
-		    hasElementalShield = true;
-		    break
-		end
+	    if mod:CheckPlayerHasAbility(mod.earthShield)
+	    then
+		hasEarthShield = true
 	    end
 	end
     end
@@ -71,7 +67,7 @@ local function checkShamanWeaponEnchant(chatOnly)
     then
 	local hasMainHandEnchant, hasOffHandEnchant = mod:HasWeaponEnchants();
 
-	if hasMainHandEnchant ~= nil and (hasOffhandEnchant ~= nil or not OffhandHasWeapon())
+	if hasMainHandEnchant ~= nil and (hasOffHandEnchant ~= nil or not OffhandHasWeapon())
 	then
 	else
 	    mod:ReportMessage(mod:AbilityToCastMessage(mod.shamanElementalWeapon), chatOnly);
@@ -79,9 +75,43 @@ local function checkShamanWeaponEnchant(chatOnly)
     end
 end
 
+mod.earthShieldTarget, mod.earthShieldExpiration = nil, nil;
+
 local shamanShieldList = { [mod.waterShield] = true, [mod.lightningShield] = true, [mod.earthShield] = true };
 
-local function CheckShamanShield(chatOnly)
+local function unitSpellCastSucceededShaman(unitCaster, spellName, spellRank, lineIDCounter)
+    if spellName == mod.earthShield and unitCaster and UnitIsUnit(unitCaster, mod.unitPlayer)
+    then
+	mod.earthShieldTarget = (UnitName(mod.unitTarget) or UnitName(mod.unitPlayer))
+    end
+end
+
+local function unitAuraChange(unit)
+    if unit and mod.earthShieldTarget and UnitIsUnit(unit, mod.earthShieldTarget) and UnitIsVisible(unit)
+    then
+	-- Check remaining time for Earth Shield buff on target
+	local spellName, unitCaster, prevExpireTime = nil, nil, mod.earthShieldExpiration;
+	spellName, _, _, _, _, _, mod.earthShieldExpiration, unitCaster = UnitBuff(mod.earthShieldTarget, mod.earthShield);
+
+	if spellName and unitCaster and UnitIsUnit(unitCaster, mod.unitPlayer)
+	then
+	    if not prevExpireTime
+	    then
+		local expireInterval = math.floor(mod.earthShieldExpiration - GetTime() + 0.5);
+		mod:DebugMessage(mod.displayName .. ": " .. spellName .. " cast on " .. UnitName(unit) .. " for " .. math.floor(expireInterval / 60) .. " min " .. (expireInterval % 60) .. " sec.")
+	    else
+	    end
+	else
+	    -- Earth Shield buff now expired or replaced by other shaman
+	    mod.earthShieldTarget = nil;
+	    mod.earthShieldExpiration = nil;
+	    mod:DebugMessage(mod.displayName .. ": " .. mod.earthShield .. " now removed.")
+	end
+    end
+end
+
+
+local function checkShamanElementalShield(chatOnly)
     if checkShamanShield and hasShamanShield
     then
 	local i, buffName, rank, icon, count, debuffType, duration, expirationTime, unitCaster = 1, nil, nil, nil, nil, nil, nil, nil, nil;
@@ -90,16 +120,39 @@ local function CheckShamanShield(chatOnly)
 	    buffName, rank, icon, count, debuffType, duration, expirationTime, unitCaster = UnitBuff(mod.unitPlayer, i);
 	    i = i + 1;
 
-	    if buffName ~= nil
+	    if buffName
 	    then
-		if shamanShieldList[buffName] ~= nil and UnitIsUnit(unitCaster, mod.unitPlayer)
+		if shamanShieldList[buffName] and unitCaster and UnitIsUnit(unitCaster, mod.unitPlayer)
 		then
-		    return
+		    return buffName
 		end
 	    end
 	until buffName == nil
 
-	mod:ReportMessage(mod:AbilityToCastMessage(mod.shamanElementalShield), chatOnly);
+	mod:ReportMessage(mod:AbilityToCastMessage(mod.shamanElementalShield), chatOnly)
+    end
+end
+
+local function checkEarthShieldInParty(chatOnly, shamanElementalShield)
+    if checkEarthShield and hasEarthShield and shamanElementalShield ~= mod.earthShield and mod:PlayerIsInGroup()
+    then
+	if mod.earthShieldTarget and mod.earthShieldExpiration
+	then
+	    if mod.earthShieldExpiration > GetTime() + 5 and UnitExists(mod.earthShieldTarget)
+	    then
+		local buffName, _, _, _, _, _, _, unitCaster = UnitBuff(mod.earthShieldTarget, mod.earthShield);
+		if buffName and unitCaster and UnitIsUnit(unitCaster, mod.unitPlayer)
+		then
+		    -- mod.earthShieldTarget still has Earth Shield buff from player
+		    return
+		end
+	    end
+
+	    mod.earthShieldTarget = nil;
+	    mod.earthShieldExpiration = nil
+	end
+
+	mod:ReportMessage(mod:AbilityToCastMessage(mod.earthShield), chatOnly)
     end
 end
 
@@ -114,12 +167,19 @@ end
 
 local function combatCheckShaman(chatOnly, frame, event, ...)
     checkShamanWeaponEnchant(chatOnly);
-    CheckShamanShield(chatOnly)
+    checkEarthShieldInParty(chatOnly, checkShamanElementalShield(chatOnly))
 end
 
 mod.EventHandlerTableShaman =
 {
-    [mod.eventPlayerAlive] = onPlayerAlive,
+    [mod.eventPlayerAlive] = function(frame, event, ...)
+	onPlayerAlive(frame, event, ...);
+
+	frame:RegisterEvent(mod.eventUnitSpellCastSucceeded);
+	frame:RegisterEvent(mod.eventUnitAura);
+	frame:RegisterEvent(mod.eventActiveTalentGroupChanged)
+    end,
+
     [mod.eventActiveTalentGroupChanged] = onPlayerAlive,
 
     [mod.eventPlayerRegenDisabled] = function(frame, event, ...)
@@ -127,11 +187,11 @@ mod.EventHandlerTableShaman =
 	then
 	    combatCheckShaman(false, frame, event, ...);
 	end
-	ShamanAttacked = true;
+	ShamanAttacked = true
     end,
 
     [mod.eventPlayerRegenEnabled] = function(frame, event, ...)
-	ShamanAttacked = false;
+	ShamanAttacked = false
     end,
 
     [mod.eventPlayerEnterCombat] = function(frame, event, ...)
@@ -139,11 +199,21 @@ mod.EventHandlerTableShaman =
 	then
 	    combatCheckShaman(false, frame, event, ...);
 	end
-	ShamanAttacking = true;
+	ShamanAttacking = true
     end,
 
     [mod.eventPlayerLeaveCombat] = function(frame, event, ...)
-	ShamanAttacking = false;
+	ShamanAttacking = false
+    end,
+
+    [mod.eventUnitSpellCastSucceeded] = function(frame, event, ...)
+	local unitCaster, spellName, spellRank, lineIDCounter = ...;
+	unitSpellCastSucceededShaman(unitCaster, spellName, spellRank, lineIDCounter);
+    end,
+
+    [mod.eventUnitAura] = function(frame, event, ...)
+	local args = { ... };
+	unitAuraChange(args[1])
     end
 };
 

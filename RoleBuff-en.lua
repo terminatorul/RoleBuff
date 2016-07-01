@@ -63,6 +63,7 @@ then
 	slashCommandEquipmentSet = "set";
 	slashCommandGearSpec = "gear-spec";
 	slashCommandSetDebug = "verbose";
+	slashCommandInGroup = "always-in-group";
     };
 
     for key, val in pairs(translationTableEn)

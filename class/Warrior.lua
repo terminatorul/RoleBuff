@@ -81,7 +81,7 @@ local function checkVigilanceTargetWarrior(chatOnly)
 		-- name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, ..
 		local vigilanceName, _, _, _, _, _, expirationTime, unitCaster = UnitBuff(vigilanceTargetUnit, vigilanceBuffName, vigilanceRank, mod.filterPlayer);
 
-		if vigilanceName and UnitIsUnit(unitCaster, unitPlayer)
+		if vigilanceName and unitCaster and UnitIsUnit(unitCaster, unitPlayer)
 		then
 		    local expirationInterval = expirationTime - GetTime();
 		    local intervalSec = expirationInterval % 60;
@@ -131,19 +131,17 @@ end
 local function onUnitAuraChange(unit)
     if unit and vigilanceTargetUnit and UnitIsUnit(unit, vigilanceTargetUnit) and UnitIsVisible(vigilanceTargetUnit)
     then
-	local spellName = nil;
+	local spellName, unitCaster = nil, nil;
 
 	-- name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable
 	spellName, vigilanceRank, _, _, _, _, vigilanceExpireTime, unitCaster = UnitBuff(vigilanceTargetUnit, vigilanceBuffName, vigilanceRank);
 
-	if spellName and UnitIsUnit(unitPlayer, unitCaster)
+	if spellName and unitCaster and UnitIsUnit(unitPlayer, unitCaster)
 	then
 	    if not vigilanceIntervalReported
 	    then
-		local expirationInterval = vigilanceExpireTime - GetTime();
-		local intervalSec = expirationInterval % 60;
-		local intervalMin = (expirationInterval - intervalSec) / 60;
-		mod:DebugMessage(mod.displayName .. ": " .. spellName .. " cast on " .. vigilanceTargetUnit .. " for " .. intervalMin .. " min " .. intervalSec .. " sec.");
+		local expirationInterval = math.floor(vigilanceExpireTime - GetTime() + 0.5);
+		mod:DebugMessage(mod.displayName .. ": " .. spellName .. " cast on " .. vigilanceTargetUnit .. " for " .. math.floor(expirationInterval / 60) .. " min " .. (expirationInterval % 60) .. " sec.");
 		vigilanceIntervalReported = true;
 	    end
 	else
@@ -155,6 +153,16 @@ local function onUnitAuraChange(unit)
 	end
     end
 end
+
+mod.ClassHandlerWarrior =
+{
+    playerCheck = initialPlayerAlive,
+    talentGroupChanged = initialPlayerAlive,
+    combatCheck = combatCheckWarrior,
+    updateShapeShiftForm = updateShapeshiftFormsWarrior,
+    unitSpellCastSucceeded = unitSpellCastSucceededWarrior,
+    unitAuraChange = onUnitAuraChange
+};
 
 mod.EventHandlerTableWarrior =
 {
@@ -185,39 +193,39 @@ mod.EventHandlerTableWarrior =
     end,
 
     [mod.eventUpdateShapeshiftForms] = function(frame, event, ...)
-	updateShapeshiftFormsWarrior(frame, event, ...);
+	updateShapeshiftFormsWarrior(frame, event, ...)
     end,
 
     [mod.eventUpdateShapeshiftForm] = function(frame, event, ...)
-	updateShapeshiftFormsWarrior(frame, event, ...);
+	updateShapeshiftFormsWarrior(frame, event, ...)
     end,
 
     [mod.eventPlayerRegenDisabled] = function(frame, event, ...)
 	if not RoleBuff_WarriorAttacked and not RoleBuff_WarriorAttacking
 	then
-	    combatCheckWarrior(false);
+	    combatCheckWarrior(false)
 	end
-	RoleBuff_WarriorAttacked = true;
+	RoleBuff_WarriorAttacked = true
     end,
 
     [mod.eventPlayerRegenEnabled] = function(frame, event, ...)
-	RoleBuff_WarriorAttacked = false;
+	RoleBuff_WarriorAttacked = false
     end,
 
     [mod.eventPlayerEnterCombat] = function(frame, event, ...)
 	if not RoleBuff_WarriorAttacked and not RoleBuff_WarriorAttacking
 	then
-	    combatCheckWarrior(false);
+	    combatCheckWarrior(false)
 	end
-	RoleBuff_WarriorAttacking = true;
+	RoleBuff_WarriorAttacking = true
     end,
 
     [mod.eventPlayerLeaveCombat] = function(frame, event, ...)
-	RoleBuff_WarriorAttacking = false;
+	RoleBuff_WarriorAttacking = false
     end,
 
     [mod.eventUnitSpellCastSucceeded] = function(frame, event, ...)
-	local unit, spellName, spellRank, lineIDCounterargsList = ...;
+	local unit, spellName, spellRank, lineIDCounter = ...;
 	unitSpellCastSucceededWarrior(unit, spellName, spellRank, lineIDCounter);
     end,
 
@@ -241,10 +249,10 @@ mod.SlashCommandHandlerWarrior =
 function mod.GetWarriorRole()
     if isProtectionWarrior
     then
-	return mod.roleTank;
+	return mod.roleTank
     end
 
-    return mod.roleDPS;
+    return mod.roleDPS
 end
 
 function mod:WarriorOptionsFrameLoad(panel)

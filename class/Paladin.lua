@@ -16,6 +16,10 @@ local hasGreaterBlessingOfSanctuaryRank = 0;
 local auraIndex, auraCount = 0, 0;
 local RoleBuff_PaladinAttacked, RoleBuff_PaladinAttacking = false, false;
 
+local function updatePaladinAura(event, frame, ...)
+    auraIndex, auraCount = GetShapeshiftForm(), GetNumShapeshiftForms();
+end
+
 local function initialPlayerAlivePaladin(event, frame, ...)
     local specIndex, specName = mod:GetPlayerBuild();
 
@@ -118,10 +122,8 @@ local function initialPlayerAlivePaladin(event, frame, ...)
     then
 	hasRighteousFury = mod:CheckPlayerHasAbility(mod.righteousFury);
     end
-end
 
-local function updatePaladinAura(event, frame, ...)
-    auraIndex, auraCount = GetShapeshiftForm(), GetNumShapeshiftForms();
+    updatePaladinAura(frame, event, ...)
 end
 
 local paladinSealList =
@@ -200,7 +202,7 @@ local function combatCheckPaladin(chatOnly, event, frame, ...)
 
 		if checkBlessingBuffs and not hasBlessingSelfBuff and paladinBlessingBuffList[buffName] ~= nil
 		then
-		    if UnitIsUnit(unitCaster, mod.unitPlayer)
+		    if unitCaster and UnitIsUnit(unitCaster, mod.unitPlayer)
 		    then
 			mod:DebugMessage("Paladin self-blessing: " .. buffName);
 			hasBlessingSelfBuff = true;

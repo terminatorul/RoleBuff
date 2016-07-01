@@ -73,10 +73,10 @@ local function combatCheckWarlockArmor(chatOnly)
     then
 	local i = 1;
 	repeat
-	    local buffName, rank, icon, count, debuffType, duration, expirationTime, unitCaster = UnitBuff(mod.unitPlayer, i);
+	    local buffName, rank, icon, count, debuffType, duration, expirationTime = UnitBuff(mod.unitPlayer, i);
 	    i = i + 1;
 
-	    if buffName ~= nil
+	    if buffName
 	    then
 		if type(rank) == "string" and string.find(rank, mod.rankTooltipPrefix, 1, true) == 1
 		then

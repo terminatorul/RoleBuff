@@ -72,6 +72,24 @@ local function checkTankTalentsInvestedDeathKnight()
     end
 end
 
+local function updatePresenceDeathKnight(frame, event, ...)
+    local newPresenceIndex = GetShapeshiftForm();
+    if newPresenceIndex ~= 0 and newPresenceIndx ~= presenceIndex
+    then
+	local icon, name, active = GetShapeshiftFormInfo(newPresenceIndex)
+	if name ~= nil
+	then
+	    mod:DebugMessage(name);
+	else
+	    mod:ChatMessage(mod.displayName .. ": presence " .. stanceIndex .. " active.");
+	end
+    else
+	mod:DebugMessage(mod.warningNoDeathKnightPresence);
+    end
+
+    presenceIndex = newPresenceIndex;
+end
+
 local function initialPlayerAliveDeathKnight(frame, event, ...)
     hasTankTalentsInvested = checkTankTalentsInvestedDeathKnight();
     hasFrostPresence = mod:CheckPlayerHasAbility(mod.frostPresenceSpellName);
@@ -95,24 +113,8 @@ local function initialPlayerAliveDeathKnight(frame, event, ...)
     then
 	hasMasterOfGhouls = true;
     end
-end
 
-local function updatePresenceDeathKnight(frame, even, ...)
-    local newPresenceIndex = GetShapeshiftForm();
-    if newPresenceIndex ~= 0 and newPresenceIndx ~= presenceIndex
-    then
-	local icon, name, active = GetShapeshiftFormInfo(newPresenceIndex)
-	if name ~= nil
-	then
-	    mod:DebugMessage(name);
-	else
-	    print("RoleBuff: presence " .. stanceIndex .. " active.");
-	end
-    else
-	mod:DebugMessage(mod.warningNoDeathKnightPresence);
-    end
-
-    presenceIndex = newPresenceIndex;
+    updatePresenceDeathKnight(frame, event, ...)
 end
 
 local function combatCheckDeathKnight(chatOnly, frame, event, ...)

@@ -238,7 +238,7 @@ function mod:GetGroupMembersCount()
 end
 
 function mod:PlayerIsInGroup()
-    return self:GetGroupMembersCount() > 1;
+    return mod.usePlayerInGroup or self:GetGroupMembersCount() > 1;
 end
 
 
