@@ -410,12 +410,12 @@ eventHandlerTable[mod.eventAddOnLoaded] = onAddOnLoaded;
 function mod:OnEvent(frame, event, ...)
     if RoleBuff_Enabled
     then
-	if eventHandlerTable[event] ~= nil
+	if eventHandlerTable[event]
 	then
 	    eventHandlerTable[event](frame, event, ...);
 	end
 
-	if RoleBuff_BaseEventHandlerTable[event] ~= nil
+	if RoleBuff_BaseEventHandlerTable[event]
 	then
 	    RoleBuff_BaseEventHandlerTable[event](frame, event, ...);
 	end
@@ -423,7 +423,7 @@ function mod:OnEvent(frame, event, ...)
 end
 
 function mod:OnUpdate(frame, elapsedFrameTime)
-    if self.UpdateHandlersSet ~= nil
+    if self.UpdateHandlersSet
     then
 	for _, handlerFn in pairs(self.UpdateHandlersSet)
 	do

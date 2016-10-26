@@ -143,7 +143,7 @@ then
 	prayerOfShadowProtection = "Prayer of Shadow Protection";
 
 	-- Shaman
-	restaurationSpecName = "Restauration";
+	restorationSpecName = "Restoration";
 	elementalSpecName = "Elemental";
 	enhancementSpecName = "Enhancement";
 	flametongueWeapon = "Flametongue Weapon";

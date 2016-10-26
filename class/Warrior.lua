@@ -192,13 +192,9 @@ mod.EventHandlerTableWarrior =
 	vigilanceExpireTime = 0;
     end,
 
-    [mod.eventUpdateShapeshiftForms] = function(frame, event, ...)
-	updateShapeshiftFormsWarrior(frame, event, ...)
-    end,
+    [mod.eventUpdateShapeshiftForms] = updateShapeshiftFormsWarrior,
 
-    [mod.eventUpdateShapeshiftForm] = function(frame, event, ...)
-	updateShapeshiftFormsWarrior(frame, event, ...)
-    end,
+    [mod.eventUpdateShapeshiftForm] = updateShapeshiftFormsWarrior,
 
     [mod.eventPlayerRegenDisabled] = function(frame, event, ...)
 	if not RoleBuff_WarriorAttacked and not RoleBuff_WarriorAttacking

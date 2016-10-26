@@ -1,7 +1,7 @@
 -- Check Shaman for:
 --	- totems
---	- flametongue weapon
---	- water shield
+--	- elemental weapon enchant(s)
+--	- elemental shield buffs
 --
 --
 --  add plugin options UI
@@ -17,13 +17,14 @@ local checkElementalWeapon, checkShamanShield, checkEarthShield = true, true, tr
 
 local checkShamanTotems, checkShamanWeapon = true, true;
 
-local isRestaurationShaman, hasWeaponEnchantment, hasEarthShield, hasShamanShield = nil, false, false, false;
+local isRestorationShaman, hasWeaponEnchantment, hasEarthShield, hasShamanShield = nil, false, false, false;
 
 local ShamanAttacked, ShamanAttacking = false, false;
 
 local function onPlayerAlive(frame, event, ...)
     local specIndex, specName = mod:GetPlayerBuild();
-    isRestaurationShaman = (specName == mod.restaurationSpecName);
+    isRestorationShaman = (specName == mod.restaurationSpecName);
+    hasWeaponEnchantment, hasEarthShield, hasShamanShield = false, false, false;
 
     if checkElementalWeapon
     then
@@ -157,7 +158,7 @@ local function checkEarthShieldInParty(chatOnly, shamanElementalShield)
 end
 
 function mod.GetShamanRole()
-    if isRestaurationShaman
+    if isRestorationShaman
     then
 	return mod.roleHealer;
     else

@@ -32,7 +32,7 @@ local function equipmentSetUsage(currentRole)
 	setName = GetEquipmentSetInfo(currentSetNo);
 	if setRoles[setName] == nil
 	then
-	    mod:DebugMessage("Equipment set " .. setName .. " needs to be assigned a role.");
+	    mod:ChatMessage("Equipment set " .. setName .. " needs to be assigned a role.");
 	    return nil, nil;
 	end
 
