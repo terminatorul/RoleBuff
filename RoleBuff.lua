@@ -470,7 +470,12 @@ function mod:SlashCmdHandler(msg)
 	print("  " .. SLASH_ROLEBUFF1 .. " " .. self.slashCommandDisable);
 	print("  " .. SLASH_ROLEBUFF1 .. " " .. self.slashCommandPlayerCheck);
 	print("  " .. SLASH_ROLEBUFF1 .. " " .. self.slashCommandCombatCheck);
-	print("  " .. SLASH_ROLEBUFF1 .. " " .. self.slashCommandEquipmentSet .. " <EquipmentSet> <ExpectedRole>");
+	if tonumber(mod.clientBuildNumber) >= 9901	-- Path 3.1.2 needed for Equipment Manager
+	then
+	    print("  " .. SLASH_ROLEBUFF1 .. " " .. self.slashCommandEquipmentSet .. " <EquipmentSet> <ExpectedRole>");
+	    print("  " .. SLASH_ROLEBUFF1 .. " " .. self.slashCommandEquipmentSet .. " <EquipmentSet> <ExpectedRole> [primary|secondary]");
+	    print("  " .. SLASH_ROLEBUFF1 .. " " .. self.slashCommandSwitchSpec);
+	end
 	print("  " .. SLASH_ROLEBUFF1 .. " " .. self.slashCommandGearSpec);
 	print("  " .. SLASH_ROLEBUFF1 .. " " .. self.slashCommandSetDebug .. " on|off");
     end

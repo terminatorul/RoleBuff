@@ -61,6 +61,8 @@ then
 	slashCommandEnable = "enable";
 	slashCommandDisable = "disable";
 	slashCommandEquipmentSet = "set";
+	slashCommandSwitchSpec ="switch-spec";
+	slashCommandSS ="ss";
 	slashCommandGearSpec = "gear-spec";
 	slashCommandSetDebug = "verbose";
 	slashCommandInGroup = "always-in-group";

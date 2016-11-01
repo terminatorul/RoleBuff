@@ -23,7 +23,7 @@ local ShamanAttacked, ShamanAttacking = false, false;
 
 local function onPlayerAlive(frame, event, ...)
     local specIndex, specName = mod:GetPlayerBuild();
-    isRestorationShaman = (specName == mod.restaurationSpecName);
+    isRestorationShaman = (specName == mod.restorationSpecName);
     hasWeaponEnchantment, hasEarthShield, hasShamanShield = false, false, false;
 
     if checkElementalWeapon

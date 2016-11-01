@@ -125,22 +125,28 @@ local function playerEquipmentUsage()
     end
 end
 
--- display chat window message to the player asking to assign 
--- a role to an equipment set
-function mod:GearSetRoleAnnounce(frame, event, ...)
-    if multipleRoleClass and equipmentMissmatchCount == nil
-    then
-	print(self.setCommandUsageIntroLine);
-	for i = 1, GetNumEquipmentSets()
-	do
-	    local setName = GetEquipmentSetInfo(i);
+if tonumber(mod.clientBuildNumber) >= 9901
+then
+    -- display chat window message to the player asking to assign 
+    -- a role to an equipment set
+    function mod:GearSetRoleAnnounce(frame, event, ...)
+	if multipleRoleClass and equipmentMissmatchCount == nil
+	then
+	    print(self.setCommandUsageIntroLine);
+	    for i = 1, GetNumEquipmentSets()
+	    do
+		local setName = GetEquipmentSetInfo(i);
 
-	    if self:GetEquipmentSetRoles()[setName] == nil
-	    then
-		print("  " .. SLASH_ROLEBUFF1 .. " " .. self.slashCommandEquipmentSet .. " " .. setName  .. " <ExpectedRole>");
+		if self:GetEquipmentSetRoles()[setName] == nil
+		then
+		    print("  " .. SLASH_ROLEBUFF1 .. " " .. self.slashCommandEquipmentSet .. " " .. setName  .. " <ExpectedRole>");
+		end
 	    end
+	    print(self.setCommandUsageClosingLine);
 	end
-	print(self.setCommandUsageClosingLine);
+    end
+else
+    function mod:GearSetRoleAnnounce(frame, event, ...)
     end
 end
 
@@ -206,9 +212,9 @@ local function isAmmoItemSubtype(expectedItemSubtype)
     return false;
 end
 
-function mod:UnitInventoryChanged(unitID, chatOnly)
-    if tonumber(mod.clientBuildNumber) < 13164  -- Patch 4.0.1 "Cataclysm Systems"
-    then
+if tonumber(mod.clientBuildNumber) >= 9901 and tonumber(mod.clientBuildNumber) < 13164  -- Patch 4.0.1 "Cataclysm Systems", Patch 3.1.2 needed for EquipmentManager feature
+then
+    function mod:UnitInventoryChanged(unitID, chatOnly)
 	if not equipmentSwapPending and UnitIsUnit(unitID, self.unitPlayer)
 	then
 	    local scanAmmoItemType, scanAmmoDisplayType = nil, nil;
@@ -229,54 +235,69 @@ function mod:UnitInventoryChanged(unitID, chatOnly)
 	    useContainerItemWithType(scanAmmoItemType, scanAmmoDisplayType, chatOnly);
 	end
     end
-end
-
-
-function mod:OnGearSetEvent(frame, event, ...)
-    if event == self.eventEquipmentSwapPending
-    then
-	equipmentSwapPending = true;
-	self:DebugMessage("Equipment swap pending...");
-    else
-	-- inventory changed
-	-- sets changed
-	-- wear set
-	-- swap finished
-
-	if event == self.eventEquipmentSwapFinished
-	then
-	    equipmentSwapPending = false;
-	    self:UnitInventoryChanged(self.unitPlayer, false);   -- check ammo after switching gear
-	    self:DebugMessage("Equipment swapped.");
-	end
-
-	playerEquipmentUsage();
-
-	if event == self.eventEquipmentSetsChanged
-	then
-	    -- Announce "/rolebuff set" command for a new gear set
-	    self:GearSetRoleAnnounce(frame, event, ...);
-	end
+else
+    function mod:UnitInventoryChanged(unitID, chatOnly)
     end
 end
 
-function mod:GearSpec_InitialPlayerAlive(frame, event, ...)
-    if self.CheckEquipmentSet
-    then
-	multipleRoleClass = (self.classRolesCount[self.playerClassEn] ~= nil and self.classRolesCount[self.playerClassEn] > 1);
 
-	if multipleRoleClass
+if tonumber(mod.clientBuildNumber) >= 9901	    -- Patch 3.1.2 needed for Equipment Manager feature
+then
+    function mod:OnGearSetEvent(frame, event, ...)
+	if event == self.eventEquipmentSwapPending
 	then
+	    equipmentSwapPending = true;
+	    self:DebugMessage("Equipment swap pending...");
+	else
+	    -- inventory changed
+	    -- sets changed
+	    -- wear set
+	    -- swap finished
+
+	    if event == self.eventEquipmentSwapFinished
+	    then
+		equipmentSwapPending = false;
+		self:UnitInventoryChanged(self.unitPlayer, false);   -- check ammo after switching gear
+		self:DebugMessage("Equipment swapped.");
+	    end
+
 	    playerEquipmentUsage();
 
-	    frame:RegisterEvent(self.eventUnitInventoryChanged);
-	    frame:RegisterEvent(self.eventEquipmentSetsChanged);
-	    frame:RegisterEvent(self.eventEquipmentSwapPending);
-	    frame:RegisterEvent(self.eventEquipmentSwapFinished);
-	    frame:RegisterEvent(self.eventWearEquipmentSet);
-
-	    self:GearSetRoleAnnounce(frame, event, ...);
+	    if event == self.eventEquipmentSetsChanged
+	    then
+		-- Announce "/rolebuff set" command for a new gear set
+		self:GearSetRoleAnnounce(frame, event, ...);
+	    end
 	end
+    end
+else
+    function mod:OnGearSetEvent(...)
+    end
+end
+
+if tonumber(mod.clientBuildNumber) >= 9901	-- Patch 3.1.2 needed for Equipment Manager feature
+then
+    function mod:GearSpec_InitialPlayerAlive(frame, event, ...)
+	if self.CheckEquipmentSet
+	then
+	    multipleRoleClass = (self.classRolesCount[self.playerClassEn] ~= nil and self.classRolesCount[self.playerClassEn] > 1);
+
+	    if multipleRoleClass
+	    then
+		playerEquipmentUsage();
+
+		frame:RegisterEvent(self.eventUnitInventoryChanged);
+		frame:RegisterEvent(self.eventEquipmentSetsChanged);
+		frame:RegisterEvent(self.eventEquipmentSwapPending);
+		frame:RegisterEvent(self.eventEquipmentSwapFinished);
+		frame:RegisterEvent(self.eventWearEquipmentSet);
+
+		self:GearSetRoleAnnounce(frame, event, ...);
+	    end
+	end
+    end
+else
+    function mod:GearSpec_InitialPlayerAlive(...)
     end
 end
 
@@ -324,65 +345,77 @@ local function classRolesFind(classRoles, roleName)
     return false;
 end
 
-function mod:SlashCommandEquipmentSet(cmdLine)
-    if cmdLine[2] == nil or cmdLine[3] == nil or cmdLine[4] ~= nil
-    then
-	-- <EquipmentSet> and <ExpectedRole> arguments are expected --
-	print(self.setCommandArgsMessage);
-	return;
+if tonumber(mod.clientBuildNumber) >= 9901	-- Patch 3.1.2
+then
+    function mod:SlashCommandEquipmentSet(cmdLine)
+	if cmdLine[2] == nil or cmdLine[3] == nil or cmdLine[4] ~= nil
+	then
+	    -- <EquipmentSet> and <ExpectedRole> arguments are expected --
+	    print(self.setCommandArgsMessage);
+	    return;
+	end
+
+	local setNameArg, setRoleArg = cmdLine[2], cmdLine[3];
+
+	if multipleRoleClass
+	then
+	    local equipmentSetName, roleName, setRoles = findGearSet(setNameArg), getRoleName(setRoleArg), self:GetEquipmentSetRoles();
+
+	    if equipmentSetName == nil
+	    then
+		print(self.setCommandFirstArgMessage);
+		return;
+	    end
+
+	    if roleName == nil or not classRolesFind(self.classRoles[self.playerClassEn], roleName)
+	    then
+		print(self.setCommandSecondArgMessage);
+		return;
+	    end
+
+	    setRoles[equipmentSetName] = roleName;
+	else
+	    print(self.setCommandSingleRoleClass);
+	end
     end
-
-    local setNameArg, setRoleArg = cmdLine[2], cmdLine[3];
-
-    if multipleRoleClass
-    then
-	local equipmentSetName, roleName, setRoles = findGearSet(setNameArg), getRoleName(setRoleArg), self:GetEquipmentSetRoles();
-
-	if equipmentSetName == nil
-	then
-	    print(self.setCommandFirstArgMessage);
-	    return;
-	end
-
-	if roleName == nil or not classRolesFind(self.classRoles[self.playerClassEn], roleName)
-	then
-	    print(self.setCommandSecondArgMessage);
-	    return;
-	end
-
-	setRoles[equipmentSetName] = roleName;
-    else
-	print(self.setCommandSingleRoleClass);
+else
+    function mod:SlashCommandEquipmentSet(cmdLine)
     end
 end
 
-function mod:GearSpecCheck()
-    if self.CheckEquipmentSet
-    then
-	if multipleRoleClass
+if tonumber(mod.clientBuildNumber) >= 9901	    -- Patch 3.1.2 needed for Equipment Manager feature
+then
+    function mod:GearSpecCheck()
+	if self.CheckEquipmentSet
 	then
-	    playerEquipmentUsage();
-
-	    if equipmentMissmatchCount ~= nil
+	    if multipleRoleClass
 	    then
-		if equipmentMissmatchCount > 0
+		playerEquipmentUsage();
+
+		if equipmentMissmatchCount ~= nil
 		then
-		    print(self.equipmentMissmatchMessage);
-		else
-		    if equipmentMatchCount > 0
+		    if equipmentMissmatchCount > 0
 		    then
-			print(self.equipmentMatchMessage);
+			print(self.equipmentMissmatchMessage);
 		    else
-			print(self.equipmentMatchNeededMessage);
+			if equipmentMatchCount > 0
+			then
+			    print(self.equipmentMatchMessage);
+			else
+			    print(self.equipmentMatchNeededMessage);
+			end
 		    end
+		else
+		    self:GearSetRoleAnnounce();
 		end
 	    else
-		self:GearSetRoleAnnounce();
+		print(self.equipmentMatchSingleRoleClass);
 	    end
 	else
-	    print(self.equipmentMatchSingleRoleClass);
+	    print(self.equipmentMatchDisabled);
 	end
-    else
-	print(self.equipmentMatchDisabled);
+    end
+else
+    function mod:GearSpecCheck()
     end
 end
